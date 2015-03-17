@@ -1,0 +1,14 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<beans xmlns="http://www.springframework.org/schema/beans"
+	xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns:autoconf="http://github.com/xiaofengzhouxf/autoconf"
+	xsi:schemaLocation="http://www.springframework.org/schema/beans http://www.springframework.org/schema/beans/spring-beans.xsd
+	                    http://github.com/xiaofengzhouxf/autoconf http://github.com/xiaofengzhouxf/autoconf/autoconfig.xsd">
+
+
+	<autoconf:properties fetchTime="10" localconf="file:/Users/jason/Documents/autoconf.properties"/>
+
+	<bean id="datasourceTest" class="com.github.commons.datasource.CommonsDataSource">
+		<property name="dataSourceName" value="druid-V1" />
+	</bean>
+
+</beans>
