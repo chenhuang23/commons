@@ -9,7 +9,7 @@ import com.github.commons.utils.spi.SpiLoader;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import com.github.commons.security.ReqParams;
+import com.github.commons.security.support.ReqParams;
 import com.github.commons.security.config.AppInfo;
 import com.github.commons.security.spi.AppConfigurationSpi;
 
@@ -20,7 +20,7 @@ import com.github.commons.security.spi.AppConfigurationSpi;
  */
 public class LocalAppManager implements AppConfigurationSpi {
 
-    private static final Logger logger = LoggerFactory.getLogger(LocalAppManager.class);
+    private static final Logger logger               = LoggerFactory.getLogger(LocalAppManager.class);
 
     private final static String DEFAULT_CONFIG_CLASS = "com.github.commons.security.config.DefaultAppConfiguration";
 
@@ -40,7 +40,7 @@ public class LocalAppManager implements AppConfigurationSpi {
             try {
                 appConfiguration = (AppConfigurationSpi) Class.forName(DEFAULT_CONFIG_CLASS).newInstance();
             } catch (Throwable e) {
-                logger.error("load AppConfigurationSpi exception.",e);
+                logger.error("load AppConfigurationSpi exception.", e);
             }
         }
 
@@ -54,11 +54,6 @@ public class LocalAppManager implements AppConfigurationSpi {
     @Override
     public AppInfo lookup(String appCode) {
         return appConfiguration.lookup(appCode);
-    }
-
-    @Override
-    public AppInfo lookup(String appCode, String appKey) {
-        return appConfiguration.lookup(appCode, appKey);
     }
 
     @Override

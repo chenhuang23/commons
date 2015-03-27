@@ -11,7 +11,8 @@
     <modules>
         <module>common.utils</module>
         <module>common.datasource</module>
-        <module>common-security</module>
+        <module>common.security</module>
+        <module>common.message</module>
     </modules>
 
 <distributionManagement>

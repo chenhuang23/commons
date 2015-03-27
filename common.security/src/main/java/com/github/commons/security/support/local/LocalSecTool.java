@@ -5,10 +5,10 @@
  */
 package com.github.commons.security.support.local;
 
-import com.github.commons.security.ReqParams;
+import com.github.commons.security.support.ReqParams;
 import com.github.commons.security.config.AppInfo;
 import com.github.commons.security.config.SecKey;
-import com.github.commons.security.policy.SecPolicy;
+import com.github.commons.security.constants.SecPolicy;
 import com.github.commons.security.spi.SecKeyPolicySpi;
 import com.github.commons.security.support.SecTool;
 
@@ -22,8 +22,8 @@ public abstract class LocalSecTool extends SecTool {
     // 本地模式
     protected static LocalAppManager localAppManager = null;
 
-    public LocalSecTool(String appCode, String appKey, SecPolicy policy, int version){
-        super(appCode, appKey, policy, version);
+    public LocalSecTool(String appCode, SecPolicy policy, int version){
+        super(appCode, policy, version);
         localAppManager = new LocalAppManager();
     }
 

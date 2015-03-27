@@ -6,13 +6,9 @@
 package com.github.commons.security;
 
 import com.github.commons.security.constants.EncryptType;
-import com.github.commons.security.policy.SecPolicy;
+import com.github.commons.security.constants.SecPolicy;
 import com.github.commons.security.support.CodecTool;
-import com.github.commons.security.support.SignReqParams;
-import com.github.commons.security.support.SignTool;
-import com.github.commons.security.support.ValidateSignReqParams;
 import com.github.commons.security.support.local.codec.LocalCodecTools;
-import com.github.commons.security.support.local.sign.LocalSignTools;
 
 /**
  * SignToolsFacade.java 加解密/摘要/编解码 工具集中服务
@@ -23,10 +19,10 @@ public class CodecToolsFacade implements CodecTool {
 
     private CodecTool tool;
 
-    public CodecToolsFacade(String appCode, String appKey, SecPolicy policy, int version){
+    public CodecToolsFacade(String appCode, SecPolicy policy, int version){
         switch (policy) {
             case LOCAL:
-                tool = new LocalCodecTools(appCode, appKey, policy, version);
+                tool = new LocalCodecTools(appCode, policy, version);
                 break;
             case REMOTE:
             default:

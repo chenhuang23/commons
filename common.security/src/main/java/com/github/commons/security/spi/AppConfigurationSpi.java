@@ -5,7 +5,7 @@
  */
 package com.github.commons.security.spi;
 
-import com.github.commons.security.ReqParams;
+import com.github.commons.security.support.ReqParams;
 import com.github.commons.security.config.AppInfo;
 
 /**
@@ -35,21 +35,6 @@ public interface AppConfigurationSpi {
      * @return
      */
     public AppInfo lookup(String appCode);
-
-    /**
-     * @param appCode
-     * @param appKey
-     * @return 如果没有对应的则返回空
-     */
-
-    /**
-     * 获取应用配置
-     * 
-     * @param appCode
-     * @param appKey
-     * @return
-     */
-    public AppInfo lookup(String appCode, String appKey);
 
     /**
      * 获取应用配置

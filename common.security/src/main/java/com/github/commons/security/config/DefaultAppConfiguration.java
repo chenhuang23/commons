@@ -16,7 +16,7 @@ import org.apache.commons.lang.StringUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import com.github.commons.security.ReqParams;
+import com.github.commons.security.support.ReqParams;
 import com.github.commons.security.constants.Constants;
 import com.github.commons.security.spi.AppConfigurationSpi;
 import com.github.commons.utils.format.JsonUtils;
@@ -73,23 +73,12 @@ public class DefaultAppConfiguration implements AppConfigurationSpi {
         return appMap != null ? appMap.get(appCode) : null;
     }
 
-    public AppInfo lookup(String appCode, String appKey) {
-        AppInfo info = appMap != null ? appMap.get(appCode) : null;
-
-        if (info != null) {
-            if (StringUtils.equals(appKey, info.getAppKey())) {
-
-                return info;
-            }
-        }
-
-        return null;
-    }
-
     @Override
     public AppInfo lookup(ReqParams params) {
-        return lookup(params.appCode, params.appKey);
+        return lookup(params.appCode);
     }
+
+    // ==================================
 
     public static void main(String[] args) {
         String pubKey = "MIGfMA0GCSqGSIb3DQEBAQUAA4GNADCBiQKBgQCcc/zw9IqnDYSXIbiRnssB43cPMmQoUzZgRuRj\n"
@@ -109,13 +98,11 @@ public class DefaultAppConfiguration implements AppConfigurationSpi {
                         + "RAQFzFJFcStJZp0g3Z3FnNDuicJYzkrApG9hV5rI9W7yz+uevbxVQOTTUaHMH33XGNTfMpsc7Q23\n"
                         + "mJdGXc/CLw==";
 
-
         String desKey = "xsdfasdfasdf3egfadaa";
 
         AppInfo[] apparr = new AppInfo[1];
         apparr[0] = new AppInfo();
         apparr[0].setAppCode("test-code");
-        apparr[0].setAppKey("test-key");
 
         SecKey secKey = new SecKey();
         secKey.setPriKey(priKey);
@@ -129,11 +116,22 @@ public class DefaultAppConfiguration implements AppConfigurationSpi {
         secKey2.setVersion(1);
         secKey2.setType(EncryptType.DES.getType());
 
-        apparr[0].setKeys(new SecKey[] { secKey, secKey2 });
+        SecKey secKey3 = new SecKey();
+        secKey3.setPriKey(desKey);
+        secKey3.setPubKey(desKey);
+        secKey3.setVersion(1);
+        secKey3.setType(EncryptType.XDES.getType());
+
+        SecKey secKey4 = new SecKey();
+        secKey4.setPriKey(priKey);
+        secKey4.setPubKey(pubKey);
+        secKey4.setVersion(1);
+        secKey4.setType(EncryptType.XRSA.getType());
+
+        apparr[0].setKeys(new SecKey[] { secKey, secKey2, secKey3, secKey4 });
         apparr[0].setLastVersion(1);
         apparr[0].setPolicy(Constants.VERSION_POLICY);
 
         System.out.println(JsonUtils.toJson(apparr));
-
     }
 }

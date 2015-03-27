@@ -17,7 +17,10 @@ package com.github.commons.security.constants;
  */
 public enum EncryptType {
 
-    DES("des"), RSA("rsa"), ;
+    DES("des"), RSA("rsa"),
+
+    // º”√‹¿©’π
+    XDES("xdes"), XRSA("xrsa");
 
     private String type;
 

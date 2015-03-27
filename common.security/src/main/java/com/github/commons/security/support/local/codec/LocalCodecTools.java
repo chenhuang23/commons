@@ -5,10 +5,11 @@
  */
 package com.github.commons.security.support.local.codec;
 
-import com.github.commons.security.ReqParams;
+import com.github.commons.security.constants.SaltPrefix;
+import com.github.commons.security.support.ReqParams;
 import com.github.commons.security.constants.EncryptType;
 import com.github.commons.security.support.CodecTool;
-import com.github.commons.security.policy.SecPolicy;
+import com.github.commons.security.constants.SecPolicy;
 import com.github.commons.security.spi.CodecSpi;
 import com.github.commons.security.support.local.LocalSecTool;
 
@@ -19,16 +20,25 @@ import com.github.commons.security.support.local.LocalSecTool;
  */
 public class LocalCodecTools extends LocalSecTool implements CodecTool {
 
-    public LocalCodecTools(String appCode, String appKey, SecPolicy policy, int version){
-        super(appCode, appKey, policy, version);
+    public LocalCodecTools(String appCode, SecPolicy policy, int version){
+        super(appCode, policy, version);
     }
 
     @Override
     public String decode(String ciphertext, EncryptType type) {
-        ReqParams reqParams = new ReqParams(appCode, appKey, version, type);
+        ReqParams reqParams = new ReqParams(appCode, version, type);
         CodecSpi codec = InitSec.codecRepository.getCodec(type.getType());
 
         if (codec != null) {
+
+            // 为了兼容，解密会判断是哪个版本的加密数据
+            SaltPrefix saltPrefix = SaltPrefix.lookup(ciphertext.substring(0, 4));
+
+            if (saltPrefix != SaltPrefix.NULL) {
+                reqParams.version = saltPrefix.getVersion();
+                ciphertext = ciphertext.substring(4, ciphertext.length());
+            }
+
             return codec.decode(ciphertext, super.getSecKey(reqParams));
         }
         return null;
@@ -36,11 +46,12 @@ public class LocalCodecTools extends LocalSecTool implements CodecTool {
 
     @Override
     public String encode(String plainText, EncryptType type) {
-        ReqParams reqParams = new ReqParams(appCode, appKey, version, type);
+        ReqParams reqParams = new ReqParams(appCode, version, type);
         CodecSpi codec = InitSec.codecRepository.getCodec(type.getType());
 
         if (codec != null) {
-            return codec.encode(plainText, super.getSecKey(reqParams));
+            String encode = codec.encode(plainText, super.getSecKey(reqParams));
+            return SaltPrefix.lookup(this.version).getSalt() + encode;
         }
         return null;
     }

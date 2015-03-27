@@ -4,13 +4,12 @@ package com.github.commons.security;/*
  * 
  */
 
-import com.sun.org.apache.bcel.internal.classfile.Code;
 import junit.framework.Assert;
 
 import org.junit.Test;
 
 import com.github.commons.security.constants.EncryptType;
-import com.github.commons.security.policy.SecPolicy;
+import com.github.commons.security.constants.SecPolicy;
 
 /**
  * SignToolsTest.java
@@ -19,14 +18,16 @@ import com.github.commons.security.policy.SecPolicy;
  */
 public class CodecToolsTest {
 
-    private final String plaintext  = "this is a test.";
+    private final String plaintext   = "this is a test.";
 
-    private final String encodeCode = "7CA288C840AA39A6E4E0F94934A14ADC";
+    private final String encodeCode  = "WQEP7CA288C840AA39A6E4E0F94934A14ADC";
+
+    private final String xencodeCode = "WQEP;GE6<<G<84EE7=E:I8I4J=8=78E58EHG";
+
+    CodecToolsFacade     tools       = new CodecToolsFacade("test-code", SecPolicy.LOCAL, 1);
 
     @Test
-    public void testSign() throws ClassNotFoundException, IllegalAccessException, InstantiationException {
-
-        CodecToolsFacade tools = new CodecToolsFacade("test-code", "test-key", SecPolicy.LOCAL, 1);
+    public void testDes() throws ClassNotFoundException, IllegalAccessException, InstantiationException {
 
         String encode = tools.encode(plaintext, EncryptType.DES);
 
@@ -35,6 +36,20 @@ public class CodecToolsTest {
         Assert.assertEquals(encode, encodeCode);
 
         String decode = tools.decode(encode, EncryptType.DES);
+
+        Assert.assertEquals(decode, plaintext);
+    }
+
+    @Test
+    public void testXDes() throws ClassNotFoundException, IllegalAccessException, InstantiationException {
+
+        String encode = tools.encode(plaintext, EncryptType.XDES);
+
+        System.out.println(encode);
+
+        Assert.assertEquals(encode, xencodeCode);
+
+        String decode = tools.decode(encode, EncryptType.XDES);
 
         Assert.assertEquals(decode, plaintext);
     }

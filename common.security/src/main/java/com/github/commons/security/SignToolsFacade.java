@@ -6,7 +6,7 @@
 package com.github.commons.security;
 
 import com.github.commons.security.constants.EncryptType;
-import com.github.commons.security.policy.SecPolicy;
+import com.github.commons.security.constants.SecPolicy;
 import com.github.commons.security.support.local.sign.LocalSignTools;
 import com.github.commons.security.support.SignReqParams;
 import com.github.commons.security.support.SignTool;
@@ -21,10 +21,10 @@ public class SignToolsFacade implements SignTool {
 
     private SignTool tool;
 
-    public SignToolsFacade(String appCode, String appKey, SecPolicy policy, int version){
+    public SignToolsFacade(String appCode, SecPolicy policy, int version){
         switch (policy) {
             case LOCAL:
-                tool = new LocalSignTools(appCode, appKey, policy, version);
+                tool = new LocalSignTools(appCode, policy, version);
                 break;
             case REMOTE:
             default:

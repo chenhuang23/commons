@@ -5,9 +5,8 @@
  */
 package com.github.commons.security.support;
 
-import com.github.commons.security.ReqParams;
 import com.github.commons.security.config.SecKey;
-import com.github.commons.security.policy.SecPolicy;
+import com.github.commons.security.constants.SecPolicy;
 
 /**
  * SecTools.java
@@ -28,13 +27,11 @@ public abstract class SecTool {
      * º”√‹ƒ£ Ω
      */
     protected SecPolicy policy;
-    protected String    appKey;
     protected String    appCode;
     protected int       version = 1;
 
-    public SecTool(String appCode, String appKey, SecPolicy policy, int version){
+    public SecTool(String appCode, SecPolicy policy, int version){
         this.appCode = appCode;
-        this.appKey = appKey;
         this.policy = policy;
         this.version = version;
     }
@@ -53,14 +50,6 @@ public abstract class SecTool {
 
     public void setAppCode(String appCode) {
         this.appCode = appCode;
-    }
-
-    public String getAppKey() {
-        return appKey;
-    }
-
-    public void setAppKey(String appKey) {
-        this.appKey = appKey;
     }
 
     public SecPolicy getPolicy() {

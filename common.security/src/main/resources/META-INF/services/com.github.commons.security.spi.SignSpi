@@ -1,1 +1,2 @@
 com.github.commons.security.core.sign.RsaSign
+com.github.commons.security.core.sign.XRsaSign

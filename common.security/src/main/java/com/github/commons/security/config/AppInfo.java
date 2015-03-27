@@ -24,9 +24,6 @@ public class AppInfo implements Serializable {
     // 应用Id
     private String            appCode;
 
-    // 应用密码
-    private String            appKey;
-
     // 最新版本号
     private int               lastVersion      = 1;
 
@@ -41,14 +38,6 @@ public class AppInfo implements Serializable {
 
     public void setAppCode(String appCode) {
         this.appCode = appCode;
-    }
-
-    public String getAppKey() {
-        return appKey;
-    }
-
-    public void setAppKey(String appKey) {
-        this.appKey = appKey;
     }
 
     public SecKey[] getKeys() {
@@ -77,8 +66,8 @@ public class AppInfo implements Serializable {
 
     @Override
     public String toString() {
-        return "AppInfo{" + "appCode='" + appCode + '\'' + ", appKey='" + appKey + '\'' + ", lastVersion="
-               + lastVersion + ", policy='" + policy + '\'' + ", keys=" + Arrays.toString(keys) + '}';
+        return "AppInfo{" + "appCode='" + appCode + '\'' + ", lastVersion=" + lastVersion + ", policy='" + policy
+               + '\'' + ", keys=" + Arrays.toString(keys) + '}';
     }
 
 }

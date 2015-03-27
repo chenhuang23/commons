@@ -5,7 +5,7 @@
  */
 package com.github.commons.security.policy;
 
-import com.github.commons.security.ReqParams;
+import com.github.commons.security.support.ReqParams;
 import com.github.commons.security.config.SecKey;
 import com.github.commons.security.constants.Constants;
 import com.github.commons.security.spi.SecKeyPolicySpi;

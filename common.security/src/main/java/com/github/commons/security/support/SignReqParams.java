@@ -5,7 +5,6 @@
  */
 package com.github.commons.security.support;
 
-import com.github.commons.security.ReqParams;
 import com.github.commons.security.constants.EncryptType;
 
 /**
@@ -19,8 +18,8 @@ public class SignReqParams extends ReqParams {
     // т╜нд
     public String             plaintext;
 
-    public SignReqParams(String appCode, String appKey, int version, EncryptType type, String plaintext){
-        super(appCode, appKey, version, type);
+    public SignReqParams(String appCode, int version, EncryptType type, String plaintext){
+        super(appCode, version, type);
         this.plaintext = plaintext;
     }
 
