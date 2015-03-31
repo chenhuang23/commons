@@ -7,7 +7,6 @@ import java.util.concurrent.atomic.AtomicBoolean;
 /**
  * <pre>
  * desc: 
- * created: 2012-7-26 обнГ04:06:59
  * author: xiaofeng.zhouxf
  * todo: 
  * history:

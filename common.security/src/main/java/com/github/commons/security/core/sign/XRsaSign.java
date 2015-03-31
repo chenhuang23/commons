@@ -17,7 +17,6 @@ import com.github.commons.utils.security.RSAUtils;
  * <pre>
  * RsaSignSpi.java
  * 
- * rsa 签名
  *
  * </pre>
  *
@@ -34,7 +33,6 @@ public class XRsaSign implements SignSpi {
         try {
             String sign = RSAUtils.sign(source.getBytes(UTF_8), key.getPriKey());
 
-            // 每个加密结果加4
             StringBuilder res = new StringBuilder();
             for (char c : sign.toCharArray()) {
 
@@ -55,7 +53,6 @@ public class XRsaSign implements SignSpi {
 
         try {
 
-            // 每个加密结果加4
             StringBuilder res = new StringBuilder();
             for (char c : signCode.toCharArray()) {
 
@@ -72,8 +69,8 @@ public class XRsaSign implements SignSpi {
     }
 
     @Override
-    public String getType() {
-        return EncryptType.XRSA.getType();
+    public int getCode() {
+        return EncryptType.XRSA.getCode();
     }
 
 }

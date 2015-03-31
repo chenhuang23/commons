@@ -29,7 +29,6 @@ public class XDesCodec implements CodecSpi {
         try {
             String encrypt = DesUtils.encrypt(plainText, key.getPriKey());
 
-            // 每个加密结果加4
             StringBuilder res = new StringBuilder();
             for (char c : encrypt.toCharArray()) {
 
@@ -48,7 +47,6 @@ public class XDesCodec implements CodecSpi {
     public String decode(String ciphertext, SecKey key) {
         try {
 
-            // 每个加密结果加4
             StringBuilder res = new StringBuilder();
             for (char c : ciphertext.toCharArray()) {
 
@@ -66,9 +64,10 @@ public class XDesCodec implements CodecSpi {
     }
 
     @Override
-    public String getType() {
-        return EncryptType.XDES.getType();
+    public int getCode() {
+        return EncryptType.XDES.getCode();
     }
+
 
     public static void main(String[] args) {
 

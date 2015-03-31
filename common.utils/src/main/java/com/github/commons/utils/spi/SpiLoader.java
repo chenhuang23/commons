@@ -16,8 +16,7 @@ import java.util.ServiceLoader;
 public class SpiLoader {
 
     /**
-     * 获取一个集合
-     * 
+     *
      * @param clazz
      * @param <T>
      * @return
@@ -28,8 +27,7 @@ public class SpiLoader {
     }
 
     /**
-     * 获取第一个
-     * 
+     *
      * @param clazz
      * @param <T>
      * @return

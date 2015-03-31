@@ -19,22 +19,26 @@ import com.github.commons.security.support.SecTool;
  */
 public abstract class LocalSecTool extends SecTool {
 
-    // 本地模式
-    protected static LocalAppManager localAppManager = null;
+
+
+    public static class SuperInit {
+
+        public static SecKeyPolicyRespository secKeyPolicyRespository = new SecKeyPolicyRespository();
+
+        protected static LocalAppManager localAppManager = new LocalAppManager();;
+    }
 
     public LocalSecTool(String appCode, SecPolicy policy, int version){
         super(appCode, policy, version);
-        localAppManager = new LocalAppManager();
     }
 
     /**
-     * 获取Seckey
      *
      * @param params
      * @return
      */
     public SecKey getSecKey(ReqParams params) {
-        AppInfo appInfo = localAppManager.lookup(params);
+        AppInfo appInfo = SuperInit.localAppManager.lookup(params);
 
         if (appInfo == null) {
             throw new IllegalArgumentException("App config not exists.");
@@ -44,4 +48,5 @@ public abstract class LocalSecTool extends SecTool {
 
         return secKeyPolicy.findSecKey(params, appInfo.getKeys());
     }
+
 }

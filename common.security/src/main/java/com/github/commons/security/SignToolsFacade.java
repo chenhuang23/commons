@@ -11,9 +11,11 @@ import com.github.commons.security.support.local.sign.LocalSignTools;
 import com.github.commons.security.support.SignReqParams;
 import com.github.commons.security.support.SignTool;
 import com.github.commons.security.support.ValidateSignReqParams;
+import org.springframework.beans.BeansException;
+import org.springframework.context.ApplicationContext;
+import org.springframework.context.ApplicationContextAware;
 
 /**
- * SignToolsFacade.java 签名工具集中服务
  *
  * @author zhouxiaofeng 3/26/15
  */
@@ -34,22 +36,13 @@ public class SignToolsFacade implements SignTool {
     }
 
     @Override
-    public String sign(SignReqParams params) {
-        return tool.sign(params);
-    }
-
-    @Override
     public String sign(String plaintext, EncryptType type) {
         return tool.sign(plaintext, type);
-    }
-
-    @Override
-    public boolean validateSign(ValidateSignReqParams params) {
-        return tool.validateSign(params);
     }
 
     @Override
     public boolean validateSign(String plaintext, String ciphertext, EncryptType type) {
         return tool.validateSign(plaintext, ciphertext, type);
     }
+
 }

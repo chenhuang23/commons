@@ -3,7 +3,7 @@
  *
  * 
  */
-package com.github.commons.security.support;
+package com.github.commons.security.support.local;
 
 import java.util.HashMap;
 import java.util.Iterator;
@@ -27,7 +27,6 @@ public class SecKeyPolicyRespository {
 
     private void init() {
 
-        // 初始化sign的算法实例
 
         Iterator<SecKeyPolicySpi> iterator = SpiLoader.load(SecKeyPolicySpi.class);
         if (iterator != null) {
@@ -42,9 +41,7 @@ public class SecKeyPolicyRespository {
     }
 
     /**
-     * 算法名称
-     * 
-     * @param name 策略类型
+     *
      * @return
      */
     public SecKeyPolicySpi findSecKeyPolicy(String name) {

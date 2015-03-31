@@ -29,8 +29,7 @@ public class JsonUtils {
     }
 
     /**
-     * 获取JsonObject
-     * 
+     *
      * @param json
      * @return
      */
@@ -41,8 +40,7 @@ public class JsonUtils {
     }
 
     /**
-     * 根据json字符串返回Map对象
-     * 
+     *
      * @param json
      * @return
      */
@@ -51,8 +49,7 @@ public class JsonUtils {
     }
 
     /**
-     * 将JSONObjec对象转换成Map-List集合
-     * 
+     *
      * @param json
      * @return
      */
@@ -70,9 +67,7 @@ public class JsonUtils {
         return map;
     }
 
-
     /**
-     * 将JSONObjec对象转换成Properties
      *
      * @param json
      * @return
@@ -83,17 +78,16 @@ public class JsonUtils {
         for (Iterator<Map.Entry<String, JsonElement>> iter = entrySet.iterator(); iter.hasNext();) {
             Map.Entry<String, JsonElement> entry = iter.next();
             String key = entry.getKey();
-            Object value = entry.getValue();
+            JsonElement value = entry.getValue();
             if (value instanceof JsonArray) properties.put((String) key, toList((JsonArray) value));
             else if (value instanceof JsonObject) properties.put((String) key, toMap((JsonObject) value));
-            else properties.put((String) key, value);
+            else properties.put((String) key, value.getAsString());
         }
         return properties;
     }
 
     /**
-     * 将JSONArray对象转换成List
-     * 
+     *
      * @param json
      * @return
      */

@@ -18,15 +18,9 @@ public class SecKey implements Serializable {
 
     private int    version;
 
-    // √ÿ‘ø÷µ
     private String pubKey;
 
     private String priKey;
-
-    public String getSecType() {
-
-        return this.type;
-    }
 
     public int getVersion() {
         return this.version;

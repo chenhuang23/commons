@@ -18,7 +18,6 @@ import org.springframework.context.ApplicationContext;
 import org.springframework.context.ApplicationContextAware;
 
 /**
- * CommonDataSource.java 封装各种类型的Datasource
  *
  * @author zhouxiaofeng 3/17/15
  */
@@ -27,7 +26,6 @@ public class CommonsDataSource implements FactoryBean<DataSource>, ApplicationCo
     private ApplicationContext applicationContext;
     private DataSource         dataSource;
 
-    // 设置需要的datasource实现
     private String             dataSourceName;
 
     @Override
@@ -52,7 +50,6 @@ public class CommonsDataSource implements FactoryBean<DataSource>, ApplicationCo
 
                     ServiceLoader<FetchDataSourcesConfigSpi> fetchDataSourcesConfigSpis = ServiceLoader.load(FetchDataSourcesConfigSpi.class);
 
-                    // 获取配置信息
                     Properties properties = null;
 
                     if (fetchDataSourcesConfigSpis != null) {
@@ -69,7 +66,6 @@ public class CommonsDataSource implements FactoryBean<DataSource>, ApplicationCo
                         return null;
                     }
 
-                    // 默认使用Json格式
                     return config.createDateSource(properties);
                 }
 

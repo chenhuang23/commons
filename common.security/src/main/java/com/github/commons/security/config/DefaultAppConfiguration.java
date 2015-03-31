@@ -22,7 +22,6 @@ import com.github.commons.security.spi.AppConfigurationSpi;
 import com.github.commons.utils.format.JsonUtils;
 
 /**
- * DefaultAppConfiguration.java 默认的配置,从配置文件中获取
  *
  * @author zhouxiaofeng 3/19/15
  */
@@ -39,7 +38,6 @@ public class DefaultAppConfiguration implements AppConfigurationSpi {
         try {
             pro.load(resourceAsStream);
         } catch (IOException e) {
-
             logger.error("Load " + Constants.DEFAULT_APP_CONF_FILE + " exception.", e);
         }
 
@@ -99,6 +97,7 @@ public class DefaultAppConfiguration implements AppConfigurationSpi {
                         + "mJdGXc/CLw==";
 
         String desKey = "xsdfasdfasdf3egfadaa";
+        String aesKey = "xsdfasdfasdf3egf";
 
         AppInfo[] apparr = new AppInfo[1];
         apparr[0] = new AppInfo();
@@ -128,7 +127,13 @@ public class DefaultAppConfiguration implements AppConfigurationSpi {
         secKey4.setVersion(1);
         secKey4.setType(EncryptType.XRSA.getType());
 
-        apparr[0].setKeys(new SecKey[] { secKey, secKey2, secKey3, secKey4 });
+        SecKey secKey5 = new SecKey();
+        secKey5.setPriKey(aesKey);
+        secKey5.setPubKey(aesKey);
+        secKey5.setVersion(1);
+        secKey5.setType(EncryptType.AES.getType());
+
+        apparr[0].setKeys(new SecKey[] { secKey, secKey2, secKey3, secKey4, secKey5 });
         apparr[0].setLastVersion(1);
         apparr[0].setPolicy(Constants.VERSION_POLICY);
 

@@ -17,9 +17,7 @@ import java.util.concurrent.ConcurrentHashMap;
 /**
  * <pre>
  * VersionSecKeyPolicy.java 
- * 
- * 按版本号区分可以
- * 
+ *
  * </pre>
  * 
  * @author zhouxiaofeng 3/19/15
@@ -34,8 +32,7 @@ public class VersionSecKeyPolicy implements SecKeyPolicySpi {
     }
 
     /**
-     * 通过secType + version 来查找秘钥
-     * 
+     *
      * @param params
      * @param keys
      * @return
@@ -53,7 +50,7 @@ public class VersionSecKeyPolicy implements SecKeyPolicySpi {
 
         for (SecKey key : keys) {
 
-            if (key.getVersion() == params.version) {
+            if (key.getVersion() == params.version && key.getType().equals(params.secType.getType())) {
                 map.get(keys).put((params.secType.getType() + params.version), key);
                 return key;
             }

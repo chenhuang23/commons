@@ -15,15 +15,12 @@ import com.github.commons.security.constants.EncryptType;
 public interface SignTool {
 
     /**
-     * 签名操作
      *
      * @param params
-     * @return
+     * @return public String sign(SignReqParams params);
      */
-    public String sign(SignReqParams params);
 
     /**
-     * 签名操作
      *
      * @param plaintext
      * @param type
@@ -32,15 +29,11 @@ public interface SignTool {
     public String sign(String plaintext, EncryptType type);
 
     /**
-     * 验证签名
      *
      * @param params
-     * @return
+     * @return public boolean validateSign(ValidateSignReqParams params);
      */
-    public boolean validateSign(ValidateSignReqParams params);
-
     /**
-     * 验证签名
      *
      * @return
      */

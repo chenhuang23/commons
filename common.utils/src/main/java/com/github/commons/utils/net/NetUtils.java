@@ -16,12 +16,11 @@ public class NetUtils {
 	private static final String SEPARATIVE = "_";
 
 	/**
-	 * @return 本机IP
 	 * @throws java.net.SocketException
 	 */
 	public static String getIPAddress() {
-		String localip = StringUtils.EMPTY;// 本地IP，如果没有配置外网IP则返回它
-		String netip = StringUtils.EMPTY;// 外网IP
+		String localip = StringUtils.EMPTY;
+		String netip = StringUtils.EMPTY;
 
 		Enumeration<NetworkInterface> netInterfaces;
 		try {
@@ -32,7 +31,7 @@ public class NetUtils {
 		}
 		if (netInterfaces != null) {
 			InetAddress ip = null;
-			boolean finded = false;// 是否找到外网IP
+			boolean finded = false;
 			while (netInterfaces.hasMoreElements() && !finded) {
 				NetworkInterface ni = netInterfaces.nextElement();
 				Enumeration<InetAddress> address = ni.getInetAddresses();
@@ -40,13 +39,13 @@ public class NetUtils {
 					ip = address.nextElement();
 					if (!ip.isSiteLocalAddress()
 							&& !ip.isLoopbackAddress()
-							&& ip.getHostAddress().indexOf(COLON) == -1) {// 外网IP
+							&& ip.getHostAddress().indexOf(COLON) == -1) {
 						netip = ip.getHostAddress();
 						finded = true;
 						break;
 					} else if (ip.isSiteLocalAddress()
 							&& !ip.isLoopbackAddress()
-							&& ip.getHostAddress().indexOf(COLON) == -1) {// 内网IP
+							&& ip.getHostAddress().indexOf(COLON) == -1) {
 						localip = ip.getHostAddress();
 					}
 				}

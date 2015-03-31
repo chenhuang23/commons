@@ -9,8 +9,6 @@ import org.joda.time.format.DateTimeFormatter;
 
 /**
  * <pre>
- * desc: 时间格式转换
- * created: 2012-5-15 上午11:13:03
  * author: xiaofeng.zhouxf
  * todo: 
  * history:
@@ -20,8 +18,7 @@ public class TimeUtils {
 	private static String[] TIMESTAMP_PATTERN = { "yyyy-MM-dd HH:mm:ss", "yyyy-MM-dd", "yyyy-MM-dd HH:mm" };
 
 	/**
-	 * 创建Date对象
-	 * 
+	 *
 	 * @param year
 	 * @param monthOfYear
 	 * @param dayOfMonth
@@ -49,8 +46,7 @@ public class TimeUtils {
 	}
 
 	/**
-	 * 创建Date对象, hourOfDay,minuteOfHour,secondOfMinute,millisOfSecond 为0
-	 * 
+	 *
 	 * @param year
 	 * @param monthOfYear
 	 * @param dayOfMonth
@@ -63,10 +59,8 @@ public class TimeUtils {
 	}
 
 	/**
-	 * 增加dayOfMonth,如果参数days为负数，则相当于减dayOfMonth
-	 * 
+	 *
 	 * @param date
-	 *            需要修改的Date对象
 	 * @param days
 	 */
 	public static Date pulsDays(Date date, int days) {
@@ -80,10 +74,8 @@ public class TimeUtils {
 	}
 
 	/**
-	 * 增加year,如果参数years为负数，则相当于减year
-	 * 
+	 *
 	 * @param date
-	 *            需要修改的Date对象
 	 * @param years
 	 */
 	public static Date pulsYears(Date date, int years) {
@@ -97,10 +89,8 @@ public class TimeUtils {
 	}
 
 	/**
-	 * 增加Week,如果参数weeks为负数，则相当于减Week
-	 * 
+	 *
 	 * @param date
-	 *            需要修改的Date对象
 	 * @param weeks
 	 */
 	public static Date pulsWeeks(Date date, int weeks) {
@@ -114,10 +104,8 @@ public class TimeUtils {
 	}
 
 	/**
-	 * 增加Second,如果参数seconds为负数，则相当于减Second
-	 * 
+	 *
 	 * @param date
-	 *            需要修改的Date对象
 	 * @param seconds
 	 */
 	public static Date pulsSeconds(Date date, int seconds) {
@@ -131,10 +119,8 @@ public class TimeUtils {
 	}
 
 	/**
-	 * 增加Month,如果参数months为负数，则相当于减Month
-	 * 
+	 *
 	 * @param date
-	 *            需要修改的Date对象
 	 * @param months
 	 */
 	public static Date pulsMonths(Date date, int months) {
@@ -148,10 +134,8 @@ public class TimeUtils {
 	}
 
 	/**
-	 * 增加Minute,如果参数minutes为负数，则相当于减Minute
-	 * 
+	 *
 	 * @param date
-	 *            需要修改的Date对象
 	 * @param minutes
 	 */
 	public static Date pulsMinutes(Date date, int minutes) {
@@ -165,10 +149,8 @@ public class TimeUtils {
 	}
 
 	/**
-	 * 增加Milli,如果参数millis为负数，则相当于减Milli
-	 * 
+	 *
 	 * @param date
-	 *            需要修改的Date对象
 	 * @param millis
 	 */
 	public static Date pulsMillis(Date date, int millis) {
@@ -182,10 +164,8 @@ public class TimeUtils {
 	}
 
 	/**
-	 * 增加Hour,如果参数hours为负数，则相当于减Hour
-	 * 
+	 *
 	 * @param date
-	 *            需要修改的Date对象
 	 * @param hours
 	 */
 	public static Date pulsHours(Date date, int hours) {
@@ -198,14 +178,6 @@ public class TimeUtils {
 		return null;
 	}
 
-	/**
-	 * 
-	 * 把"yyyy-MM-dd HH:mm:ss", "yyyy-MM-dd", "yyyy-MM-dd HH:mm" 格式的字符串转化成<code>Date</code>对象
-	 * 
-	 * @param strDate
-	 * @return 符合"yyyy-MM-dd HH:mm:ss", "yyyy-MM-dd", "yyyy-MM-dd HH:mm"格式的字符串将返回Date对象,当字符串为空或者null时返回null,
-	 *         当字符串格式不正确时返回null
-	 */
 	public static Date parseDate(String strDate) {
 		if (StringUtils.isBlank(strDate)) {
 			return null;
@@ -243,8 +215,7 @@ public class TimeUtils {
 	}
 
 	/**
-	 * 格式化字符串日志，返回"yyyy-MM-dd hh:mm:ss" 格式
-	 * 
+	 *
 	 * @param date
 	 * @return
 	 */
@@ -253,8 +224,7 @@ public class TimeUtils {
 	}
 
 	/**
-	 * 格式化字符串日志，返回"yyyy-MM-dd" 格式
-	 * 
+	 *
 	 * @param date
 	 * @return
 	 */

@@ -27,11 +27,10 @@ public class LocalCodecTools extends LocalSecTool implements CodecTool {
     @Override
     public String decode(String ciphertext, EncryptType type) {
         ReqParams reqParams = new ReqParams(appCode, version, type);
-        CodecSpi codec = InitSec.codecRepository.getCodec(type.getType());
+        CodecSpi codec = InitSec.codecRepository.getCodec(type.getCode());
 
         if (codec != null) {
 
-            // 为了兼容，解密会判断是哪个版本的加密数据
             SaltPrefix saltPrefix = SaltPrefix.lookup(ciphertext.substring(0, 4));
 
             if (saltPrefix != SaltPrefix.NULL) {
@@ -47,7 +46,7 @@ public class LocalCodecTools extends LocalSecTool implements CodecTool {
     @Override
     public String encode(String plainText, EncryptType type) {
         ReqParams reqParams = new ReqParams(appCode, version, type);
-        CodecSpi codec = InitSec.codecRepository.getCodec(type.getType());
+        CodecSpi codec = InitSec.codecRepository.getCodec(type.getCode());
 
         if (codec != null) {
             String encode = codec.encode(plainText, super.getSecKey(reqParams));
@@ -56,9 +55,6 @@ public class LocalCodecTools extends LocalSecTool implements CodecTool {
         return null;
     }
 
-    /**
-     * 初始化
-     */
 
     static class InitSec {
 

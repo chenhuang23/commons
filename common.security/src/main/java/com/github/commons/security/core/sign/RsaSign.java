@@ -16,8 +16,7 @@ import org.slf4j.LoggerFactory;
  * <pre>
  * RsaSignSpi.java
  * 
- * rsa Ç©Ãû
- * 
+ *
  * </pre>
  * 
  * @author zhouxiaofeng 3/19/15
@@ -51,8 +50,8 @@ public class RsaSign implements SignSpi {
     }
 
     @Override
-    public String getType() {
-        return EncryptType.RSA.getType();
+    public int getCode() {
+        return EncryptType.RSA.getCode();
     }
 
 }

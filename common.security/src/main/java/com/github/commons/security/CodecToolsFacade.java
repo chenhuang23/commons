@@ -9,9 +9,11 @@ import com.github.commons.security.constants.EncryptType;
 import com.github.commons.security.constants.SecPolicy;
 import com.github.commons.security.support.CodecTool;
 import com.github.commons.security.support.local.codec.LocalCodecTools;
+import org.springframework.beans.BeansException;
+import org.springframework.context.ApplicationContext;
+import org.springframework.context.ApplicationContextAware;
 
 /**
- * SignToolsFacade.java 加解密/摘要/编解码 工具集中服务
  *
  * @author zhouxiaofeng 3/26/15
  */
@@ -40,4 +42,5 @@ public class CodecToolsFacade implements CodecTool {
     public String encode(String plainText, EncryptType type) {
         return tool.encode(plainText, type);
     }
+
 }

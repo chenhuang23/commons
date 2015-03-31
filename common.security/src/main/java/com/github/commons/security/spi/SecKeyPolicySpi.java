@@ -12,7 +12,6 @@ import com.github.commons.security.config.SecKey;
  * <pre>
  * SecKeyPolicy.java
  * 
- * 获取key 的策略
  *
  * </pre>
  *
@@ -21,15 +20,13 @@ import com.github.commons.security.config.SecKey;
 public interface SecKeyPolicySpi {
 
     /**
-     * 获取策略名称
-     * 
+     *
      * @return
      */
     public String getName();
 
     /**
-     * 根据不同策略获取对应的secKey
-     * 
+     *
      * @param params
      * @param keys
      * @return

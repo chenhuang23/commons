@@ -13,7 +13,6 @@ import com.github.commons.security.config.AppInfo;
  *
  * AppConfiguration.java
  * 
- * 应用配置载入
  *
  * </pre>
  *
@@ -22,23 +21,20 @@ import com.github.commons.security.config.AppInfo;
 public interface AppConfigurationSpi {
 
     /**
-     * 获得所有的appInfo
-     * 
+     *
      * @return
      */
     public AppInfo[] findAll();
 
     /**
-     * 通过appcode 获取配置
-     * 
+     *
      * @param appCode
      * @return
      */
     public AppInfo lookup(String appCode);
 
     /**
-     * 获取应用配置
-     * 
+     *
      * @param params
      * @return
      */

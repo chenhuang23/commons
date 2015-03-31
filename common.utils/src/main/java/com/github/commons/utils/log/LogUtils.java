@@ -5,8 +5,7 @@ import org.slf4j.Logger;
 
 /**
  * <pre>
- * desc: 日志记录工具
- * created: 2012-4-26 上午09:52:51
+ * created: 2012-4-26 锟斤拷锟斤拷09:52:51
  * author: xiaofeng.zhouxf
  * todo: 
  * history:
@@ -122,7 +121,6 @@ public class LogUtils {
 
 			StackTraceElement[] trace = exception.getStackTrace();
 			for (int i = 0; i < trace.length; i++) {
-				// 打印方法信息
 				sb.append("\nat ");
 				sb.append(trace[i].toString());
 				sb.append("\n");

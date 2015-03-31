@@ -1,12 +1,13 @@
 package com.github.commons.security.impl;
 
-import com.github.commons.utils.security.RSAUtils;
-import org.junit.Assert;
-import org.junit.Test;
-import org.junit.Before;
-import org.junit.After;
-
 import java.util.Map;
+
+import org.junit.After;
+import org.junit.Assert;
+import org.junit.Before;
+import org.junit.Test;
+
+import com.github.commons.utils.security.RSAUtils;
 
 /**
  * RSAUtils Tester.

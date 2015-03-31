@@ -10,35 +10,25 @@ import org.apache.commons.lang.StringUtils;
  */
 public class UnitUtils {
 
-	/**
-	 * 容量精度格式化工具
-	 */
-	private static DecimalFormat quotaFormatter0 = new DecimalFormat("0");// 转成0格式
-	private static DecimalFormat quotaFormatter1 = new DecimalFormat("0.0");// 转成0.0格式
-	private static DecimalFormat quotaFormatter2 = new DecimalFormat("0.00");// 转成0.00格式
-	private static DecimalFormat quotaFormatter3 = new DecimalFormat("0.000");// 转成0.000格式
-	private static DecimalFormat quotaFormatter4 = new DecimalFormat("0.0000");// 转成0.0000格式
+	private static DecimalFormat quotaFormatter0 = new DecimalFormat("0");
+	private static DecimalFormat quotaFormatter1 = new DecimalFormat("0.0");
+	private static DecimalFormat quotaFormatter2 = new DecimalFormat("0.00");
+	private static DecimalFormat quotaFormatter3 = new DecimalFormat("0.000");
+	private static DecimalFormat quotaFormatter4 = new DecimalFormat("0.0000");
 
-	/**
-	 * 容量单位 K,1KB = 1024B
-	 */
 	private static final String VOLUME_K = " K";
 	/**
-	 * 容量单位 M,1MB = 1024KB
 	 */
 	private static final String VOLUME_M = " M";
 	/**
-	 * 容量单位 G,1GB = 1024MB
 	 */
 	private static final String VOLUME_G = " G";
 
 	/**
-	 * 容量单位 T,1TB = 1024GB
 	 */
 	private static final String VOLUME_T = " T";
 
 	/**
-	 * 容量单位 P,1PB = 1024TB
 	 */
 	private static final String VOLUME_P = " P";
 
@@ -54,24 +44,6 @@ public class UnitUtils {
 
 	private static final String NEGATIVE_SIGN = "-";
 
-	/**
-	 * <p>
-	 * 格式化容量单位
-	 * </p>
-	 * 大于1K以K为单位,1KB = 1024B<br>
-	 * 大于1M以M为单位,1MB = 1024KB<br>
-	 * 大于1G以G为单位,1GB = 1024MB<br>
-	 * 大于1T以T为单位,1TB = 1024GB<br>
-	 * 大于1P以P为单位,1PB = 1024TB
-	 * 
-	 * @param size
-	 *            大小(bit)
-	 * @param needFill
-	 *            是否需要补齐位数，如果位数不足，左边加0
-	 * @param decimalDigits
-	 *            小数位数,最大支持4位，超过4位默认按4位处理.
-	 * @return 带单位大小字符串
-	 */
 	public static String formatSize(Long size, boolean needFill, int decimalDigits) {
 		if (size == null) {
 			size = 0l;
@@ -108,19 +80,19 @@ public class UnitUtils {
 				break;
 		}
 		String volume = "";
-		if (0 <= bitSize && bitSize < M_MIN_RANGE) {// K单位
+		if (0 <= bitSize && bitSize < M_MIN_RANGE) {
 			volume = quotaFormatter.format((double) bitSize / K_MIN_RANGE) + VOLUME_K;
-		} else if (M_MIN_RANGE <= bitSize && bitSize < G_MIN_RANGE) { // M单位
+		} else if (M_MIN_RANGE <= bitSize && bitSize < G_MIN_RANGE) {
 			volume = quotaFormatter.format((double) bitSize / M_MIN_RANGE) + VOLUME_M;
-		} else if (G_MIN_RANGE <= bitSize && bitSize < T_MIN_RANGE) {// G单位 // G单位
+		} else if (G_MIN_RANGE <= bitSize && bitSize < T_MIN_RANGE) {
 			volume = quotaFormatter.format((double) bitSize / G_MIN_RANGE) + VOLUME_G;
-		} else if (T_MIN_RANGE <= bitSize && bitSize < P_MIN_RANGE) {// T单位
+		} else if (T_MIN_RANGE <= bitSize && bitSize < P_MIN_RANGE) {
 			volume = quotaFormatter.format((double) bitSize / T_MIN_RANGE) + VOLUME_T;
-		} else { // P单位
+		} else {
 			volume = quotaFormatter.format((double) bitSize / P_MIN_RANGE) + VOLUME_P;
 		}
-		if (needFill) {// 需要补齐
-			int lessBit = (7 + decimalDigits) - volume.length();// 7 = 小数点1位 + 4小数点前4位+ 2位 单位
+		if (needFill) {
+			int lessBit = (7 + decimalDigits) - volume.length();
 			if (lessBit > 0) {
 				StringBuilder sb = new StringBuilder();
 				for (int i = 0; i < lessBit; i++) {
@@ -135,8 +107,7 @@ public class UnitUtils {
 	}
 
 	/**
-	 * 小数点后保留4位，自动对齐数字长度
-	 * 
+	 *
 	 * @param sizeBit
 	 * @return
 	 */
@@ -151,8 +122,7 @@ public class UnitUtils {
 	}
 
 	/**
-	 * 小数点后保留4位
-	 * 
+	 *
 	 * @param sizeBit
 	 * @return
 	 */
@@ -167,8 +137,7 @@ public class UnitUtils {
 	}
 
 	/**
-	 * 小数点后保留2位，自动对齐数字长度
-	 * 
+	 *
 	 * @param sizeBit
 	 * @return
 	 */
@@ -183,8 +152,7 @@ public class UnitUtils {
 	}
 
 	/**
-	 * 小数点后保留2位
-	 * 
+	 *
 	 * @param sizeBit
 	 * @return
 	 */
@@ -199,8 +167,7 @@ public class UnitUtils {
 	}
 
 	/**
-	 * 保留1位小数点
-	 * 
+	 *
 	 * @param sizeBit
 	 * @return
 	 */

@@ -7,24 +7,18 @@ import org.apache.commons.lang.StringUtils;
 import com.github.commons.security.constants.EncryptType;
 
 /**
- * 加密请求参数
  */
 public class ReqParams implements Serializable {
 
     private static final long serialVersionUID = -6253593483223395584L;
-    // 应用Id
     public String             appCode;
 
-    // 版本
     public int                version          = 1;
 
-    // 签名秘钥分片信息
     public int                shareKey;
 
-    // 加密类型
     public EncryptType        secType;
 
-    // 访问的时间
     private long              currentTime;
 
     public ReqParams(String appCode, int version, EncryptType type){

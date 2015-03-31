@@ -18,7 +18,6 @@ import com.github.commons.security.spi.SignSpi;
 import com.github.commons.security.support.local.LocalSecTool;
 
 /**
- * SecurityTools.java 本地签名工具
  *
  * @author zhouxiaofeng 3/17/15
  */
@@ -29,25 +28,22 @@ public class LocalSignTools extends LocalSecTool implements SignTool {
     }
 
     /**
-     * 获取签名
      *
      * @param params
      * @return
      */
     private SignSpi getSign(ReqParams params) {
 
-        return InitSec.signRepository.getSign(params.secType.getType());
+        return InitSec.signRepository.getSign(params.secType.getCode());
     }
 
     /**
-     * 签名操作
      *
      * @param params
      * @return
-     */
+
     public String sign(SignReqParams params) {
 
-        // 补齐参数
         CompParams(params);
 
         validateParams(params);
@@ -60,7 +56,7 @@ public class LocalSignTools extends LocalSecTool implements SignTool {
         String signRes = sign.sign(params.plaintext, getSecKey(params));
 
         return SaltPrefix.lookup(params.version).getSalt() + signRes;
-    }
+    } */
 
     private void CompParams(SignReqParams params) {
         if (StringUtils.isBlank(params.appCode)) {
@@ -73,7 +69,6 @@ public class LocalSignTools extends LocalSecTool implements SignTool {
     }
 
     /**
-     * 签名操作
      *
      * @param plaintext
      * @param type
@@ -109,11 +104,10 @@ public class LocalSignTools extends LocalSecTool implements SignTool {
     }
 
     /**
-     * 验证签名
      *
      * @param params
      * @return
-     */
+
     public boolean validateSign(ValidateSignReqParams params) {
         validateParams(params);
 
@@ -122,7 +116,7 @@ public class LocalSignTools extends LocalSecTool implements SignTool {
             throw new IllegalArgumentException("Sign not exist for this params.");
         }
 
-        // 为了兼容，解密会判断是哪个版本的加密数据
+        // 为锟剿硷拷锟捷ｏ拷锟斤拷锟杰伙拷锟叫讹拷锟斤拷锟侥革拷锟芥本锟侥硷拷锟斤拷锟斤拷锟斤拷
         SaltPrefix saltPrefix = SaltPrefix.lookup(params.ciphertext.substring(0, 4));
 
         if (saltPrefix != SaltPrefix.NULL) {
@@ -131,10 +125,9 @@ public class LocalSignTools extends LocalSecTool implements SignTool {
         }
 
         return sign.validateSign(params.plaintext, params.ciphertext, getSecKey(params));
-    }
+    } */
 
     /**
-     * 验证签名
      *
      * @return
      */
@@ -144,7 +137,7 @@ public class LocalSignTools extends LocalSecTool implements SignTool {
         }
 
         if (StringUtils.isBlank(plaintext) || type == null) {
-            throw new IllegalArgumentException("Params is illegal。");
+            throw new IllegalArgumentException("Params is illegal");
         }
 
         ReqParams reqParams = new ReqParams(appCode, version, type);
@@ -153,7 +146,6 @@ public class LocalSignTools extends LocalSecTool implements SignTool {
             throw new IllegalArgumentException("Sign not exist for this params.");
         }
 
-        // 为了兼容，解密会判断是哪个版本的加密数据
         SaltPrefix saltPrefix = SaltPrefix.lookup(ciphertext.substring(0, 4));
 
         if (saltPrefix != SaltPrefix.NULL) {
@@ -170,12 +162,11 @@ public class LocalSignTools extends LocalSecTool implements SignTool {
 
     private void validateParams(ReqParams param) {
         if (!param.validate()) {
-            throw new IllegalArgumentException("Params is illegal。");
+            throw new IllegalArgumentException("Params is illegal");
         }
     }
 
     /**
-     * 初始化
      */
 
     static class InitSec {

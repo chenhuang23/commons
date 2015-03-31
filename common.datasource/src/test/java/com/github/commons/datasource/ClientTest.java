@@ -7,17 +7,18 @@ import org.springframework.context.support.ClassPathXmlApplicationContext;
 import javax.sql.DataSource;
 import java.io.IOException;
 import java.io.InputStream;
+import java.sql.SQLException;
 import java.util.Enumeration;
 import java.util.Properties;
 
 public class ClientTest {
 
-    public static void main(String[] args) throws IOException {
+    public static void main(String[] args) throws IOException, SQLException {
 
 
         ApplicationContext ctx = new ClassPathXmlApplicationContext("classpath:bean.xml");
         DataSource hello = (DataSource) ctx.getBean("datasourceTest");
-        System.out.println("0------->> "+hello);
+        System.out.println("0------->> "+hello.getConnection());
 
 
     }

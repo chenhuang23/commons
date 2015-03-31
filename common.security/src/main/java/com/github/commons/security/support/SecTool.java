@@ -7,6 +7,7 @@ package com.github.commons.security.support;
 
 import com.github.commons.security.config.SecKey;
 import com.github.commons.security.constants.SecPolicy;
+import com.github.commons.security.support.ReqParams;
 
 /**
  * SecTools.java
@@ -16,15 +17,7 @@ import com.github.commons.security.constants.SecPolicy;
 
 public abstract class SecTool {
 
-    public static class SuperInit {
-
-        // sec key 策略器
-        public static SecKeyPolicyRespository secKeyPolicyRespository = new SecKeyPolicyRespository();
-
-    }
-
     /**
-     * 加密模式
      */
     protected SecPolicy policy;
     protected String    appCode;
@@ -35,14 +28,6 @@ public abstract class SecTool {
         this.policy = policy;
         this.version = version;
     }
-
-    /**
-     * 通过请求参数获取key
-     * 
-     * @param params
-     * @return
-     */
-    public abstract SecKey getSecKey(ReqParams params);
 
     public String getAppCode() {
         return appCode;

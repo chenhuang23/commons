@@ -45,7 +45,8 @@ public class DesCodec implements CodecSpi {
     }
 
     @Override
-    public String getType() {
-        return EncryptType.DES.getType();
+    public int getCode() {
+        return EncryptType.DES.getCode();
     }
+
 }

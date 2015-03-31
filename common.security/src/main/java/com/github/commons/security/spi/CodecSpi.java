@@ -15,7 +15,6 @@ import com.github.commons.security.config.SecKey;
 public interface CodecSpi {
 
     /**
-     * 编码
      *
      * @param plainText
      * @return ciphertext
@@ -23,7 +22,6 @@ public interface CodecSpi {
     public String encode(String plainText, SecKey key);
 
     /**
-     * 解码
      *
      * @param ciphertext
      * @return plainText
@@ -31,9 +29,8 @@ public interface CodecSpi {
     public String decode(String ciphertext, SecKey key);
 
     /**
-     * 获取加解密类型
      *
      * @return
      */
-    public String getType();
+    public int getCode();
 }

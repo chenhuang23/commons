@@ -5,19 +5,20 @@
  */
 package com.github.commons.security;
 
-import com.github.commons.security.config.SecKey;
 import com.github.commons.security.constants.SecPolicy;
 import com.github.commons.security.support.CodecTool;
-import com.github.commons.security.support.ReqParams;
 import com.github.commons.security.support.SecTool;
 import com.github.commons.security.support.SignTool;
+import com.github.commons.security.utils.ApplicationContextUtils;
+import org.springframework.beans.BeansException;
+import org.springframework.context.ApplicationContext;
+import org.springframework.context.ApplicationContextAware;
 
 /**
- * SecTools.java 安全工具集中地
  *
  * @author zhouxiaofeng 3/27/15
  */
-public class SecTools extends SecTool {
+public class SecTools extends SecTool implements ApplicationContextAware {
 
     private CodecTool codecTool;
     private SignTool  signTool;
@@ -45,7 +46,7 @@ public class SecTools extends SecTool {
     }
 
     @Override
-    public SecKey getSecKey(ReqParams params) {
-        throw new RuntimeException("Not support. ");
+    public void setApplicationContext(ApplicationContext applicationContext) throws BeansException {
+        ApplicationContextUtils.init(applicationContext);
     }
 }

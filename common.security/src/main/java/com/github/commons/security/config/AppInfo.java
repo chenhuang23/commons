@@ -12,7 +12,6 @@ import java.util.Arrays;
  * <pre>
  * AppInfo.java
  * 
- * 应用信息
  * </pre>
  *
  * @author zhouxiaofeng 3/19/15
@@ -21,13 +20,10 @@ public class AppInfo implements Serializable {
 
     private static final long serialVersionUID = -162985189865718994L;
 
-    // 应用Id
     private String            appCode;
 
-    // 最新版本号
     private int               lastVersion      = 1;
 
-    // 获取key的策略
     private String            policy;
 
     private SecKey[]          keys;

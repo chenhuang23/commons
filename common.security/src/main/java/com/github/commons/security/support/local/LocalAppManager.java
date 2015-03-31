@@ -5,6 +5,7 @@
  */
 package com.github.commons.security.support.local;
 
+import com.github.commons.security.utils.ApplicationContextUtils;
 import com.github.commons.utils.spi.SpiLoader;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -22,6 +23,10 @@ public class LocalAppManager implements AppConfigurationSpi {
 
     private static final Logger logger               = LoggerFactory.getLogger(LocalAppManager.class);
 
+    public static final int     INIT_SPI_STEP        = 1;
+    public static final int     INIT_SPRING_STEP     = 2;
+    public static final int     INIT_DEFAULT_STEP    = 3;
+
     private final static String DEFAULT_CONFIG_CLASS = "com.github.commons.security.config.DefaultAppConfiguration";
 
     private AppConfigurationSpi appConfiguration;
@@ -32,16 +37,43 @@ public class LocalAppManager implements AppConfigurationSpi {
 
     private void init() {
 
-        // 获取应用的配置
-        // 初始化使用者和key, 默认从文件中获取
-        appConfiguration = SpiLoader.loadFirst(AppConfigurationSpi.class);
+        Integer step = INIT_SPI_STEP;
 
-        if (appConfiguration == null) {
-            try {
-                appConfiguration = (AppConfigurationSpi) Class.forName(DEFAULT_CONFIG_CLASS).newInstance();
-            } catch (Throwable e) {
-                logger.error("load AppConfigurationSpi exception.", e);
-            }
+        while (appConfiguration == null && step <= INIT_DEFAULT_STEP) {
+            initAppConfiguration(step);
+            step++;
+
+        }
+
+    }
+
+    private void initAppConfiguration(Integer step) {
+
+        System.out.println("step:=---> " + step);
+
+        switch (step) {
+
+            case INIT_SPI_STEP:
+                appConfiguration = SpiLoader.loadFirst(AppConfigurationSpi.class);
+
+                return;
+
+            case INIT_SPRING_STEP:
+                if (ApplicationContextUtils.getApplicationContext() != null) {
+                    appConfiguration = ApplicationContextUtils.getApplicationContext().getBean(AppConfigurationSpi.class);
+                }
+
+                return;
+
+            case INIT_DEFAULT_STEP:
+            default:
+                try {
+                    appConfiguration = (AppConfigurationSpi) Class.forName(DEFAULT_CONFIG_CLASS).newInstance();
+                } catch (Throwable e) {
+                    logger.error("load AppConfigurationSpi exception.", e);
+                }
+
+                return;
         }
 
     }
