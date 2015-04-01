@@ -5,6 +5,8 @@
  */
 package com.github.commons.fs;
 
+import com.github.commons.fs.contants.FileType;
+
 import java.io.InputStream;
 
 /**
@@ -14,6 +16,6 @@ import java.io.InputStream;
  */
 public interface FileWriter {
 
-    public void writeFile(String filename, InputStream inputStream, UserMetadata... userMetadatas);
+    public void writeFile(String filename, FileType type, InputStream inputStream, UserMetadata... userMetadatas);
 
 }

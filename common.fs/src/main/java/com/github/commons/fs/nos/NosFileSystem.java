@@ -7,16 +7,20 @@ package com.github.commons.fs.nos;
 
 import java.io.InputStream;
 
+import org.apache.commons.lang.StringUtils;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+
 import com.github.commons.fs.FileReader;
 import com.github.commons.fs.FileWriter;
 import com.github.commons.fs.UserMetadata;
+import com.github.commons.fs.contants.FileType;
 import com.github.commons.fs.exception.FileSystemException;
+import com.github.commons.fs.utils.ImageUtils;
 import com.netease.cloud.auth.BasicCredentials;
 import com.netease.cloud.services.nos.NosClient;
 import com.netease.cloud.services.nos.model.NOSObject;
 import com.netease.cloud.services.nos.model.ObjectMetadata;
-import com.sun.tools.javac.util.Assert;
-import org.apache.commons.lang.StringUtils;
 
 /**
  * NosAbstractFile.java
@@ -25,11 +29,13 @@ import org.apache.commons.lang.StringUtils;
  */
 public class NosFileSystem implements FileReader, FileWriter {
 
-    private String             bucketName;
-    private String             accessKey;
-    private String             secretKey;
+    private static final Logger logger    = LoggerFactory.getLogger(NosFileSystem.class);
 
-    private volatile NosClient nosClient = null;
+    private String              bucketName;
+    private String              accessKey;
+    private String              secretKey;
+
+    private volatile NosClient  nosClient = null;
 
     public void init() {
         nosClient = new NosClient(new BasicCredentials(accessKey, secretKey));
@@ -61,39 +67,66 @@ public class NosFileSystem implements FileReader, FileWriter {
     }
 
     @Override
-    public InputStream getFile(String filename) {
-        Assert.checkNonNull(bucketName);
-        Assert.checkNonNull(nosClient);
+    public InputStream getFile(String filename, FileType type) {
+        isNotNUll(bucketName, "bucketName");
+        isNotNUll(nosClient, "filename");
+        isNotNUll(type, "fileType");
 
-        NOSObject nosObject = nosClient.getObject(bucketName, filename);
+        switch (type) {
+            case IMG:
+                return nosClient.getImage(bucketName, filename);
 
-        if (nosObject != null) {
-            return nosObject.getObjectContent();
+            case ALL:
+            default:
+                NOSObject nosObject = nosClient.getObject(bucketName, filename);
+
+                if (nosObject != null) {
+                    return nosObject.getObjectContent();
+                }
         }
 
         return null;
     }
 
     @Override
-    public void writeFile(String filename, InputStream inputStream, UserMetadata... userMetadatas) {
-        Assert.checkNonNull(bucketName);
-        Assert.checkNonNull(nosClient);
+    public void writeFile(String filename, FileType type, InputStream inputStream, UserMetadata... userMetadatas) {
+        isNotNUll(bucketName, "bucketName");
+        isNotNUll(nosClient, "filename");
+        isNotNUll(type, "fileType");
 
-        ObjectMetadata objectMetadata = new ObjectMetadata();
-
-        if (userMetadatas != null) {
-            for (UserMetadata entry : userMetadatas) {
-                if (entry != null && StringUtils.isNotBlank(entry.getKey()) && StringUtils.isNotBlank(entry.getValue())) {
-                    objectMetadata.addUserMetadata(entry.getKey(), entry.getValue());
+        switch (type) {
+            case IMG:
+                // first check the img
+                if (!ImageUtils.check(inputStream)) {
+                    throw new IllegalArgumentException("The image content is not legal.");
                 }
-            }
+                // not break;
+
+            case ALL:
+            default:
+                ObjectMetadata objectMetadata = new ObjectMetadata();
+
+                if (userMetadatas != null) {
+                    for (UserMetadata entry : userMetadatas) {
+                        if (entry != null && StringUtils.isNotBlank(entry.getKey())
+                            && StringUtils.isNotBlank(entry.getValue())) {
+                            objectMetadata.addUserMetadata(entry.getKey(), entry.getValue());
+                        }
+                    }
+                }
+
+                try {
+                    nosClient.putObject(bucketName, filename, inputStream, objectMetadata);
+                } catch (Throwable e) {
+                    throw new FileSystemException("Nos file system write file exception.", e);
+                }
         }
 
-        try {
-            nosClient.putObject(bucketName, filename, inputStream, objectMetadata);
-        } catch (Throwable e) {
-            throw new FileSystemException("Nos file system write file exception.", e);
-        }
     }
 
+    private void isNotNUll(Object obj, String paramName) {
+        if (obj == null) {
+            throw new IllegalArgumentException("Params " + paramName + " can't be null.");
+        }
+    }
 }

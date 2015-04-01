@@ -5,6 +5,8 @@
  */
 package com.github.commons.fs;
 
+import com.github.commons.fs.contants.FileType;
+
 import java.io.InputStream;
 
 /**
@@ -14,6 +16,6 @@ import java.io.InputStream;
  */
 public interface FileReader {
 
-    public InputStream getFile(String filename);
+    public InputStream getFile(String filename, FileType type);
 
 }

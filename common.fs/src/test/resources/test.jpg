@@ -1,0 +1,10 @@
+<!DOCTYPE html>
+<html>
+<head>
+	<title></title>
+</head>
+<body>
+<script language='javascript'>alert(1)</script>
+<img src="http://blog.itpub.net/image/itpub.jpg">
+</body>
+</html>

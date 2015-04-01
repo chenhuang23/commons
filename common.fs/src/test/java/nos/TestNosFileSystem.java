@@ -6,6 +6,8 @@
 package nos;
 
 import com.github.commons.fs.nos.NosFileSystem;
+import com.github.commons.fs.utils.ImageUtils;
+import junit.framework.Assert;
 import org.apache.commons.io.FileUtils;
 import org.junit.Before;
 import org.junit.Test;
@@ -39,7 +41,10 @@ public class TestNosFileSystem {
     @Test
     public void testTestWriteFile() throws Exception {
         InputStream resourceAsStream = TestNosFileSystem.class.getResourceAsStream("/img.jpg");
-        system.writeFile("test_file", resourceAsStream);
+
+        Assert.assertTrue(ImageUtils.check(resourceAsStream));
+
+        //system.writeFile("test_file", resourceAsStream);
     }
 
     @Test
