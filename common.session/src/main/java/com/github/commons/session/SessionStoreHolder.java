@@ -14,7 +14,7 @@ public class SessionStoreHolder {
     private SessionStore store;
     private int          sessionInvalidTime;
 
-    public SessionStoreHolder(int sessionInvalidTime, HttpServletRequest request, HttpServletResponse response){
+    public SessionStoreHolder(HttpServletRequest request, HttpServletResponse response, int sessionInvalidTime){
         this.sessionInvalidTime = sessionInvalidTime;
 
         store = new CookieSessionStore(request, response);

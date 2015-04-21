@@ -62,7 +62,7 @@ public class CookieSessionStore implements SessionStore {
                 list.add(cookie.getName());
             }
         }
-        return (String[]) list.toArray();
+        return list.toArray(new String[0]);
     }
 
     public void clean(String sessionId) {

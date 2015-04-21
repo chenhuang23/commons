@@ -8,11 +8,11 @@ import javax.servlet.http.HttpSession;
 
 public class SessionRequestWrapper extends HttpServletRequestWrapper {
 
-    private SessionImpl         session;
-    private HttpServletResponse response;
-    private ServletContext      servletContext;
-    private SessionStoreHolder  storeHolder;
-    private boolean             isSessionNew;
+    private volatile SessionImpl session;
+    private HttpServletResponse  response;
+    private ServletContext       servletContext;
+    private SessionStoreHolder   storeHolder;
+    private boolean              isSessionNew;
 
     public boolean isSessionNew() {
         return isSessionNew;
@@ -23,7 +23,7 @@ public class SessionRequestWrapper extends HttpServletRequestWrapper {
     }
 
     public SessionRequestWrapper(HttpServletRequest request, HttpServletResponse response,
-                                 ServletContext servletContext, SessionStoreHolder storeHolder) {
+                                 ServletContext servletContext, SessionStoreHolder storeHolder){
         super(request);
         this.response = response;
         this.servletContext = servletContext;
@@ -31,8 +31,7 @@ public class SessionRequestWrapper extends HttpServletRequestWrapper {
     }
 
     /**
-     * The default behavior of this method is to return getRequestedSessionId()
-     * on the wrapped request object.
+     * The default behavior of this method is to return getRequestedSessionId() on the wrapped request object.
      */
     public String getRequestedSessionId() {
         if (session == null) {
@@ -42,24 +41,25 @@ public class SessionRequestWrapper extends HttpServletRequestWrapper {
     }
 
     /**
-     * The default behavior of this method is to return getSession(boolean
-     * create) on the wrapped request object.
+     * The default behavior of this method is to return getSession(boolean create) on the wrapped request object.
      */
     public HttpSession getSession(boolean create) {
         return getSession();
     }
 
     /**
-     * The default behavior of this method is to return getSession() on the
-     * wrapped request object.
+     * The default behavior of this method is to return getSession() on the wrapped request object.
      */
     public HttpSession getSession() {
-        return new SessionImpl(this, response, servletContext, this.storeHolder);
+        if (session != null) {
+            return session;
+        }
+        session = new SessionImpl(this, response, servletContext, this.storeHolder);
+        return session;
     }
 
     /**
-     * The default behavior of this method is to return
-     * isRequestedSessionIdValid() on the wrapped request object.
+     * The default behavior of this method is to return isRequestedSessionIdValid() on the wrapped request object.
      */
 
     public boolean isRequestedSessionIdValid() {
@@ -67,24 +67,21 @@ public class SessionRequestWrapper extends HttpServletRequestWrapper {
     }
 
     /**
-     * The default behavior of this method is to return
-     * isRequestedSessionIdFromCookie() on the wrapped request object.
+     * The default behavior of this method is to return isRequestedSessionIdFromCookie() on the wrapped request object.
      */
     public boolean isRequestedSessionIdFromCookie() {
         return session.isSessionIdFromCookie();
     }
 
     /**
-     * The default behavior of this method is to return
-     * isRequestedSessionIdFromURL() on the wrapped request object.
+     * The default behavior of this method is to return isRequestedSessionIdFromURL() on the wrapped request object.
      */
     public boolean isRequestedSessionIdFromURL() {
         return session.isSessionIdFromURL();
     }
 
     /**
-     * The default behavior of this method is to return
-     * isRequestedSessionIdFromUrl() on the wrapped request object.
+     * The default behavior of this method is to return isRequestedSessionIdFromUrl() on the wrapped request object.
      */
     public boolean isRequestedSessionIdFromUrl() {
         return isRequestedSessionIdFromURL();

@@ -21,8 +21,8 @@ public class SessionImpl implements HttpSession {
     private boolean                            isRequestedSessionIdValid;
     private boolean                            isSessionIdFromURL    = false;
     private boolean                            isSessionIdFromCookie = true;
-    private static String                      SESSION_ID_NAME       = "netease_ln_jsession_id";
-    private static String                      SESSION_CREATE_TIME   = "netease_ln_jsession_create_time";
+    private static String                      SESSION_ID_NAME       = "ne_ln_jsession_id";
+    private static String                      SESSION_CREATE_TIME   = "ne_ln_jsession_create_time";
     public static String                       COOKIE_PATH_VAL       = "/";
     private SessionIDGenerator                 sidGenerator          = new DefaultSessionIDGenerator();
     public static int                          COOKIE_ALIVE_TIME     = 3600 * 24 * 365 * 100;
@@ -192,7 +192,7 @@ public class SessionImpl implements HttpSession {
                 set.add(name);
             }
         }
-        return (String[]) set.toArray();
+        return set.toArray(new String[0]);
     }
 
     public void setAttribute(String name, Object value) {
