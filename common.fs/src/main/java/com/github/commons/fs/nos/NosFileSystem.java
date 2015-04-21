@@ -6,6 +6,9 @@
 package com.github.commons.fs.nos;
 
 import java.io.InputStream;
+import java.net.URL;
+import java.util.Calendar;
+import java.util.concurrent.TimeUnit;
 
 import org.apache.commons.lang.StringUtils;
 import org.slf4j.Logger;
@@ -86,6 +89,28 @@ public class NosFileSystem implements FileReader, FileWriter {
         }
 
         return null;
+    }
+
+    @Override
+    public String generateUrl(String filename, FileType type, int millis) {
+
+        Calendar instance = Calendar.getInstance();
+        instance.add(Calendar.MILLISECOND, millis);
+
+        try {
+
+            URL url = nosClient.generatePresignedUrl(bucketName, filename, instance.getTime());
+
+            if (url != null) {
+                return url.toExternalForm();
+            }
+
+            return null;
+
+        } catch (Throwable e) {
+            throw new FileSystemException("Nos file system write file exception.", e);
+        }
+
     }
 
     @Override

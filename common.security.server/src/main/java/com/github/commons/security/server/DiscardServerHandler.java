@@ -4,6 +4,7 @@ import io.netty.buffer.ByteBuf;
 
 import io.netty.channel.ChannelHandlerContext;
 import io.netty.channel.ChannelHandlerAdapter;
+import io.netty.util.ReferenceCountUtil;
 
 /**
  * Handles a server-side channel.
@@ -11,9 +12,18 @@ import io.netty.channel.ChannelHandlerAdapter;
 public class DiscardServerHandler extends ChannelHandlerAdapter { // (1)
 
     @Override
-    public void channelRead(ChannelHandlerContext ctx, Object msg) { // (2)
-        // Discard the received data silently.
-        ((ByteBuf) msg).release(); // (3)
+    public void channelRead(ChannelHandlerContext ctx, Object msg) {
+        ByteBuf in = (ByteBuf) msg;
+        try {
+            while (in.isReadable()) { // (1)
+                System.out.print((char) in.readByte());
+                System.out.flush();
+            }
+        } finally {
+
+            ctx.writeAndFlush(msg);
+            //ReferenceCountUtil.release(msg); // (2)
+        }
     }
 
     @Override

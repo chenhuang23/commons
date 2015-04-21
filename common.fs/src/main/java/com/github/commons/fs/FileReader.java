@@ -18,4 +18,7 @@ public interface FileReader {
 
     public InputStream getFile(String filename, FileType type);
 
+
+    public String generateUrl(String filename, FileType type,int millis);
+
 }

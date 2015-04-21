@@ -28,7 +28,7 @@ public class SecurityServer implements InitializingBean, DisposableBean {
 	
 	private EventLoopGroup workerGroup = new NioEventLoopGroup();
 	
-	private DiamondServerHandler serverHandler;
+	private SecurityServerHandler serverHandler;
 
 	@Override
 	public void afterPropertiesSet() throws Exception {
@@ -37,7 +37,7 @@ public class SecurityServer implements InitializingBean, DisposableBean {
         	.channel(NioServerSocketChannel.class)
         	.option(ChannelOption.SO_BACKLOG, 1024)
         	.option(ChannelOption.SO_REUSEADDR, true)
-        	.childHandler(new DiamondServerInitializer(serverHandler));
+        	.childHandler(new SecurityServerInitializer(serverHandler));
         
         b.bind("0.0.0.0", port).sync().channel();
         logger.info("启动 Diamond Netty Server, post={}", port);
@@ -60,11 +60,11 @@ public class SecurityServer implements InitializingBean, DisposableBean {
 		this.port = port;
 	}
 
-	public DiamondServerHandler getServerHandler() {
+	public SecurityServerHandler getServerHandler() {
 		return serverHandler;
 	}
 
-	public void setServerHandler(DiamondServerHandler serverHandler) {
+	public void setServerHandler(SecurityServerHandler serverHandler) {
 		this.serverHandler = serverHandler;
 	}
 }

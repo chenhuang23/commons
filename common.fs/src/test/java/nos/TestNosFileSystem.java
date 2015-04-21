@@ -5,6 +5,7 @@
  */
 package nos;
 
+import com.github.commons.fs.contants.FileType;
 import com.github.commons.fs.nos.NosFileSystem;
 import com.github.commons.fs.utils.ImageUtils;
 import junit.framework.Assert;
@@ -22,10 +23,10 @@ import java.io.*;
 public class TestNosFileSystem {
 
     NosFileSystem system;
-    String        testBucketName = "";
+    String        testBucketName = "loan-xproject-test";
 
-    String        accessKey      = "";
-    String        secretKey      = "";
+    String        accessKey      = "64d19464c55d4f80b467d332e7391dc8";
+    String        secretKey      = "967921571806489e8065bf28802d9d6a";
 
     @Before
     public void init() {
@@ -42,15 +43,23 @@ public class TestNosFileSystem {
     public void testTestWriteFile() throws Exception {
         InputStream resourceAsStream = TestNosFileSystem.class.getResourceAsStream("/img.jpg");
 
-        Assert.assertTrue(ImageUtils.check(resourceAsStream));
+        //Assert.assertTrue(ImageUtils.check(resourceAsStream));
 
-        //system.writeFile("test_file", resourceAsStream);
+        system.writeFile("test_file.jpg", FileType.IMG, resourceAsStream);
     }
 
     @Test
     public void testTestReadFile() throws Exception {
-        InputStream test_file = system.getFile("test_file");
+        InputStream test_file = system.getFile("test_file.jpg", FileType.IMG);
 
         FileUtils.copyInputStreamToFile(test_file, new File("test_file2"));
+    }
+
+    @Test
+    public void testTestGenerateUrl() throws Exception {
+        String generateUrl = system.generateUrl("test_file.jpg", FileType.IMG, 10000);
+
+        System.out.println(generateUrl);
+        Assert.assertNotNull(generateUrl);
     }
 }
