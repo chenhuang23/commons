@@ -6,31 +6,28 @@ import java.util.List;
 import java.util.concurrent.Future;
 
 import org.apache.commons.lang.SerializationUtils;
-import redis.clients.jedis.Jedis;
-import redis.clients.jedis.JedisPoolConfig;
-import redis.clients.jedis.JedisShardInfo;
-import redis.clients.jedis.ShardedJedisPool;
+import redis.clients.jedis.*;
 import redis.clients.util.Hashing;
 import redis.clients.util.Sharded;
 
 /**
  * <pre>
  * <p>文件名称: DefaultRedisClient.java</p>
- * 
+ *
  * <p>文件功能: redis 封装</p>
- * 
+ *
  * <p>编程者: xiaofeng.zhou</p>
- * 
+ *
  * <p>初作时间: 2014年7月8日 下午5:39:32</p>
- * 
+ *
  * <p>版本: version 1.0 </p>
- * 
+ *
  * <p>输入说明: </p>
- * 
+ *
  * <p>输出说明: </p>
- * 
+ *
  * <p>程序流程: </p>
- * 
+ *
  * <p>============================================</p>
  * <p>修改序号:</p>
  * <p>时间:	 </p>
@@ -41,19 +38,19 @@ import redis.clients.util.Sharded;
  */
 public class DefaultRedisClient<T extends Serializable, Object> extends AbstractCacheClient implements RedisClient<T> {
 
-    private static final int    VAL_INT_ZERO        = 0;
+    private static final int VAL_INT_ZERO = 0;
 
     private static final String POOL_MAX_WAIT_MILLS = "poolMaxWaitMills";
 
-    private static final String POOL_IDLE_SIZE      = "poolIdleSize";
+    private static final String POOL_IDLE_SIZE = "poolIdleSize";
 
-    private static final String POOL_MAX_SIZE       = "poolMaxSize";
+    private static final String POOL_MAX_SIZE = "poolMaxSize";
 
-    private static final int    MAX_TOTAL           = 100;
-    private static final long   MAX_WAIT_MILLIS     = 1000L * 10;
-    private static final int    MAX_IDLE            = 1000 * 60;
+    private static final int MAX_TOTAL = 100;
+    private static final long MAX_WAIT_MILLIS = 1000L * 10;
+    private static final int MAX_IDLE = 1000 * 60;
 
-    private ShardedJedisPool    pool;
+    private ShardedJedisPool pool;
 
     public void init() {
         if (!isInitd) {
@@ -74,7 +71,7 @@ public class DefaultRedisClient<T extends Serializable, Object> extends Abstract
         }
 
         pool = new ShardedJedisPool(configRedisPool(), jdsInfoList, Hashing.MURMUR_HASH,
-                                    Sharded.DEFAULT_KEY_TAG_PATTERN);
+                Sharded.DEFAULT_KEY_TAG_PATTERN);
     }
 
     private void checkConfig() {
@@ -90,11 +87,11 @@ public class DefaultRedisClient<T extends Serializable, Object> extends Abstract
     private JedisPoolConfig configRedisPool() {
         JedisPoolConfig redisConfig = new JedisPoolConfig();// Jedis池配置
 
-        redisConfig.setMaxTotal(this.<Integer> getConfigVal(POOL_MAX_SIZE, MAX_TOTAL));
+        redisConfig.setMaxTotal(this.<Integer>getConfigVal(POOL_MAX_SIZE, MAX_TOTAL));
 
-        redisConfig.setMaxIdle(this.<Integer> getConfigVal(POOL_IDLE_SIZE, MAX_IDLE));// 对象最大空闲时间
+        redisConfig.setMaxIdle(this.<Integer>getConfigVal(POOL_IDLE_SIZE, MAX_IDLE));// 对象最大空闲时间
 
-        redisConfig.setMaxWaitMillis(this.<Long> getConfigVal(POOL_MAX_WAIT_MILLS, MAX_WAIT_MILLIS));// 获取对象时最大等待时间
+        redisConfig.setMaxWaitMillis(this.<Long>getConfigVal(POOL_MAX_WAIT_MILLS, MAX_WAIT_MILLIS));// 获取对象时最大等待时间
         return redisConfig;
     }
 
@@ -112,10 +109,15 @@ public class DefaultRedisClient<T extends Serializable, Object> extends Abstract
         Assert.isNotBlank("key is blank.", key);
         Assert.isNotNull("value is null", val);
 
+        ShardedJedis shareJedis = null;
         try {
-            getJdies(key).set(key.getBytes(), SerializationUtils.serialize(val));
+            shareJedis = getShareJedis();
+
+            getJdies(shareJedis, key).set(key.getBytes(), SerializationUtils.serialize(val));
         } catch (Throwable e) {
             throw new CacheException("Put cache exception.", e);
+        } finally {
+            retShareJedis(shareJedis);
         }
 
     }
@@ -125,10 +127,15 @@ public class DefaultRedisClient<T extends Serializable, Object> extends Abstract
         Assert.isNotBlank("key is blank.", key);
         Assert.isNotNull("value is null", val);
 
+        ShardedJedis shareJedis = null;
         try {
-            getJdies(key).setex(key.getBytes(), expiredTime, SerializationUtils.serialize(val));
+            shareJedis = getShareJedis();
+
+            getJdies(shareJedis, key).setex(key.getBytes(), expiredTime, SerializationUtils.serialize(val));
         } catch (Throwable e) {
             throw new CacheException("Put cache exception.", e);
+        } finally {
+            retShareJedis(shareJedis);
         }
     }
 
@@ -140,16 +147,21 @@ public class DefaultRedisClient<T extends Serializable, Object> extends Abstract
         // 1. 检查参数
         Assert.isNotBlank("key is blank.", key);
 
+        ShardedJedis shareJedis = null;
         try {
-            byte[] ret = getJdies(key).get(key.getBytes());
+            shareJedis = getShareJedis();
+
+            byte[] ret = getJdies(shareJedis, key).get(key.getBytes());
             if (ret == null) {
                 return null;
             }
 
-            return (T) SerializationUtils.<T> deserialize(ret);
+            return (T) SerializationUtils.<T>deserialize(ret);
 
         } catch (Throwable e) {
             throw new CacheException("get cache exception.", e);
+        } finally {
+            retShareJedis(shareJedis);
         }
     }
 
@@ -157,11 +169,16 @@ public class DefaultRedisClient<T extends Serializable, Object> extends Abstract
         // 1. 检查参数
         Assert.isNotBlank("key is blank.", key);
 
+        ShardedJedis shareJedis = null;
         try {
-            getJdies(key).del(key);
+            shareJedis = getShareJedis();
+
+            getJdies(shareJedis, key).del(key);
 
         } catch (Throwable e) {
             throw new CacheException("delete cache exception.", e);
+        } finally {
+            retShareJedis(shareJedis);
         }
     }
 
@@ -170,12 +187,18 @@ public class DefaultRedisClient<T extends Serializable, Object> extends Abstract
         // 1. 检查参数
         Assert.isNotBlank("key is blank.", key);
         Assert.isNotEqual("incr value is zero.", by, VAL_INT_ZERO);
-        try {
 
-            getJdies(key).incrBy(key, by);
+        ShardedJedis shareJedis = null;
+        try {
+            shareJedis = getShareJedis();
+
+
+            getJdies(shareJedis, key).incrBy(key, by);
 
         } catch (Throwable e) {
             throw new CacheException("incr cache exception.", e);
+        } finally {
+            retShareJedis(shareJedis);
         }
 
     }
@@ -183,13 +206,17 @@ public class DefaultRedisClient<T extends Serializable, Object> extends Abstract
     public void incr(String key, int expiredTime) throws CacheException {
         // 1. 检查参数
         Assert.isNotBlank("key is blank.", key);
-
+        ShardedJedis shareJedis = null;
         try {
-            getJdies(key).incr(key);
-            getJdies(key).expire(key, expiredTime);
+            shareJedis = getShareJedis();
+
+            getJdies(shareJedis, key).incr(key);
+            getJdies(shareJedis, key).expire(key, expiredTime);
 
         } catch (Throwable e) {
             throw new CacheException("incr cache exception.", e);
+        } finally {
+            retShareJedis(shareJedis);
         }
 
     }
@@ -197,12 +224,16 @@ public class DefaultRedisClient<T extends Serializable, Object> extends Abstract
     public void expire(String key, int expiredTime) throws CacheException {
         // 1. 检查参数
         Assert.isNotBlank("key is blank.", key);
-
+        ShardedJedis shareJedis = null;
         try {
-            getJdies(key).expire(key, expiredTime);
+            shareJedis = getShareJedis();
+
+            getJdies(shareJedis, key).expire(key, expiredTime);
 
         } catch (Throwable e) {
             throw new CacheException("expire cache exception.", e);
+        } finally {
+            retShareJedis(shareJedis);
         }
     }
 
@@ -212,11 +243,16 @@ public class DefaultRedisClient<T extends Serializable, Object> extends Abstract
         // 1. 检查参数
         Assert.isNotBlank("key is blank.", key);
         Assert.isNotNull("value is null", val);
+        ShardedJedis shareJedis = null;
         try {
-            getJdies(key).lpush(key.getBytes(), SerializationUtils.serialize(val));
+            shareJedis = getShareJedis();
+
+            getJdies(shareJedis, key).lpush(key.getBytes(), SerializationUtils.serialize(val));
 
         } catch (Throwable e) {
             throw new CacheException("lpush cache exception.", e);
+        } finally {
+            retShareJedis(shareJedis);
         }
     }
 
@@ -225,29 +261,39 @@ public class DefaultRedisClient<T extends Serializable, Object> extends Abstract
         // 1. 检查参数
         Assert.isNotBlank("key is blank.", key);
         Assert.isNotNull("value is null", val);
+
+        ShardedJedis shareJedis = null;
         try {
-            getJdies(key).rpush(key.getBytes(), SerializationUtils.serialize(val));
+            shareJedis = getShareJedis();
+
+            getJdies(shareJedis, key).rpush(key.getBytes(), SerializationUtils.serialize(val));
 
         } catch (Throwable e) {
             throw new CacheException("rpush cache exception.", e);
+        } finally {
+            retShareJedis(shareJedis);
         }
     }
 
     public T lpop(String key) throws CacheException {
         // 1. 检查参数
         Assert.isNotBlank("key is blank.", key);
-
+        ShardedJedis shareJedis = null;
         try {
-            byte[] ret = getJdies(key).lpop(key.getBytes());
+            shareJedis = getShareJedis();
+
+            byte[] ret = getJdies(shareJedis, key).lpop(key.getBytes());
 
             if (ret == null) {
                 return null;
             }
 
-            return (T) SerializationUtils.<T> deserialize(ret);
+            return (T) SerializationUtils.<T>deserialize(ret);
 
         } catch (Throwable e) {
             throw new CacheException("lpop cache exception.", e);
+        } finally {
+            retShareJedis(shareJedis);
         }
     }
 
@@ -255,17 +301,22 @@ public class DefaultRedisClient<T extends Serializable, Object> extends Abstract
         // 1. 检查参数
         Assert.isNotBlank("key is blank.", key);
 
+        ShardedJedis shareJedis = null;
         try {
-            byte[] ret = getJdies(key).rpop(key.getBytes());
+            shareJedis = getShareJedis();
+
+            byte[] ret = getJdies(shareJedis, key).rpop(key.getBytes());
 
             if (ret == null) {
                 return null;
             }
 
-            return (T) SerializationUtils.<T> deserialize(ret);
+            return (T) SerializationUtils.<T>deserialize(ret);
 
         } catch (Throwable e) {
             throw new CacheException("rpop cache exception.", e);
+        } finally {
+            retShareJedis(shareJedis);
         }
     }
 
@@ -273,28 +324,37 @@ public class DefaultRedisClient<T extends Serializable, Object> extends Abstract
         // 1. 检查参数
         Assert.isNotBlank("key is blank.", key);
 
+        ShardedJedis shareJedis = null;
         try {
-            byte[] ret = getJdies(key).lindex(key.getBytes(), index);
+            shareJedis = getShareJedis();
+
+            byte[] ret = getJdies(shareJedis, key).lindex(key.getBytes(), index);
 
             if (ret == null) {
                 return null;
             }
 
-            return (T) SerializationUtils.<T> deserialize(ret);
+            return (T) SerializationUtils.<T>deserialize(ret);
 
         } catch (Throwable e) {
             throw new CacheException("rpop cache exception.", e);
+        } finally {
+            retShareJedis(shareJedis);
         }
     }
 
     public Long rindex(String key) throws CacheException {
         // 1. 检查参数
         Assert.isNotBlank("key is blank.", key);
-
+        ShardedJedis shareJedis = null;
         try {
-            return getJdies(key).llen(key);
+            shareJedis = getShareJedis();
+
+            return getJdies(shareJedis, key).llen(key);
         } catch (Throwable e) {
             throw new CacheException("rpop cache exception.", e);
+        } finally {
+            retShareJedis(shareJedis);
         }
     }
 
@@ -304,11 +364,16 @@ public class DefaultRedisClient<T extends Serializable, Object> extends Abstract
         Assert.isNotBlank("key is blank.", key);
         Assert.isNotBlank("field is blank.", field);
 
+        ShardedJedis shareJedis = null;
         try {
-            getJdies(key).hset(key.getBytes(), field.getBytes(), SerializationUtils.serialize(v));
+            shareJedis = getShareJedis();
+
+            getJdies(shareJedis, key).hset(key.getBytes(), field.getBytes(), SerializationUtils.serialize(v));
 
         } catch (Throwable e) {
             throw new CacheException("hset cache exception.", e);
+        } finally {
+            retShareJedis(shareJedis);
         }
     }
 
@@ -317,17 +382,21 @@ public class DefaultRedisClient<T extends Serializable, Object> extends Abstract
         Assert.isNotBlank("key is blank.", key);
         Assert.isNotBlank("field is blank.", field);
 
+        ShardedJedis shareJedis = getShareJedis();
+
         try {
-            byte[] ret = getJdies(key).hget(key.getBytes(), field.getBytes());
+            byte[] ret = getJdies(shareJedis, key).hget(key.getBytes(), field.getBytes());
 
             if (ret == null) {
                 return null;
             }
 
-            return (T) SerializationUtils.<T> deserialize(ret);
+            return (T) SerializationUtils.<T>deserialize(ret);
 
         } catch (Throwable e) {
             throw new CacheException("hget cache exception.", e);
+        } finally {
+            retShareJedis(shareJedis);
         }
     }
 
@@ -336,21 +405,30 @@ public class DefaultRedisClient<T extends Serializable, Object> extends Abstract
         Assert.isNotBlank("key is blank.", key);
         Assert.isNotBlank("field is blank.", field);
 
+        ShardedJedis shareJedis = null;
         try {
-            getJdies(key).hdel(key.getBytes(), field.getBytes());
+            shareJedis = getShareJedis();
+
+            getJdies(shareJedis, key).hdel(key.getBytes(), field.getBytes());
         } catch (Throwable e) {
             throw new CacheException("hget cache exception.", e);
+        } finally {
+            retShareJedis(shareJedis);
         }
     }
 
     public Long hlen(String key) throws CacheException {
         // 1. 检查参数
         Assert.isNotBlank("key is blank.", key);
-
+        ShardedJedis shareJedis = null;
         try {
-            return getJdies(key).hlen(key.getBytes());
+            shareJedis = getShareJedis();
+
+            return getJdies(shareJedis, key).hlen(key.getBytes());
         } catch (Throwable e) {
             throw new CacheException("hget cache exception.", e);
+        } finally {
+            retShareJedis(shareJedis);
         }
     }
 
@@ -359,12 +437,16 @@ public class DefaultRedisClient<T extends Serializable, Object> extends Abstract
         // 1. 检查参数
         Assert.isNotBlank("key is blank.", key);
         Assert.isNotNull("value is null.", val);
-
+        ShardedJedis shareJedis = null;
         try {
-            getJdies(key).sadd(key.getBytes(), SerializationUtils.serialize(val));
+            shareJedis = getShareJedis();
+
+            getJdies(shareJedis, key).sadd(key.getBytes(), SerializationUtils.serialize(val));
 
         } catch (Throwable e) {
             throw new CacheException("sAdd cache exception.", e);
+        } finally {
+            retShareJedis(shareJedis);
         }
     }
 
@@ -372,20 +454,35 @@ public class DefaultRedisClient<T extends Serializable, Object> extends Abstract
         // 1. 检查参数
         Assert.isNotBlank("key is blank.", key);
 
+        ShardedJedis shareJedis = null;
         try {
-            byte[] ret = getJdies(key).spop(key.getBytes());
+            shareJedis = getShareJedis();
+
+            byte[] ret = getJdies(shareJedis, key).spop(key.getBytes());
             if (ret == null) {
                 return null;
             }
 
-            return (T) SerializationUtils.<T> deserialize(ret);
+            return (T) SerializationUtils.<T>deserialize(ret);
 
         } catch (Throwable e) {
             throw new CacheException("sAdd cache exception.", e);
+        } finally {
+            retShareJedis(shareJedis);
         }
     }
 
-    private Jedis getJdies(String key) {
-        return pool.getResource().getShard(key);
+    private Jedis getJdies(ShardedJedis shardedJedis, String key) {
+        return shardedJedis.getShard(key);
+    }
+
+    private ShardedJedis getShareJedis() {
+        return pool.getResource();
+    }
+
+    private void retShareJedis(ShardedJedis shareJedis) {
+        if (shareJedis != null) {
+            pool.returnBrokenResource(shareJedis);
+        }
     }
 }

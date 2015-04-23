@@ -15,7 +15,7 @@ public class RedisClientTest implements Serializable {
     public void init() {
         redisClient = new DefaultRedisClient<>();
 
-        //redisClient.setServers("redis://:xdcsrftest@10.165.124.77:6379");
+        // redisClient.setServers("redis://:xdcsrftest@10.165.124.77:6379");
 
         redisClient.setServers("10.240.176.240");
 
@@ -24,6 +24,7 @@ public class RedisClientTest implements Serializable {
 
     @Test
     public void putAndGet() throws CacheException {
+
         int age = 25;
         String name = "mike";
         String key = "test";
@@ -37,8 +38,8 @@ public class RedisClientTest implements Serializable {
         org.junit.Assert.assertNotNull(user);
         org.junit.Assert.assertEquals(25, user.getAge());
         org.junit.Assert.assertEquals(name, user.getName());
-    }
 
+    }
 
     public RedisClient<User> getRedisClient() {
         return redisClient;

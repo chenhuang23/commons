@@ -30,12 +30,30 @@ public class DruidV1DataSourceConfig implements DataSourceConfigSpi {
     @Override
     public DataSource createDateSource(Properties properties) {
 
-
         DruidDataSource source = new DruidDataSource();
 
         source.setUrl(String.valueOf(properties.get("druid.url")));
         source.setUsername(String.valueOf(properties.get("druid.username")));
         source.setPassword(String.valueOf(properties.get("druid.password")));
+        source.setMaxActive(Integer.parseInt(String.valueOf(properties.get("druid.maxActive"))));
+
+        if (properties.get("druid.logAbandoned") != null) {
+            // 关闭abanded连接时输出错误日志
+            source.setLogAbandoned(Boolean.valueOf(String.valueOf(properties.get("druid.logAbandoned"))));
+        }
+
+        if (properties.get("druid.removeAbandoned") != null) {
+            source.setRemoveAbandoned(Boolean.valueOf(String.valueOf(properties.get("druid.removeAbandoned"))));
+        }
+
+        if (properties.get("druid.removeAbandonedTimeout") != null) {
+            source.setRemoveAbandonedTimeout(Integer.parseInt(String.valueOf(properties.get("druid.removeAbandonedTimeout"))));
+        }
+
+        if (properties.get("druid.removeAbandonedTimeoutMillis") != null) {
+
+            source.setRemoveAbandonedTimeoutMillis(Integer.parseInt(String.valueOf(properties.get("druid.removeAbandonedTimeoutMillis"))));
+        }
 
         source.setConnectProperties(properties);
 
