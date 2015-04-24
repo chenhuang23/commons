@@ -3,10 +3,9 @@
  *
  * 
  */
-package com.github.commons.message.mail;
+package com.github.commons.message.server.mail;
 
-import com.github.commons.message.MessageException;
-import org.apache.commons.mail.DefaultAuthenticator;
+import com.github.commons.message.server.MessageException;
 import org.apache.commons.mail.SimpleEmail;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;

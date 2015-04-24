@@ -3,7 +3,7 @@
  *
  * 
  */
-package com.github.commons.message;
+package com.github.commons.message.server;
 
 /**
  * MessageException.java
