@@ -1,5 +1,6 @@
 package com.github.commons.message;
 
+import java.io.Serializable;
 import java.util.Map;
 
 /**
@@ -7,6 +8,6 @@ import java.util.Map;
  * <p/>
  * 消息载体，由客户端发送给服务端。载体包含了消息需要使用的模板、解析模板的参数以及消息期望的通道。
  */
-public interface IMessageRequest extends ITemplate {
+public interface IMessageRequest extends ITemplate, Serializable {
     Map<MessageChannel, IEnvelop> getEnvelops();
 }

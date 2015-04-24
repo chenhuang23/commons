@@ -5,7 +5,6 @@ import com.github.commons.message.server.template.ITemplateResolver;
 import com.github.commons.message.server.template.ResolvedEnvelop;
 import org.springframework.beans.factory.InitializingBean;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.stereotype.Service;
 import org.springframework.util.StringUtils;
 
 import java.util.List;
@@ -17,8 +16,6 @@ import java.util.concurrent.ConcurrentHashMap;
  * <p/>
  * 默认的消息处理器
  */
-
-@Service
 public class DefaultMessageProcessor implements IMessageProcessor, InitializingBean {
 
     @Autowired
