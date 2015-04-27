@@ -17,22 +17,22 @@ import org.slf4j.LoggerFactory;
  */
 public class MailSender {
 
-    private static final Logger logger  = LoggerFactory.getLogger(MailSender.class);
-    public static final String  GB_2312 = "GB2312";
+    private static final Logger logger = LoggerFactory.getLogger(MailSender.class);
+    public static final String GB_2312 = "GB2312";
 
-    private String              smtp;
+    private String smtp;
 
-    private String              username;
+    private String username;
 
-    private String              password;
+    private String password;
 
-    private int                 port;
+    private int port;
 
-    private boolean             isDebug;
+    private boolean isDebug;
 
     /**
      * 发送邮件
-     * 
+     *
      * @param from
      * @param to
      * @param cc
@@ -42,7 +42,7 @@ public class MailSender {
      * @return
      */
     public void send(String from, String[] to, String[] cc, String[] bcc, String subject, String msg)
-                                                                                                     throws MessageException {
+            throws MessageException {
 
         SimpleEmail email = new SimpleEmail();
         // email.setTLS(true); //是否TLS校验，，某些邮箱需要TLS安全校验，同理有SSL校验
@@ -66,7 +66,6 @@ public class MailSender {
             logger.error("Send mail exception.", e);
             throw new MessageException("Send mail exception ", e);
         }
-
     }
 
     public boolean isDebug() {
@@ -123,7 +122,7 @@ public class MailSender {
         sender.setUsername("kefu-loan@service.netease.com");
         sender.setPassword("");
 
-        sender.send("kefu-epay@service.netease.com", new String[] { "jason_zhou@163.com" },
-                    new String[] {}, new String[] {}, "test", "test11111111");
+        sender.send("kefu-epay@service.netease.com", new String[]{"jason_zhou@163.com"},
+                new String[]{}, new String[]{}, "test", "test11111111");
     }
 }

@@ -15,7 +15,7 @@ public class NeteaseSmsSender implements IMessageSender {
 
     private final MobileUtil mobileUtil = new MobileUtil();
 
-    private final String MSG_GROUP = "12345";
+    private final String MSG_GROUP = "12345"; // todo: set default message group
 
     @Override
     public MessageChannel getMessageChannel() {

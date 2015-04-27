@@ -72,6 +72,12 @@ public class MobileUtil {
         assertNotBlank(msgprop, "msgprop");
         assertArrayNotBlank(mobiles, "mobiles");
 
+        if (message.length() > 130) {
+            // todo: 短信发送前需要做严格的检查，且规定超长的处理结果
+            // 还有接收用户数量的限制
+            log.warn("sms message is tool long");
+        }
+
         try {
             // url 网易企信通的地址
             StringBuffer smsUrl = new StringBuffer(smsGatewayUrl).append("msgprop=").append(msgprop).append("&message=").append(Tools.HexToStr(message.getBytes())).append("&corpinfo=1").append("&msgtype=0");

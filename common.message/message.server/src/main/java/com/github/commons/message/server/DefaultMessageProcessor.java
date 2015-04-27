@@ -46,6 +46,7 @@ public class DefaultMessageProcessor implements IMessageProcessor, InitializingB
             getMessageSender(entry.getKey()).send(createEnvelop(entry.getKey(), entry.getValue()));
         }
 
+        // todo: process errors
         return DefaultMessageResponse.SUCCESS;
     }
 

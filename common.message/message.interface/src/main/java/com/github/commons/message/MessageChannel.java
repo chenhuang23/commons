@@ -6,5 +6,11 @@ package com.github.commons.message;
  * 消息下行渠道
  */
 public enum MessageChannel {
-    ALL, SMS, EMAIL, WEIXIN, YIXIN
+    ALL("all"), SMS("sms"), EMAIL("email"), WEIXIN("wx"), YIXIN("yx");
+
+    public final String suffix;
+
+    private MessageChannel(String suffix) {
+        this.suffix = suffix;
+    }
 }
