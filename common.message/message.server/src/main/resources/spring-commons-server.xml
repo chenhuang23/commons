@@ -19,8 +19,8 @@
     <dubbo:service interface="com.github.commons.message.IMessageProcessor" ref="messageProcessor"/>
 
     <bean id="mailSender" class="com.github.commons.message.server.mail.MailSender">
-        <property name="smtp" value=""/>
-        <property name="port" value="537"/>
+        <property name="smtp" value="smtp.163.com"/>
+        <property name="port" value="25"/>
 
         <property name="username" value=""/>
         <property name="password" value=""/>

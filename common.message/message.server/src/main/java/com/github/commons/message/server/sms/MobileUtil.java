@@ -28,15 +28,15 @@ import com.github.commons.message.server.MessageException;
  */
 public class MobileUtil {
 
-    private static Logger    log           = LoggerFactory.getLogger(MobileUtil.class);
+    private static final Logger log = LoggerFactory.getLogger(MobileUtil.class);
 
-    private String           smsGatewayUrl = "http://smsknl.163.com:8089/servlet/CorpIdentifyNotCheck?";
+    private static final String smsGatewayUrl = "http://smsknl.163.com:8089/servlet/CorpIdentifyNotCheck?";
 
     private static final int CONN_TIME_OUT = 5000;
 
     /**
      * 验证手机号的有效性，规则6-20位的纯数字字符串
-     * 
+     *
      * @return
      */
     public static boolean isMobileNO(String mobiles) {
@@ -60,10 +60,10 @@ public class MobileUtil {
 
     /**
      * 发送文本短信
-     * 
+     *
      * @param mobiles 发送目标，可以包含多个
      * @param msgprop 增值业务的内部代号，决定信息的业务属性
-     * @param level 0；最高优先级，信息会优先提交给运营商 3；一般优先级 5；群发级 @return
+     * @param level   0；最高优先级，信息会优先提交给运营商 3；一般优先级 5；群发级 @return
      */
     public boolean sendTxtSms(String message, String msgprop, String level, String... mobiles) throws MessageException {
         String resultstr = "";
@@ -114,26 +114,19 @@ public class MobileUtil {
         return false;
     }
 
-    public void setSmsGatewayUrl(String smsGatewayUrl) {
-        this.smsGatewayUrl = smsGatewayUrl;
-    }
-
     private void assertNotBlank(String value, String fieldName) {
-
         if (StringUtils.isBlank(value)) {
             throw new IllegalArgumentException(fieldName + " can't be blank.");
         }
     }
 
     private void assertArrayNotBlank(String[] values, String fieldName) {
-
         if (values == null) {
             throw new IllegalArgumentException(fieldName + " can't be blank.");
         }
     }
 
     protected String openUrl(String url) {
-
         CloseableHttpClient httpClient = null;
         CloseableHttpResponse response = null;
 
@@ -153,7 +146,7 @@ public class MobileUtil {
 
             if (response.getStatusLine().getStatusCode() != SC_OK) {
                 throw new MessageException("Sms send failed, Server response: "
-                                           + response.getStatusLine().getStatusCode());
+                        + response.getStatusLine().getStatusCode());
             }
 
             return fetchResponse(response);
@@ -162,7 +155,6 @@ public class MobileUtil {
         } catch (Throwable e) {
             log.error("[get] invoke url :[" + url + "] exception.", e);
         } finally {
-
             try {
                 if (response != null) {
                     response.close();

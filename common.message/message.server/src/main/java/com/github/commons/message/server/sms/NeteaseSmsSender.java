@@ -12,6 +12,11 @@ import org.springframework.stereotype.Service;
  */
 @Service
 public class NeteaseSmsSender implements IMessageSender {
+
+    private final MobileUtil mobileUtil = new MobileUtil();
+
+    private final String MSG_GROUP = "12345";
+
     @Override
     public MessageChannel getMessageChannel() {
         return MessageChannel.SMS;
@@ -19,7 +24,7 @@ public class NeteaseSmsSender implements IMessageSender {
 
     @Override
     public boolean send(ResolvedEnvelop envelop) {
-        // todo: not impl yet
-        throw new UnsupportedOperationException("not impl yet");
+        return mobileUtil.sendTxtSms(envelop.getContent(), MSG_GROUP, "5",
+                envelop.getRecipients().toArray(new String[envelop.getRecipients().size()]));
     }
 }
