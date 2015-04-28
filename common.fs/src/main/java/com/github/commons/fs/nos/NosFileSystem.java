@@ -5,11 +5,13 @@
  */
 package com.github.commons.fs.nos;
 
+import java.io.IOException;
 import java.io.InputStream;
 import java.net.URL;
 import java.util.Calendar;
 import java.util.concurrent.TimeUnit;
 
+import org.apache.commons.io.IOUtils;
 import org.apache.commons.lang.StringUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -118,14 +120,21 @@ public class NosFileSystem implements FileReader, FileWriter {
         isNotNUll(bucketName, "bucketName");
         isNotNUll(nosClient, "filename");
         isNotNUll(type, "fileType");
+        isNotNUll(inputStream, "inputStream");
 
         switch (type) {
             case IMG:
                 // first check the img
+                inputStream.mark(0);
                 if (!ImageUtils.check(inputStream)) {
                     throw new IllegalArgumentException("The image content is not legal.");
                 }
                 // not break;
+                try {
+                    inputStream.reset();
+                } catch (IOException e) {
+                    logger.error("Inputstream reset exception.", e);
+                }
 
             case ALL:
             default:

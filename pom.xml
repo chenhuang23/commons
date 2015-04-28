@@ -13,13 +13,12 @@
         <module>common.datasource</module>
         <module>common.security</module>
         <module>common.message</module>
-        <module>common.security.server</module>
         <module>common.fs</module>
         <module>common.cache</module>
         <module>common.session</module>
+        <module>common.mq</module>
     </modules>
-    
-<!--
+
 <distributionManagement>
     <repository>
         <id>releases</id>
@@ -30,7 +29,9 @@
         <url>http://10.240.176.240:8081/nexus/content/repositories/snapshots</url>
     </snapshotRepository>
 </distributionManagement>
--->
+
+
+<!--
 
 <distributionManagement>
     <repository>
@@ -45,7 +46,7 @@
     </snapshotRepository>
 </distributionManagement>
 
-
+-->
 
 
     <dependencyManagement>

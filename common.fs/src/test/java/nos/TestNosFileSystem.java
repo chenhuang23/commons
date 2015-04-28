@@ -12,6 +12,7 @@ import junit.framework.Assert;
 import org.apache.commons.io.FileUtils;
 import org.junit.Before;
 import org.junit.Test;
+import sun.misc.IOUtils;
 
 import java.io.*;
 
@@ -41,25 +42,25 @@ public class TestNosFileSystem {
 
     @Test
     public void testTestWriteFile() throws Exception {
-        InputStream resourceAsStream = TestNosFileSystem.class.getResourceAsStream("/img.jpg");
+        InputStream resourceAsStream = TestNosFileSystem.class.getResourceAsStream("/11.jpg");
 
-        //Assert.assertTrue(ImageUtils.check(resourceAsStream));
-
-        system.writeFile("test_file.jpg", FileType.IMG, resourceAsStream);
+        system.writeFile("test_file_jpg", FileType.IMG, resourceAsStream);
     }
 
     @Test
     public void testTestReadFile() throws Exception {
-        InputStream test_file = system.getFile("test_file.jpg", FileType.IMG);
+        InputStream test_file = system.getFile("test_file_jpg", FileType.IMG);
 
         FileUtils.copyInputStreamToFile(test_file, new File("test_file2"));
     }
 
     @Test
     public void testTestGenerateUrl() throws Exception {
-        String generateUrl = system.generateUrl("test_file.jpg", FileType.IMG, 10000);
+        String generateUrl = system.generateUrl("test_file_jpg", FileType.IMG, 10000);
 
         System.out.println(generateUrl);
         Assert.assertNotNull(generateUrl);
     }
+
+
 }

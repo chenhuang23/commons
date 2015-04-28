@@ -39,6 +39,18 @@ public class JsonUtils {
         return jsonObj;
     }
 
+
+    /**
+     *
+     * @param json
+     * @return
+     */
+    public static JsonArray parseJsonToArray(String json) {
+        JsonParser parser = new JsonParser();
+        JsonArray asJsonArray = parser.parse(json).getAsJsonArray();
+        return asJsonArray;
+    }
+
     /**
      *
      * @param json

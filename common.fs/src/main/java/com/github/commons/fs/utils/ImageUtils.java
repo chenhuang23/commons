@@ -34,9 +34,12 @@ public class ImageUtils {
 
         try {
             return imageInfo.check();
+
         } catch (Throwable e) {
             logger.error("check image exception.", e);
             return false;
         }
+
     }
+
 }
