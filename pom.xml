@@ -17,6 +17,7 @@
         <module>common.cache</module>
         <module>common.session</module>
         <module>common.mq</module>
+        <module>common.limit</module>
     </modules>
 
 <distributionManagement>

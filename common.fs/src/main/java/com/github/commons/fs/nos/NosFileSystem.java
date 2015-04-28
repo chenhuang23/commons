@@ -126,14 +126,24 @@ public class NosFileSystem implements FileReader, FileWriter {
             case IMG:
                 // first check the img
                 inputStream.mark(0);
-                if (!ImageUtils.check(inputStream)) {
-                    throw new IllegalArgumentException("The image content is not legal.");
-                }
-                // not break;
                 try {
-                    inputStream.reset();
+                    if (!ImageUtils.check(inputStream)) {
+                        throw new IllegalArgumentException("The image content is not legal.");
+                    }
+                } finally {
+                    // not break;
+                    try {
+                        inputStream.reset();
+                    } catch (IOException e) {
+                        logger.error("Inputstream reset exception.", e);
+                    }
+                }
+
+                // convert
+                try {
+                    inputStream = ImageUtils.convert(inputStream, ImageUtils.FORMAT_TYP_JPG);
                 } catch (IOException e) {
-                    logger.error("Inputstream reset exception.", e);
+                    throw new FileSystemException("Convert image exception.", e);
                 }
 
             case ALL:

@@ -14,6 +14,9 @@ import org.junit.Before;
 import org.junit.Test;
 import sun.misc.IOUtils;
 
+import javax.imageio.ImageIO;
+import javax.imageio.metadata.IIOMetadataFormatImpl;
+import java.awt.image.BufferedImage;
 import java.io.*;
 
 /**
@@ -44,7 +47,7 @@ public class TestNosFileSystem {
     public void testTestWriteFile() throws Exception {
         InputStream resourceAsStream = TestNosFileSystem.class.getResourceAsStream("/11.jpg");
 
-        system.writeFile("test_file_jpg", FileType.IMG, resourceAsStream);
+        system.writeFile("test_file_jpg_xxxx.jpg", FileType.IMG, resourceAsStream);
     }
 
     @Test
@@ -56,11 +59,22 @@ public class TestNosFileSystem {
 
     @Test
     public void testTestGenerateUrl() throws Exception {
-        String generateUrl = system.generateUrl("test_file_jpg", FileType.IMG, 10000);
+        String generateUrl = system.generateUrl("test_file_jpg_xxxx.jpg", FileType.IMG, 10000);
 
         System.out.println(generateUrl);
         Assert.assertNotNull(generateUrl);
     }
 
+    // =====convert
+    @Test
+    public void testConvert() throws Exception {
 
+        String[] FORMAT_TYP = { "bmp", "png", "jpg", "gif" };
+
+        for (String type : FORMAT_TYP) {
+            InputStream resourceAsStream = TestNosFileSystem.class.getResourceAsStream("/11.jpg");
+            InputStream convert = ImageUtils.convert(resourceAsStream, type);
+            FileUtils.copyInputStreamToFile(convert, new File("test_file_" + type + "." + type));
+        }
+    }
 }
