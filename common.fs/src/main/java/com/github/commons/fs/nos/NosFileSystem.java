@@ -11,6 +11,7 @@ import java.net.URL;
 import java.util.Calendar;
 import java.util.concurrent.TimeUnit;
 
+import com.github.commons.fs.FileSystem;
 import org.apache.commons.io.IOUtils;
 import org.apache.commons.lang.StringUtils;
 import org.slf4j.Logger;
@@ -32,7 +33,7 @@ import com.netease.cloud.services.nos.model.ObjectMetadata;
  *
  * @author zhouxiaofeng 3/31/15
  */
-public class NosFileSystem implements FileReader, FileWriter {
+public class NosFileSystem extends FileSystem {
 
     private static final Logger logger    = LoggerFactory.getLogger(NosFileSystem.class);
 
@@ -125,7 +126,11 @@ public class NosFileSystem implements FileReader, FileWriter {
         switch (type) {
             case IMG:
                 // first check the img
-                inputStream.mark(0);
+                try {
+                    inputStream.mark(inputStream.available());
+                } catch (IOException e) {
+                    logger.error("Inputstream mark exception.", e);
+                }
                 try {
                     if (!ImageUtils.check(inputStream)) {
                         throw new IllegalArgumentException("The image content is not legal.");

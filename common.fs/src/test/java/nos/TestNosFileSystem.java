@@ -47,19 +47,19 @@ public class TestNosFileSystem {
     public void testTestWriteFile() throws Exception {
         InputStream resourceAsStream = TestNosFileSystem.class.getResourceAsStream("/11.jpg");
 
-        system.writeFile("test_file_jpg_xxxx.jpg", FileType.IMG, resourceAsStream);
+        system.writeFile("test_file_jpg_yyyy.jpg", FileType.IMG, resourceAsStream);
     }
 
     @Test
     public void testTestReadFile() throws Exception {
-        InputStream test_file = system.getFile("test_file_jpg", FileType.IMG);
+        InputStream test_file = system.getFile("test_file_jpg_yyyy.jpg", FileType.IMG);
 
         FileUtils.copyInputStreamToFile(test_file, new File("test_file2"));
     }
 
     @Test
     public void testTestGenerateUrl() throws Exception {
-        String generateUrl = system.generateUrl("test_file_jpg_xxxx.jpg", FileType.IMG, 10000);
+        String generateUrl = system.generateUrl("test_file_jpg_yyyy.jpg", FileType.IMG, 10000);
 
         System.out.println(generateUrl);
         Assert.assertNotNull(generateUrl);
