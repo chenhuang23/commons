@@ -11,15 +11,12 @@ import java.net.URL;
 import java.util.Calendar;
 import java.util.concurrent.TimeUnit;
 
-import com.github.commons.fs.FileSystem;
+import com.github.commons.fs.*;
 import org.apache.commons.io.IOUtils;
 import org.apache.commons.lang.StringUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import com.github.commons.fs.FileReader;
-import com.github.commons.fs.FileWriter;
-import com.github.commons.fs.UserMetadata;
 import com.github.commons.fs.contants.FileType;
 import com.github.commons.fs.exception.FileSystemException;
 import com.github.commons.fs.utils.ImageUtils;
@@ -123,54 +120,33 @@ public class NosFileSystem extends FileSystem {
         isNotNUll(type, "fileType");
         isNotNUll(inputStream, "inputStream");
 
-        switch (type) {
-            case IMG:
-                // first check the img
-                try {
-                    inputStream.mark(inputStream.available());
-                } catch (IOException e) {
-                    logger.error("Inputstream mark exception.", e);
-                }
-                try {
-                    if (!ImageUtils.check(inputStream)) {
-                        throw new IllegalArgumentException("The image content is not legal.");
-                    }
-                } finally {
-                    // not break;
-                    try {
-                        inputStream.reset();
-                    } catch (IOException e) {
-                        logger.error("Inputstream reset exception.", e);
-                    }
-                }
+        if (this.getFsWriteFilters() != null && this.getFsWriteFilters().size() > 0) {
 
-                // convert
-                try {
-                    inputStream = ImageUtils.convert(inputStream, ImageUtils.FORMAT_TYP_JPG);
-                } catch (IOException e) {
-                    throw new FileSystemException("Convert image exception.", e);
+            try {
+                for (FsFilter filter : getFsWriteFilters()) {
+                    inputStream = filter.filter(inputStream, type);
                 }
+            } catch (Exception e) {
+                throw new FileSystemException("Image filter exception.", e);
+            }
 
-            case ALL:
-            default:
-                ObjectMetadata objectMetadata = new ObjectMetadata();
-
-                if (userMetadatas != null) {
-                    for (UserMetadata entry : userMetadatas) {
-                        if (entry != null && StringUtils.isNotBlank(entry.getKey())
-                            && StringUtils.isNotBlank(entry.getValue())) {
-                            objectMetadata.addUserMetadata(entry.getKey(), entry.getValue());
-                        }
-                    }
-                }
-
-                try {
-                    nosClient.putObject(bucketName, filename, inputStream, objectMetadata);
-                } catch (Throwable e) {
-                    throw new FileSystemException("Nos file system write file exception.", e);
-                }
         }
 
+        ObjectMetadata objectMetadata = new ObjectMetadata();
+
+        if (userMetadatas != null) {
+            for (UserMetadata entry : userMetadatas) {
+                if (entry != null && StringUtils.isNotBlank(entry.getKey()) && StringUtils.isNotBlank(entry.getValue())) {
+                    objectMetadata.addUserMetadata(entry.getKey(), entry.getValue());
+                }
+            }
+        }
+
+        try {
+            nosClient.putObject(bucketName, filename, inputStream, objectMetadata);
+        } catch (Throwable e) {
+            throw new FileSystemException("Nos file system write file exception.", e);
+        }
     }
 
     private void isNotNUll(Object obj, String paramName) {

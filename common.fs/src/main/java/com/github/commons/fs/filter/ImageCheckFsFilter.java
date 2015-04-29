@@ -23,7 +23,7 @@ public class ImageCheckFsFilter implements FsFilter {
         switch (type) {
             case IMG:
                 // first check the img
-                inputStream.mark(0);
+                inputStream.mark(inputStream.available());
                 try {
                     if (!ImageUtils.check(inputStream)) {
                         throw new IllegalArgumentException("The image content is not legal.");

@@ -18,21 +18,21 @@ import java.util.List;
  */
 public abstract class FileSystem implements FileReader, FileWriter {
 
-    private List<FsFilter> fsFilters = new ArrayList<FsFilter>(2);
+    private List<FsFilter> fsWriteFilters = new ArrayList<FsFilter>(2);
 
     public FileSystem(){
         defaultRegisterFilter();
     }
 
-    public FileSystem(List<FsFilter> fsFilters){
-        this.fsFilters = fsFilters;
+    public FileSystem(List<FsFilter> fsWriteFilters){
+        this.fsWriteFilters = fsWriteFilters;
     }
 
     /**
      * 
      */
-    public void registerFilter(FsFilter fsFilter) {
-        fsFilters.add(fsFilter);
+    public void registerWriteFilter(FsFilter fsFilter) {
+        fsWriteFilters.add(fsFilter);
     }
 
     /**
@@ -40,9 +40,12 @@ public abstract class FileSystem implements FileReader, FileWriter {
      */
     private void defaultRegisterFilter() {
 
-        fsFilters.add(new ImageCheckFsFilter());
-        fsFilters.add(new ImageConvertFsFilter());
+        fsWriteFilters.add(new ImageCheckFsFilter());
+        fsWriteFilters.add(new ImageConvertFsFilter());
 
     }
 
+    public List<FsFilter> getFsWriteFilters() {
+        return fsWriteFilters;
+    }
 }
