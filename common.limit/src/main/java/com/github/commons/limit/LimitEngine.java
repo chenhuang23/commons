@@ -15,7 +15,7 @@ import java.util.Map;
  */
 public class LimitEngine {
 
-    private boolean                       on                   = true;
+    private boolean                       on                   = false;
 
     private Map<String, Map<String, Spy>> classLimitRepository = new HashMap<String, Map<String, Spy>>();
 

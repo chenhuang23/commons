@@ -20,9 +20,12 @@ public class Spy implements ThresholdHandler {
     private int              threshold;
     private ThresholdHandler handler;
 
+    private String           className;
+
     private AtomicInteger    count = new AtomicInteger(0);
 
-    public Spy(ThresholdHandler handler, int threshold){
+    public Spy(String className, ThresholdHandler handler, int threshold){
+        this.className = className;
         this.handler = handler;
         this.threshold = threshold;
     }
@@ -32,7 +35,7 @@ public class Spy implements ThresholdHandler {
      */
     public boolean entry(MethodInvocation methodInvocation) {
 
-        if (count.incrementAndGet() < threshold) {
+        if (count.incrementAndGet() <= threshold) {
             return true;
         }
 
@@ -51,5 +54,15 @@ public class Spy implements ThresholdHandler {
     @Override
     public void handler(MethodInvocation methodInvocation) {
         handler.handler(methodInvocation);
+    }
+
+    @Override
+    public void setClassName(String name) {
+        this.className = name;
+    }
+
+    @Override
+    public String getClassName() {
+        return className;
     }
 }

@@ -27,8 +27,11 @@ public @interface LimitMethod {
     int threshold() default Integer.MAX_VALUE;
 
     /**
-     * 当前方法的调用阀值对应的配置key,不填写为threshold的值
-     *
+     * <pre>
+     * 当前方法的调用阀值对应的配置key,参数将从org.springframework.core.env.Environment 中获取 
+     * 不填写为threshold的值
+     * </pre>
+     * 
      * @return
      */
     String thresholdKey() default "";
@@ -38,6 +41,6 @@ public @interface LimitMethod {
      * 
      * @return
      */
-    String thresholdHandler() default "";
+    String thresholdHandlerRef() default "";
 
 }

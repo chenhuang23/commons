@@ -8,6 +8,7 @@ package com.github.commons.limit;
 import java.lang.reflect.Method;
 import java.util.HashMap;
 import java.util.Map;
+import java.util.concurrent.TimeUnit;
 
 import org.aopalliance.intercept.MethodInterceptor;
 import org.aopalliance.intercept.MethodInvocation;
@@ -30,6 +31,7 @@ import org.springframework.core.env.Environment;
 
 import com.github.commons.limit.annotation.LimitFlag;
 import com.github.commons.limit.annotation.LimitMethod;
+import com.github.commons.limit.handler.LogThresholdHandler;
 import com.github.commons.limit.handler.ThresholdHandler;
 
 /**
@@ -118,13 +120,20 @@ public class LimitAnnotationPostProcessor implements BeanFactoryPostProcessor, B
                     int threshold = thresholdConfig(annotation);
 
                     // 处理器
-                    String thresholdHandlerStr = annotation.thresholdHandler();
+                    String thresholdHandlerStr = annotation.thresholdHandlerRef();
                     ThresholdHandler thresholdHandler = null;
+
+                    beanFactory.registerSingleton("test", new LimitEngine());
+
                     if (thresholdHandlerStr != null && !"".equals(thresholdHandlerStr)) {
                         thresholdHandler = applicationContext.getBean(thresholdHandlerStr, ThresholdHandler.class);
                     }
 
-                    spyMap.put(method.getName(), new Spy(thresholdHandler, threshold));
+                    if (thresholdHandler == null) {
+                        thresholdHandler = new LogThresholdHandler();
+                    }
+                    thresholdHandler.setClassName(bean.getClass().getName());
+                    spyMap.put(method.getName(), new Spy(bean.getClass().getName(), thresholdHandler, threshold));
 
                 }
             }
@@ -164,13 +173,35 @@ public class LimitAnnotationPostProcessor implements BeanFactoryPostProcessor, B
     public void postProcessBeanFactory(ConfigurableListableBeanFactory beanFactory) throws BeansException {
         // 添加限制引擎
         this.beanFactory = (DefaultListableBeanFactory) beanFactory;
-        LimitEngine limitEngine = new LimitEngine();
+        final LimitEngine limitEngine = new LimitEngine();
 
         if (env.getProperty(LIMIT_SWITCH) != null) {
             limitEngine.setOn(Boolean.valueOf(env.getProperty(LIMIT_SWITCH)));
         }
 
         beanFactory.registerSingleton(LIMIT_ENGINE, limitEngine);
+
+        // 启动一个线程，监听限流引擎是否开启
+        new Thread() {
+
+            @Override
+            public void run() {
+
+                while (true) {
+                    try {
+                        TimeUnit.SECONDS.sleep(3);
+                    } catch (InterruptedException e) {
+                    }
+
+                    logger.debug("fetch limit engine switch.");
+
+                    if (env.getProperty(LIMIT_SWITCH) != null) {
+                        limitEngine.setOn(Boolean.valueOf(env.getProperty(LIMIT_SWITCH)));
+                    }
+
+                }
+            }
+        }.start();
     }
 
     @Override
