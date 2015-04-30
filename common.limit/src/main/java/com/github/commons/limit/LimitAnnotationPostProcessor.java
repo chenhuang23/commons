@@ -41,15 +41,17 @@ import com.github.commons.limit.handler.ThresholdHandler;
  */
 public class LimitAnnotationPostProcessor implements BeanFactoryPostProcessor, BeanPostProcessor, ApplicationContextAware, EnvironmentAware {
 
-    private static final Logger        logger       = LoggerFactory.getLogger(LimitAnnotationPostProcessor.class);
+    private static final Logger        logger                      = LoggerFactory.getLogger(LimitAnnotationPostProcessor.class);
 
-    public static final String         LIMIT_ENGINE = "limitInterceptor";
-    public static final String         LIMIT_SWITCH = "limitSwitch";
+    public static final String         LIMIT_ENGINE                = "limitInterceptor";
+    private static final String        LIMIT_SWITCH                = "limit.switch.on";
+    private static final String        LIMIT_SWITCH_FETCH_INTERVAL = "limit.switch.interval";
+    public static final String         LIMIT_SWITCH_LISTENER       = "limit_switch_listener";
 
     private ApplicationContext         applicationContext;
     private DefaultListableBeanFactory beanFactory;
 
-    private LimitEngine                engine       = null;
+    private LimitEngine                engine                      = null;
 
     // 从变量中获取配置
     private Environment                env;
@@ -123,8 +125,6 @@ public class LimitAnnotationPostProcessor implements BeanFactoryPostProcessor, B
                     String thresholdHandlerStr = annotation.thresholdHandlerRef();
                     ThresholdHandler thresholdHandler = null;
 
-                    beanFactory.registerSingleton("test", new LimitEngine());
-
                     if (thresholdHandlerStr != null && !"".equals(thresholdHandlerStr)) {
                         thresholdHandler = applicationContext.getBean(thresholdHandlerStr, ThresholdHandler.class);
                     }
@@ -133,7 +133,10 @@ public class LimitAnnotationPostProcessor implements BeanFactoryPostProcessor, B
                         thresholdHandler = new LogThresholdHandler();
                     }
                     thresholdHandler.setClassName(bean.getClass().getName());
-                    spyMap.put(method.getName(), new Spy(bean.getClass().getName(), thresholdHandler, threshold));
+                    spyMap.put(method.getName(), new Spy(bean.getClass().getName(), thresholdHandler,
+                                                         new Spy.ThresholdSynchronizer(env, annotation.threshold(),
+                                                                                       annotation.thresholdKey(),
+                                                                                       annotation.interval())));
 
                 }
             }
@@ -151,13 +154,15 @@ public class LimitAnnotationPostProcessor implements BeanFactoryPostProcessor, B
         // 阀值参数key
         String thresholdKey = annotation.thresholdKey();
 
-        // 阀值配置
-        String thresholdStr = env.getProperty(thresholdKey);
-        if (thresholdStr != null && !"".equals(thresholdStr)) {
+        if (thresholdKey != null && !"".equals(thresholdKey)) {
+            // 阀值配置
+            String thresholdStr = env.getProperty(thresholdKey);
+            if (thresholdStr != null && !"".equals(thresholdStr)) {
 
-            try {
-                threshold = Integer.parseInt(thresholdStr);
-            } catch (NumberFormatException e) {
+                try {
+                    threshold = Integer.parseInt(thresholdStr);
+                } catch (NumberFormatException e) {
+                }
             }
         }
 
@@ -175,33 +180,44 @@ public class LimitAnnotationPostProcessor implements BeanFactoryPostProcessor, B
         this.beanFactory = (DefaultListableBeanFactory) beanFactory;
         final LimitEngine limitEngine = new LimitEngine();
 
-        if (env.getProperty(LIMIT_SWITCH) != null) {
-            limitEngine.setOn(Boolean.valueOf(env.getProperty(LIMIT_SWITCH)));
+        try {
+            if (env.getProperty(LIMIT_SWITCH) != null) {
+                limitEngine.setOn(Boolean.valueOf(env.getProperty(LIMIT_SWITCH)));
+            }
+        } catch (NumberFormatException e) {
+            logger.error(LIMIT_SWITCH + " format exception.", e);
         }
 
         beanFactory.registerSingleton(LIMIT_ENGINE, limitEngine);
 
         // 启动一个线程，监听限流引擎是否开启
-        new Thread() {
+        Thread thread = new Thread(LIMIT_SWITCH_LISTENER) {
 
             @Override
             public void run() {
 
                 while (true) {
                     try {
-                        TimeUnit.SECONDS.sleep(3);
-                    } catch (InterruptedException e) {
+                        int sleepTime = 3;
+                        if (env.getProperty(LIMIT_SWITCH_FETCH_INTERVAL) != null) {
+                            sleepTime = Integer.valueOf(env.getProperty(LIMIT_SWITCH_FETCH_INTERVAL));
+                        }
+
+                        TimeUnit.SECONDS.sleep(sleepTime);
+
+                        logger.debug("fetch limit engine switch.");
+
+                        if (env.getProperty(LIMIT_SWITCH) != null) {
+                            limitEngine.setOn(Boolean.valueOf(env.getProperty(LIMIT_SWITCH)));
+                        }
+                    } catch (Throwable e) {
+                        logger.error("limit thread exception.", e);
                     }
-
-                    logger.debug("fetch limit engine switch.");
-
-                    if (env.getProperty(LIMIT_SWITCH) != null) {
-                        limitEngine.setOn(Boolean.valueOf(env.getProperty(LIMIT_SWITCH)));
-                    }
-
                 }
             }
-        }.start();
+        };
+        thread.setDaemon(true);
+        thread.start();
     }
 
     @Override

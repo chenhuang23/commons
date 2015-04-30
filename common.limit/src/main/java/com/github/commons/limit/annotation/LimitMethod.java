@@ -37,6 +37,13 @@ public @interface LimitMethod {
     String thresholdKey() default "";
 
     /**
+     * 多少毫秒数从 org.springframework.core.env.Environment 同步一次阀值
+     * 
+     * @return
+     */
+    int interval() default 15000;
+
+    /**
      * 处理器的beanName,不填写为默认配置
      * 
      * @return

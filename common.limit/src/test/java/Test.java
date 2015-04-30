@@ -33,7 +33,7 @@ public class Test {
             executorService.submit(new Work(i));
         }
 
-        // executorService.shutdown();
+        executorService.shutdown();
     }
 
     class Work implements Runnable {

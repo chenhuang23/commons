@@ -15,7 +15,7 @@ import com.github.commons.limit.annotation.LimitMethod;
 @LimitFlag
 public class LimitDemo {
 
-    @LimitMethod(threshold = 11)
+    @LimitMethod(threshold = 1)
     public void sayHello() {
 
         System.out.println("hello......");
