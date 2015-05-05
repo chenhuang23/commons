@@ -3,7 +3,7 @@ package com.github.commons.utils.format;
 import sun.misc.BASE64Decoder;
 import sun.misc.BASE64Encoder;
 
-public class Base64 {
+public class BASE64 {
 
     public static byte[] decode(String key) throws Exception {
         return (new BASE64Decoder()).decodeBuffer(key);
