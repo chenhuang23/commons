@@ -19,7 +19,7 @@ public class Base64Utils {
      * @throws Exception
      */
     public static byte[] decode(String base64) throws Exception {
-        return Base64.decode(base64);
+        return BASE64.decode(base64);
     }
 
     /** */
@@ -32,7 +32,7 @@ public class Base64Utils {
      * @throws Exception
      */
     public static String encode(byte[] bytes) throws Exception {
-        return new String(Base64.encode(bytes));
+        return new String(BASE64.encode(bytes));
     }
 
     public static String encodeFile(String filePath) throws Exception {

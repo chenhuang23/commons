@@ -1,0 +1,28 @@
+<beans xmlns="http://www.springframework.org/schema/beans"
+       xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+       xmlns:context="http://www.springframework.org/schema/context"
+       xsi:schemaLocation="http://www.springframework.org/schema/beans http://www.springframework.org/schema/beans/spring-beans.xsd
+      http://www.springframework.org/schema/context http://www.springframework.org/schema/context/spring-context.xsd
+      http://code.alibabatech.com/schema/dubbo http://code.alibabatech.com/schema/dubbo/dubbo.xsd"
+       xmlns:dubbo="http://code.alibabatech.com/schema/dubbo">
+
+    <context:component-scan base-package="com.github.commons.message.server"/>
+
+    <dubbo:application name="commons-message-server"/>
+
+    <dubbo:registry address="multicast://224.5.6.7:1234"/>
+
+    <dubbo:protocol name="dubbo" port="20880"/>
+
+    <bean id="messageProcessor" class="com.github.commons.message.server.DefaultMessageProcessor"/>
+
+    <dubbo:service interface="com.github.commons.message.IMessageProcessor" ref="messageProcessor"/>
+
+    <bean id="mailSender" class="com.github.commons.message.server.mail.MailSender">
+        <property name="smtp" value="smtp.163.com"/>
+        <property name="port" value="25"/>
+
+        <property name="username" value=""/>
+        <property name="password" value=""/>
+    </bean>
+</beans>
