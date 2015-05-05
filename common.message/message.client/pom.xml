@@ -18,6 +18,16 @@
             <version>${project.version}</version>
         </dependency>
 
+        <!--
+            TODO: 由于我们目前是将client/server 都部署在同一个进程中，所以client包中也
+            同时依赖了server包。如果采用 dubbo 来分布式部署，需要将这个包移除
+        -->
+        <dependency>
+            <groupId>com.github.commons</groupId>
+            <artifactId>common-message-server</artifactId>
+            <version>${project.version}</version>
+        </dependency>
+
         <dependency>
             <groupId>org.springframework</groupId>
             <artifactId>spring-context</artifactId>
@@ -49,7 +59,7 @@
             <scope>test</scope>
         </dependency>
     </dependencies>
-    
+
     <build>
         <finalName>${project.name}-${pom.version}</finalName>
         <resources>
