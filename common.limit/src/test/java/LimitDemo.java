@@ -15,10 +15,10 @@ import com.github.commons.limit.annotation.LimitMethod;
 @LimitFlag
 public class LimitDemo {
 
-    @LimitMethod(threshold = 1)
+    @LimitMethod(threshold = 10)
     public void sayHello() {
 
-        System.out.println("hello......");
+        // System.out.println("hello......");
 
     }
 }

@@ -50,25 +50,28 @@ public class RabbitMessageConsumer implements MqConsumer {
                 continue;
             }
 
-            if (handler.handler(new RabbitMessage(delivery.getBody()))) {
+            final boolean result = handler.handler(new RabbitMessage(delivery.getBody()));
 
-                final QueueingConsumer.Delivery innerDelivery = delivery;
+            final QueueingConsumer.Delivery innerDelivery = delivery;
 
-                new Retry() {
+            new Retry() {
 
-                    public boolean deal(int currentTime) {
-                        try {
+                public boolean deal(int currentTime) {
+                    try {
+                        if (result) {
                             channel.basicAck(innerDelivery.getEnvelope().getDeliveryTag(), false);
-                        } catch (IOException e) {
-                            logger.error("ack message exception.-->" + currentTime, e);
-                            return false;
+                        } else {
+                            channel.basicNack(innerDelivery.getEnvelope().getDeliveryTag(), false, true);
                         }
-
-                        return true;
+                    } catch (IOException e) {
+                        logger.error("ack message exception.-->" + currentTime, e);
+                        return false;
                     }
 
-                }.retry(3);
-            }
+                    return true;
+                }
+
+            }.retry(3);
         }
 
     }

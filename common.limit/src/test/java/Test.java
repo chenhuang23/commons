@@ -7,10 +7,7 @@
 import org.springframework.context.ApplicationContext;
 import org.springframework.context.support.ClassPathXmlApplicationContext;
 
-import java.util.concurrent.BrokenBarrierException;
-import java.util.concurrent.CyclicBarrier;
-import java.util.concurrent.ExecutorService;
-import java.util.concurrent.Executors;
+import java.util.concurrent.*;
 
 /**
  * Test.java
@@ -33,7 +30,7 @@ public class Test {
             executorService.submit(new Work(i));
         }
 
-        executorService.shutdown();
+        // executorService.shutdown();
     }
 
     class Work implements Runnable {
@@ -47,23 +44,30 @@ public class Test {
         @Override
         public void run() {
 
-            System.out.println("wait--" + index);
+            while (true) {
+                // System.out.println("wait--" + index);
 
-            try {
-                barrier.await();
-            } catch (InterruptedException e) {
-                e.printStackTrace();
-            } catch (BrokenBarrierException e) {
-                e.printStackTrace();
+                // try {
+                // barrier.await();
+                // } catch (InterruptedException e) {
+                // e.printStackTrace();
+                // } catch (BrokenBarrierException e) {
+                // e.printStackTrace();
+                // }
+
+                try {
+                    demo.sayHello();
+                } catch (Throwable e) {
+                    e.printStackTrace();
+                }
+                // System.out.println(index + ":" + " work.....");
+
+                try {
+                    TimeUnit.MILLISECONDS.sleep(1200);
+                } catch (InterruptedException e) {
+                    e.printStackTrace();
+                }
             }
-
-            try {
-                demo.sayHello();
-            } catch (Throwable e) {
-                e.printStackTrace();
-            }
-            System.out.println(index + ":" + " work.....");
-
         }
     }
 

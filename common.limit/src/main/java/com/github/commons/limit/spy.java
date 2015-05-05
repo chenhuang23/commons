@@ -52,6 +52,10 @@ public class Spy implements ThresholdHandler {
         count.decrementAndGet();
     }
 
+    public int currentEntrants() {
+        return count.get();
+    }
+
     @Override
     public void handler(MethodInvocation methodInvocation) {
         handler.handler(methodInvocation);
@@ -113,5 +117,10 @@ public class Spy implements ThresholdHandler {
             }
             return threshold;
         }
+    }
+
+    @Override
+    public String toString() {
+        return "Spy{" + "className='" + className + '\'' + ", count=" + count.get() + '}';
     }
 }
