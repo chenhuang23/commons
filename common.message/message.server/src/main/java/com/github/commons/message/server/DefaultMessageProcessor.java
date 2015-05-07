@@ -1,15 +1,16 @@
 package com.github.commons.message.server;
 
-import com.github.commons.message.*;
-import com.github.commons.message.server.template.ITemplateResolver;
-import com.github.commons.message.server.template.ResolvedEnvelop;
+import java.util.List;
+import java.util.Map;
+import java.util.concurrent.ConcurrentHashMap;
+
 import org.springframework.beans.factory.InitializingBean;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.util.StringUtils;
 
-import java.util.List;
-import java.util.Map;
-import java.util.concurrent.ConcurrentHashMap;
+import com.github.commons.message.*;
+import com.github.commons.message.server.template.ITemplateResolver;
+import com.github.commons.message.server.template.ResolvedEnvelop;
 
 /**
  * Created by Yang Tengfei on 4/23/15.
@@ -19,10 +20,10 @@ import java.util.concurrent.ConcurrentHashMap;
 public class DefaultMessageProcessor implements IMessageProcessor, InitializingBean {
 
     @Autowired
-    private ITemplateResolver templateResolver;
+    private ITemplateResolver                         templateResolver;
 
     @Autowired
-    private List<IMessageSender> messageSenders;
+    private List<IMessageSender>                      messageSenders;
 
     private final Map<MessageChannel, IMessageSender> messageSenderMap = new ConcurrentHashMap<>();
 
@@ -39,21 +40,23 @@ public class DefaultMessageProcessor implements IMessageProcessor, InitializingB
             return new DefaultMessageResponse(201, "template id cannot be empty!");
         }
 
-        if (request.getEnvelops() == null || request.getEnvelops().isEmpty())
-            return new DefaultMessageResponse(202, "envelop cannot be empty!");
-
-        for (Map.Entry<MessageChannel, IEnvelop> entry : request.getEnvelops().entrySet()) {
-            getMessageSender(entry.getKey()).send(createEnvelop(entry.getKey(), entry.getValue()));
-        }
+        if (request.getEnvelops() == null || request.getEnvelops().isEmpty()) return new DefaultMessageResponse(202,
+                                                                                                                "envelop cannot be empty!");
 
         // todo: process errors
+        for (Map.Entry<MessageChannel, IEnvelop> entry : request.getEnvelops().entrySet()) {
+            if (!getMessageSender(entry.getKey()).send(createEnvelop(entry.getKey(), entry.getValue()))) {
+                return DefaultMessageResponse.FAIL;
+            }
+        }
+
         return DefaultMessageResponse.SUCCESS;
     }
 
     private ResolvedEnvelop createEnvelop(MessageChannel ch, IEnvelop request) {
         String message = templateResolver.resolve(ch, request.getTemplateId(), request.getParameters());
 
-        return new ResolvedEnvelop(request, message);
+        return new ResolvedEnvelop(request, request.getTitle(), message, request.getLevel());
     }
 
     private IMessageSender getMessageSender(MessageChannel ch) {

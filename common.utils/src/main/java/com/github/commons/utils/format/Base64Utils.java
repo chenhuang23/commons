@@ -1,5 +1,8 @@
 package com.github.commons.utils.format;
 
+import sun.misc.BASE64Decoder;
+import sun.misc.BASE64Encoder;
+
 import java.io.*;
 
 public class Base64Utils {
@@ -19,7 +22,7 @@ public class Base64Utils {
      * @throws Exception
      */
     public static byte[] decode(String base64) throws Exception {
-        return BASE64.decode(base64);
+        return (new BASE64Decoder()).decodeBuffer(base64);
     }
 
     /** */
@@ -32,7 +35,7 @@ public class Base64Utils {
      * @throws Exception
      */
     public static String encode(byte[] bytes) throws Exception {
-        return new String(BASE64.encode(bytes));
+        return (new BASE64Encoder()).encodeBuffer(bytes);
     }
 
     public static String encodeFile(String filePath) throws Exception {
@@ -40,12 +43,10 @@ public class Base64Utils {
         return encode(bytes);
     }
 
-
     public static void decodeToFile(String filePath, String base64) throws Exception {
         byte[] bytes = decode(base64);
         byteArrayToFile(bytes, filePath);
     }
-
 
     public static byte[] fileToByte(String filePath) throws Exception {
         byte[] data = new byte[0];
@@ -65,7 +66,6 @@ public class Base64Utils {
         }
         return data;
     }
-
 
     public static void byteArrayToFile(byte[] bytes, String filePath) throws Exception {
         InputStream in = new ByteArrayInputStream(bytes);

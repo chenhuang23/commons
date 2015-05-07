@@ -1,10 +1,13 @@
 package com.github.commons.message.server.mail;
 
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.stereotype.Service;
+
 import com.github.commons.message.MessageChannel;
 import com.github.commons.message.server.IMessageSender;
 import com.github.commons.message.server.template.ResolvedEnvelop;
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.stereotype.Service;
 
 /**
  * Created by Yang Tengfei on 4/24/15.
@@ -12,8 +15,10 @@ import org.springframework.stereotype.Service;
 @Service
 public class NeteaseMailSender implements IMessageSender {
 
+    private static final Logger logger = LoggerFactory.getLogger(NeteaseMailSender.class);
+
     @Autowired
-    private MailSender internalMailSender;
+    private MailSender          internalMailSender;
 
     @Override
     public MessageChannel getMessageChannel() {
@@ -22,7 +27,17 @@ public class NeteaseMailSender implements IMessageSender {
 
     @Override
     public boolean send(ResolvedEnvelop envelop) {
-        // todo: not impl yet
-        throw new UnsupportedOperationException("not impl yet");
+
+        try {
+
+            internalMailSender.send(null, envelop.getRecipients(), null, null, envelop.getTitle(), envelop.getContent());
+
+        } catch (Throwable e) {
+
+            logger.error("Send mail exception.", e);
+
+            return false;
+        }
+        return true;
     }
 }

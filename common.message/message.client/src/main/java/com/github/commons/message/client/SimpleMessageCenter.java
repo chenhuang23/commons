@@ -1,6 +1,8 @@
 package com.github.commons.message.client;
 
 import com.github.commons.message.*;
+import com.github.commons.message.server.DefaultMessageProcessor;
+import org.apache.commons.lang.StringUtils;
 
 import java.util.List;
 import java.util.Map;
@@ -14,35 +16,60 @@ public class SimpleMessageCenter {
 
     private IMessageProcessor messageProcessor;
 
-    public void sendSms(List<String> recipients, String templateId, Map<String, Object> paramMap) {
-        send(MessageChannel.SMS, templateId, paramMap, recipients);
+    public boolean sendSms(String templateId, Map<String, Object> paramMap, String... recipients) {
+        return send(MessageChannel.SMS, StringUtils.EMPTY, templateId, paramMap, recipients);
     }
 
-    private void send(MessageChannel ch, String templateId, Map<String, Object> paramMap, List<String> recipients) {
-        doSend(ch, new SimpleEnvelop(templateId, paramMap, recipients));
+    private boolean send(MessageChannel ch, String title, String templateId, Map<String, Object> paramMap,
+                         String... recipients) {
+        IMessageResponse iMessageResponse = doSend(ch, new SimpleEnvelop(title, templateId,
+                                                                         IEnvelop.LEVEL.LEVEL_NORMAL, paramMap,
+                                                                         recipients));
+        if (iMessageResponse != DefaultMessageResponse.SUCCESS) {
+            return false;
+        }
+
+        return true;
     }
 
     private IMessageResponse doSend(MessageChannel ch, IEnvelop envelop) {
         DefaultMessageRequest request = new DefaultMessageRequest();
+        request.setTemplateId(envelop.getTemplateId());
         request.addEnvelop(ch, envelop);
 
         return messageProcessor.process(request);
     }
 
-    public void sendSms(String templateId, Map<String, Object> paramMap, List<String> recipients) {
-        doSend(MessageChannel.SMS, new SimpleEnvelop(templateId, paramMap, recipients));
+    public boolean sendSms(IEnvelop envelop) {
+        IMessageResponse iMessageResponse = doSend(MessageChannel.SMS, envelop);
+
+        if (iMessageResponse != DefaultMessageResponse.SUCCESS) {
+            return false;
+        }
+
+        return true;
     }
 
-    public void sendSms(IEnvelop envelop) {
-        doSend(MessageChannel.SMS, envelop);
+    public boolean sendEmail(String title, String templateId, Map<String, Object> paramMap, String... recipients) {
+        IMessageResponse iMessageResponse = doSend(MessageChannel.EMAIL, new SimpleEnvelop(title, templateId,
+                                                                                           IEnvelop.LEVEL.LEVEL_NORMAL,
+                                                                                           paramMap, recipients));
+
+        if (iMessageResponse != DefaultMessageResponse.SUCCESS) {
+            return false;
+        }
+
+        return true;
     }
 
-    public void sendEmail(List<String> recipients, String templateId, Map<String, Object> paramMap) {
-        doSend(MessageChannel.EMAIL, new SimpleEnvelop(templateId, paramMap, recipients));
-    }
+    public boolean sendEmail(IEnvelop envelop) {
+        IMessageResponse iMessageResponse = doSend(MessageChannel.EMAIL, envelop);
 
-    public void sendEmail(IEnvelop envelop) {
-        doSend(MessageChannel.EMAIL, envelop);
+        if (iMessageResponse != DefaultMessageResponse.SUCCESS) {
+            return false;
+        }
+
+        return true;
     }
 
     public IMessageProcessor getMessageProcessor() {

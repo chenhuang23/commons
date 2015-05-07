@@ -10,13 +10,23 @@ import java.util.Map;
  */
 public class ResolvedEnvelop implements IEnvelop {
 
-    private final IEnvelop request;
+    private static final long serialVersionUID = 6378403910279033909L;
 
-    private final String content;
+    private final IEnvelop    request;
 
-    public ResolvedEnvelop(IEnvelop request, String content) {
+    private final String      title;
+
+    private final String      content;
+
+    // 消息发送级别
+
+    private final LEVEL       level;
+
+    public ResolvedEnvelop(IEnvelop request, String title, String content, LEVEL level){
         this.request = request;
         this.content = content;
+        this.title = title;
+        this.level = level;
     }
 
     @Override
@@ -26,15 +36,26 @@ public class ResolvedEnvelop implements IEnvelop {
 
     @Override
     public String getTemplateId() {
-        return getTemplateId();
+        return request.getTemplateId();
     }
 
     @Override
-    public List<String> getRecipients() {
-        return getRecipients();
+    public String getTitle() {
+        return title;
+    }
+
+    @Override
+    public LEVEL getLevel() {
+        return level;
+    }
+
+    @Override
+    public String[] getRecipients() {
+        return request.getRecipients();
     }
 
     public String getContent() {
         return this.content;
     }
+
 }

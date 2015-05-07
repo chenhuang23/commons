@@ -6,6 +6,7 @@
 package com.github.commons.message.server.mail;
 
 import com.github.commons.message.server.MessageException;
+import org.apache.commons.mail.DefaultAuthenticator;
 import org.apache.commons.mail.SimpleEmail;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -17,18 +18,18 @@ import org.slf4j.LoggerFactory;
  */
 public class MailSender {
 
-    private static final Logger logger = LoggerFactory.getLogger(MailSender.class);
-    public static final String GB_2312 = "GB2312";
+    private static final Logger logger  = LoggerFactory.getLogger(MailSender.class);
+    public static final String  GB_2312 = "GB2312";
 
-    private String smtp;
+    private String              smtp;
 
-    private String username;
+    private String              username;
 
-    private String password;
+    private String              password;
 
-    private int port;
+    private int                 port;
 
-    private boolean isDebug;
+    private boolean             isDebug;
 
     /**
      * 发送邮件
@@ -42,7 +43,7 @@ public class MailSender {
      * @return
      */
     public void send(String from, String[] to, String[] cc, String[] bcc, String subject, String msg)
-            throws MessageException {
+                                                                                                     throws MessageException {
 
         SimpleEmail email = new SimpleEmail();
         // email.setTLS(true); //是否TLS校验，，某些邮箱需要TLS安全校验，同理有SSL校验
@@ -52,9 +53,9 @@ public class MailSender {
         email.setHostName(smtp);
         email.setSmtpPort(port);
 
-        //email.setAuthenticator(new DefaultAuthenticator(username, password));
+        email.setAuthenticator(new DefaultAuthenticator(username, password));
         try {
-            email.setFrom(from); // 发送方,这里可以写多个
+            email.setFrom(from == null ? username : from); // 发送方,这里可以写多个
             if (to != null && to.length > 0) email.addTo(to); // 接收方
             if (cc != null && cc.length > 0) email.addCc(cc); // 抄送方
             if (bcc != null && bcc.length > 0) email.addBcc(bcc); // 秘密抄送方
@@ -118,11 +119,10 @@ public class MailSender {
 
         sender.setDebug(true);
         sender.setPort(25);
-        sender.setSmtp("cmfast.mail.163.com");
-        sender.setUsername("kefu-loan@service.netease.com");
+        sender.setSmtp("service.netease.com");
+        sender.setUsername("");
         sender.setPassword("");
 
-        sender.send("kefu-epay@service.netease.com", new String[]{"jason_zhou@163.com"},
-                new String[]{}, new String[]{}, "test", "test11111111");
+        sender.send("", new String[] { "" }, new String[] {}, new String[] {}, "test", "test11111111");
     }
 }

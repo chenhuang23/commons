@@ -24,6 +24,7 @@
             <version>4.1.6.RELEASE</version>
         </dependency>
 
+        <!--
         <dependency>
             <groupId>com.alibaba</groupId>
             <artifactId>dubbo</artifactId>
@@ -35,6 +36,7 @@
                 </exclusion>
             </exclusions>
         </dependency>
+        -->
 
         <!--
         enable autoconf if deploy alone in dubbo

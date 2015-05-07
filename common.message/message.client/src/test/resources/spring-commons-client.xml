@@ -1,0 +1,48 @@
+<beans xmlns="http://www.springframework.org/schema/beans"
+       xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+       xmlns:context="http://www.springframework.org/schema/context"
+       xsi:schemaLocation="http://www.springframework.org/schema/beans http://www.springframework.org/schema/beans/spring-beans.xsd
+      http://www.springframework.org/schema/context http://www.springframework.org/schema/context/spring-context.xsd">
+
+    <context:component-scan base-package="com.github.commons.message.server"/>
+
+    <!--
+    <dubbo:application name="commons-message-client"/>
+
+    <dubbo:registry address="multicast://224.5.6.7:1234"/>
+
+    <dubbo:protocol name="dubbo" port="20880"/>
+
+     <dubbo:reference interface="com.github.commons.message.IMessageProcessor" id="messageProcessor"/>
+    -->
+
+    <bean id="templateResolver" class="com.github.commons.message.server.template.StringTemplateResolver">
+        <property name="templates">
+            <map>
+                <entry key="test.email" value="welcome ${username}"></entry>
+                <entry key="test.sms" value="welcome ${username}"></entry>
+            </map>
+        </property>
+    </bean>
+
+    <bean id="messageProcessor" class="com.github.commons.message.server.DefaultMessageProcessor"/>
+
+    <bean id="mailSender" class="com.github.commons.message.server.mail.MailSender">
+        <property name="smtp" value="service.netease.com"/>
+        <property name="port" value="25"/>
+        <property name="username" value=""/>
+        <property name="password" value=""/>
+    </bean>
+
+
+    <bean id="neteaseSmsSender" class="com.github.commons.message.server.sms.NeteaseSmsSender">
+        <property name="msgGroup" value=""/>
+     </bean>
+
+
+    <bean id="messageCenter" class="com.github.commons.message.client.SimpleMessageCenter">
+        <property name="messageProcessor" ref="messageProcessor"/>
+    </bean>
+
+
+</beans>

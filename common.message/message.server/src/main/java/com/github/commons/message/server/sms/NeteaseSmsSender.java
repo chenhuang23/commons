@@ -10,12 +10,11 @@ import org.springframework.stereotype.Service;
  * <p/>
  * 基于网易的消息处理中心来发送短信
  */
-@Service
 public class NeteaseSmsSender implements IMessageSender {
 
     private final MobileUtil mobileUtil = new MobileUtil();
 
-    private final String MSG_GROUP = "12345"; // todo: set default message group
+    private String           msgGroup   = "12345";
 
     @Override
     public MessageChannel getMessageChannel() {
@@ -24,7 +23,11 @@ public class NeteaseSmsSender implements IMessageSender {
 
     @Override
     public boolean send(ResolvedEnvelop envelop) {
-        return mobileUtil.sendTxtSms(envelop.getContent(), MSG_GROUP, "5",
-                envelop.getRecipients().toArray(new String[envelop.getRecipients().size()]));
+        return mobileUtil.sendTxtSms(envelop.getContent(), msgGroup, String.valueOf(envelop.getLevel()),
+                                     envelop.getRecipients());
+    }
+
+    public void setMsgGroup(String msgGroup) {
+        this.msgGroup = msgGroup;
     }
 }

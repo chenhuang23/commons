@@ -28,11 +28,11 @@ import com.github.commons.message.server.MessageException;
  */
 public class MobileUtil {
 
-    private static final Logger log = LoggerFactory.getLogger(MobileUtil.class);
+    private static final Logger log           = LoggerFactory.getLogger(MobileUtil.class);
 
     private static final String smsGatewayUrl = "http://smsknl.163.com:8089/servlet/CorpIdentifyNotCheck?";
 
-    private static final int CONN_TIME_OUT = 5000;
+    private static final int    CONN_TIME_OUT = 5000;
 
     /**
      * 验证手机号的有效性，规则6-20位的纯数字字符串
@@ -48,6 +48,7 @@ public class MobileUtil {
         } catch (Exception e) {
             flag = false;
         }
+
         return flag;
     }
 
@@ -63,7 +64,7 @@ public class MobileUtil {
      *
      * @param mobiles 发送目标，可以包含多个
      * @param msgprop 增值业务的内部代号，决定信息的业务属性
-     * @param level   0；最高优先级，信息会优先提交给运营商 3；一般优先级 5；群发级 @return
+     * @param level 0；最高优先级，信息会优先提交给运营商 3；一般优先级 5；群发级 @return
      */
     public boolean sendTxtSms(String message, String msgprop, String level, String... mobiles) throws MessageException {
         String resultstr = "";
@@ -73,9 +74,9 @@ public class MobileUtil {
         assertArrayNotBlank(mobiles, "mobiles");
 
         if (message.length() > 130) {
-            // todo: 短信发送前需要做严格的检查，且规定超长的处理结果
             // 还有接收用户数量的限制
             log.warn("sms message is tool long");
+            throw new MessageException("sms message is tool long, limit is 130.");
         }
 
         try {
@@ -86,8 +87,8 @@ public class MobileUtil {
                 smsUrl.append("&level=").append(level);
             }
 
-            if (mobiles.length == 0) {
-                smsUrl.append("&phone=").append(mobiles[0]).append("&frmphone=").append(level);
+            if (mobiles.length == 1) {
+                smsUrl.append("&phone=").append(mobiles[0]).append("&frmphone=").append(mobiles[0]);
             } else {
                 StringBuffer sb = new StringBuffer();
                 int i = 0;
@@ -113,11 +114,7 @@ public class MobileUtil {
             throw new MessageException("Send sms exception.", e);
         }
 
-        if (StringUtils.equals(resultstr, "ok")) {
-            return true;
-        }
-
-        return false;
+        return StringUtils.equals(resultstr, "ok") ? true : false;
     }
 
     private void assertNotBlank(String value, String fieldName) {
@@ -152,7 +149,7 @@ public class MobileUtil {
 
             if (response.getStatusLine().getStatusCode() != SC_OK) {
                 throw new MessageException("Sms send failed, Server response: "
-                        + response.getStatusLine().getStatusCode());
+                                           + response.getStatusLine().getStatusCode());
             }
 
             return fetchResponse(response);

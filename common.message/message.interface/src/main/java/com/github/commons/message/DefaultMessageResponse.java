@@ -7,11 +7,13 @@ public class DefaultMessageResponse implements IMessageResponse {
 
     public static final DefaultMessageResponse SUCCESS = new DefaultMessageResponse(0, "success");
 
-    private final int errorCode;
+    public static final DefaultMessageResponse FAIL    = new DefaultMessageResponse(500, "fail");
 
-    private final String errorMessage;
+    private final int                          errorCode;
 
-    public DefaultMessageResponse(int errorCode, String errorMessage) {
+    private final String                       errorMessage;
+
+    public DefaultMessageResponse(int errorCode, String errorMessage){
         this.errorCode = errorCode;
         this.errorMessage = errorMessage;
     }

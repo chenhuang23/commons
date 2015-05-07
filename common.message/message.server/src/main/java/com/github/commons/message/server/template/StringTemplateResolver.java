@@ -1,37 +1,32 @@
 package com.github.commons.message.server.template;
 
-import com.github.commons.message.MessageChannel;
-import freemarker.template.Configuration;
-import freemarker.template.Template;
-import freemarker.template.TemplateException;
-import org.springframework.stereotype.Service;
-
-import java.io.File;
 import java.io.IOException;
 import java.io.StringWriter;
 import java.util.Map;
 
+import com.github.commons.message.MessageChannel;
+
+import freemarker.cache.StringTemplateLoader;
+import freemarker.template.Configuration;
+import freemarker.template.Template;
+import freemarker.template.TemplateException;
+
 /**
- * Created by Yang Tengfei on 4/23/15.
- * <p/>
- * 测试用的模板解析工具
+ * 字符串模版
+ *
+ * @author xiaofengzhouxf
  */
-//@Service
-public class LocalTemplateResolver implements ITemplateResolver {
+public class StringTemplateResolver implements ITemplateResolver {
 
-    private final Configuration freeMarkerConf;
+    private final Configuration  freeMarkerConf;
 
-    public LocalTemplateResolver(String dir) {
+    private Map<String, String>  templates;
+    private StringTemplateLoader stringLoader;
+
+    public StringTemplateResolver(){
+        stringLoader = new StringTemplateLoader();
         freeMarkerConf = new Configuration(Configuration.VERSION_2_3_22);
-        setTemplateDir(dir);
-    }
-
-    public void setTemplateDir(String dir) {
-        try {
-            freeMarkerConf.setDirectoryForTemplateLoading(new File(dir));
-        } catch (IOException e) {
-            throw new IllegalArgumentException("template dir \"" + dir + "\" doesn't exists!", e);
-        }
+        freeMarkerConf.setTemplateLoader(stringLoader);
     }
 
     @Override
@@ -56,6 +51,17 @@ public class LocalTemplateResolver implements ITemplateResolver {
     }
 
     private String createRealTemplateId(MessageChannel ch, String templateId) {
-        return templateId + "." + ch.suffix;
+        return templateId;
+    }
+
+    public void setTemplates(Map<String, String> templates) {
+        this.templates = templates;
+
+        if (stringLoader != null && templates != null && templates.size() > 0) {
+
+            for (Map.Entry<String, String> entry : templates.entrySet()) {
+                stringLoader.putTemplate(entry.getKey(), entry.getValue());
+            }
+        }
     }
 }

@@ -52,7 +52,6 @@ public class RabbitMessageConsumer implements MqConsumer {
 
             boolean result = false;
             try {
-
                 result = handler.handler(new RabbitMessage(delivery.getBody()));
 
             } finally {

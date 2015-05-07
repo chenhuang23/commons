@@ -9,16 +9,24 @@ import java.util.Map;
  */
 public class SimpleEnvelop implements IEnvelop {
 
+    private static final long         serialVersionUID = -974367103003622830L;
     private final Map<String, Object> paramMap;
 
-    private final String templateId;
+    private final String              templateId;
 
-    private final List<String> recipients;
+    private final String              title;
+    // 消息发送级别
+    private final LEVEL               level;
 
-    public SimpleEnvelop(String templateId, Map<String, Object> paramMap, List<String> recipients) {
-        this.paramMap = paramMap == null ? Collections.<String, Object>emptyMap() : Collections.unmodifiableMap(paramMap);
+    private final String[]            recipients;
+
+    public SimpleEnvelop(String title, String templateId, LEVEL level, Map<String, Object> paramMap,
+                         String... recipients){
+        this.paramMap = paramMap == null ? Collections.<String, Object> emptyMap() : Collections.unmodifiableMap(paramMap);
         this.templateId = templateId;
-        this.recipients = recipients == null ? Collections.<String>emptyList() : Collections.unmodifiableList(recipients);
+        this.title = title;
+        this.level = level;
+        this.recipients = recipients;
     }
 
     @Override
@@ -32,7 +40,17 @@ public class SimpleEnvelop implements IEnvelop {
     }
 
     @Override
-    public List<String> getRecipients() {
+    public String getTitle() {
+        return title;
+    }
+
+    @Override
+    public LEVEL getLevel() {
+        return level;
+    }
+
+    @Override
+    public String[] getRecipients() {
         return recipients;
     }
 }
