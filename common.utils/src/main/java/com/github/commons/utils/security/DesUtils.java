@@ -16,13 +16,13 @@ public class DesUtils {
     /**
      */
     public final static String decrypt(String data, String key) throws Exception {
-        return new String(decrypt(hex2byte(data.getBytes()), key.getBytes()));
+        return new String(decrypt(hex2byte(data.getBytes("utf-8")), key.getBytes()));
     }
 
     /**
      */
     public final static String encrypt(String data, String key) throws Exception {
-        return byte2hex(encrypt(data.getBytes(), key.getBytes()));
+        return byte2hex(encrypt(data.getBytes("utf-8"), key.getBytes()));
     }
 
     // ==============================

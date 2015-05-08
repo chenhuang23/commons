@@ -35,12 +35,12 @@ public class AESUtil {
         if (sKey.length() != 16) {
             throw new IllegalArgumentException("Key长度不是16位");
         }
-        byte[] raw = sKey.getBytes();
+        byte[] raw = sKey.getBytes("utf-8");
         SecretKeySpec skeySpec = new SecretKeySpec(raw, "AES");
         Cipher cipher = Cipher.getInstance("AES/CBC/PKCS5Padding");// "算法/模式/补码方式"
         IvParameterSpec iv = new IvParameterSpec("0102030405060708".getBytes());// 使用CBC模式，需要一个向量iv，可增加加密算法的强度
         cipher.init(Cipher.ENCRYPT_MODE, skeySpec, iv);
-        byte[] encrypted = cipher.doFinal(sSrc.getBytes());
+        byte[] encrypted = cipher.doFinal(sSrc.getBytes("utf-8"));
 
         return Base64.encodeBase64String(encrypted);// 此处使用BASE64做转码功能，同时能起到2次加密的作用。
     }

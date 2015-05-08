@@ -18,11 +18,11 @@ import com.github.commons.security.constants.SecPolicy;
  */
 public class CodecToolsTest {
 
-    private final String plaintext   = "this is a test.";
+    private final String plaintext   = "this is a test测试.";
 
-    private final String encodeCode  = "WQEP7CA288C840AA39A6E4E0F94934A14ADC";
+    private final String encodeCode  = "WQEPC2BBF65166C110555C5013EEA6E9E501BB042E91EC7BA6B9";
 
-    private final String xencodeCode = "WQEP;GE6<<G<84EE7=E:I8I4J=8=78E58EHG";
+    private final String xencodeCode = "WQEPG6FFJ:95::G554999G9457IIE:I=I945FF486I=5IG;FE:F=";
 
     CodecToolsFacade     tools       = new CodecToolsFacade("test-code", SecPolicy.LOCAL, 1);
 
@@ -36,6 +36,8 @@ public class CodecToolsTest {
         Assert.assertEquals(encode, encodeCode);
 
         String decode = tools.decode(encode, EncryptType.DES);
+
+        System.out.println(decode);
 
         Assert.assertEquals(decode, plaintext);
     }
