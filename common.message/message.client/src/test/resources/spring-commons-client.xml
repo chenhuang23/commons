@@ -19,8 +19,8 @@
     <bean id="templateResolver" class="com.github.commons.message.server.template.StringTemplateResolver">
         <property name="templates">
             <map>
-                <entry key="test.email" value="welcome ${username}"></entry>
-                <entry key="test.sms" value="welcome ${username}"></entry>
+                <entry key="test.email" value="welcome @{username}"></entry>
+                <entry key="test.sms" value="welcome @{username}"></entry>
             </map>
         </property>
     </bean>
@@ -30,8 +30,8 @@
     <bean id="mailSender" class="com.github.commons.message.server.mail.MailSender">
         <property name="smtp" value="service.netease.com"/>
         <property name="port" value="25"/>
-        <property name="username" value=""/>
-        <property name="password" value=""/>
+        <property name="username" value="kefu-loan@service.netease.com"/>
+        <property name="password" value="Ejdl!sdfDF#L"/>
     </bean>
 
 

@@ -21,9 +21,9 @@ public class Main {
         Map<String, Object> param = new HashMap<String, Object>();
         param.put("username", "hi.....mike");
 
-        //System.out.println(messageCenter.sendEmail("this is a test", "test.email", param, "jason_zhouxf@163.com"));
+        System.out.println(messageCenter.sendEmail("网易小贷,个人邮箱验证", "test.email", param, "hzzhouxiaofeng@corp.netease.com"));
 
-        System.out.println(messageCenter.sendSms("test.sms", param, "13588461183"));
+        //System.out.println(messageCenter.sendSms("test.sms", param, "13588461183"));
 
     }
 }

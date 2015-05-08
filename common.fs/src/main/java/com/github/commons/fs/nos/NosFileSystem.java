@@ -5,21 +5,19 @@
  */
 package com.github.commons.fs.nos;
 
-import java.io.IOException;
 import java.io.InputStream;
 import java.net.URL;
 import java.util.Calendar;
-import java.util.concurrent.TimeUnit;
 
-import com.github.commons.fs.*;
-import org.apache.commons.io.IOUtils;
 import org.apache.commons.lang.StringUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+import com.github.commons.fs.FileSystem;
+import com.github.commons.fs.FsFilter;
+import com.github.commons.fs.UserMetadata;
 import com.github.commons.fs.contants.FileType;
 import com.github.commons.fs.exception.FileSystemException;
-import com.github.commons.fs.utils.ImageUtils;
 import com.netease.cloud.auth.BasicCredentials;
 import com.netease.cloud.services.nos.NosClient;
 import com.netease.cloud.services.nos.model.NOSObject;

@@ -20,6 +20,10 @@ public class StringTemplateResolver implements ITemplateResolver {
 
     private final Configuration  freeMarkerConf;
 
+    private final String         realPlaceholderLeft = "${";
+    private final String         placeholderLeft     = "{";
+
+    private String               placeholder         = "@";
     private Map<String, String>  templates;
     private StringTemplateLoader stringLoader;
 
@@ -60,8 +64,18 @@ public class StringTemplateResolver implements ITemplateResolver {
         if (stringLoader != null && templates != null && templates.size() > 0) {
 
             for (Map.Entry<String, String> entry : templates.entrySet()) {
-                stringLoader.putTemplate(entry.getKey(), entry.getValue());
+
+                String value = entry.getValue();
+                if (value.indexOf(placeholder + placeholderLeft) != -1) {
+                    value = value.replace(placeholder + placeholderLeft, realPlaceholderLeft);
+                }
+
+                stringLoader.putTemplate(entry.getKey(), value);
             }
         }
+    }
+
+    public void setPlaceholder(String placeholder) {
+        this.placeholder = placeholder;
     }
 }

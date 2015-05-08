@@ -1,11 +1,10 @@
 package com.github.commons.message.client;
 
-import com.github.commons.message.*;
-import com.github.commons.message.server.DefaultMessageProcessor;
+import java.util.Map;
+
 import org.apache.commons.lang.StringUtils;
 
-import java.util.List;
-import java.util.Map;
+import com.github.commons.message.*;
 
 /**
  * Created by Yang Tengfei on 4/24/15.
@@ -13,7 +12,6 @@ import java.util.Map;
  * 消息中心的代理，客户端通过该接口来发送消息
  */
 public class SimpleMessageCenter {
-
     private IMessageProcessor messageProcessor;
 
     public boolean sendSms(String templateId, Map<String, Object> paramMap, String... recipients) {
