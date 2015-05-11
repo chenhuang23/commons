@@ -13,6 +13,8 @@ import com.github.commons.mq.domain.MqProducer;
 import com.github.commons.mq.rabbitmq.RabbitMqClient;
 import com.github.commons.utils.format.JsonUtils;
 
+import java.util.concurrent.Executors;
+
 /**
  * RabbitMqClientTest.java
  *
@@ -28,9 +30,9 @@ public class RabbitMqClientTest {
     @Before
     public void before() throws Exception {
         client = new RabbitMqClient();
-        // client.setHost("127.0.0.1");
+        client.setHost("10.240.176.240");
 
-        client.setHost("10.240.176.106");
+        // client.setHost("10.240.176.106");
 
         client.setPort(5672);
 
@@ -45,7 +47,6 @@ public class RabbitMqClientTest {
 
     @After
     public void after() throws Exception {
-
 
         if (consumer != null) {
             consumer.shutdown();
@@ -86,7 +87,7 @@ public class RabbitMqClientTest {
     }
 
     @Test
-    public void testConsumer() {
+    public void testConsumer() throws InterruptedException {
 
         consumer.consumeMessage(new ConsumerHandler() {
 
@@ -97,7 +98,10 @@ public class RabbitMqClientTest {
 
                 return true;
             }
-        });
+        }, Executors.newFixedThreadPool(1));
+
+
+        Thread.sleep(10000);
 
     }
 }

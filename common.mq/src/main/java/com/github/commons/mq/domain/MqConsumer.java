@@ -5,6 +5,8 @@
  */
 package com.github.commons.mq.domain;
 
+import java.util.concurrent.ExecutorService;
+
 /**
  * MqConsumer.java
  *
@@ -19,5 +21,13 @@ public interface MqConsumer extends Shutdownable, Initializer {
      * @throws com.github.commons.mq.exception.MqRuntimeException
      */
     public void consumeMessage(final ConsumerHandler handler);
+
+    /**
+     * 异步消费消息
+     *
+     * @param handler
+     * @throws com.github.commons.mq.exception.MqRuntimeException
+     */
+    public void consumeMessage(final ConsumerHandler handler, final ExecutorService service);
 
 }

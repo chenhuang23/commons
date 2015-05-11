@@ -12,15 +12,6 @@
     <artifactId>common-utils</artifactId>
 
     <dependencies>
-
-
-        <dependency>
-            <groupId>hessian</groupId>
-            <artifactId>hessian</artifactId>
-            <version>3.0.20</version>
-        </dependency>
-
-
         <dependency>
             <groupId>commons-codec</groupId>
             <artifactId>commons-codec</artifactId>

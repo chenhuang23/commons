@@ -13,6 +13,8 @@ import com.netease.cloud.nqs.client.consumer.MessageConsumer;
 import com.netease.cloud.nqs.client.consumer.MessageHandler;
 import com.netease.cloud.nqs.client.exception.MessageClientException;
 
+import java.util.concurrent.ExecutorService;
+
 /**
  * NqsMessageConsumer.java 消息队列消费者对象
  *
@@ -64,7 +66,7 @@ public class NqsMessageConsumer implements MqConsumer {
         assertInited();
 
         if (handler == null) {
-            throw new IllegalArgumentException("ConsumerHandler ca'nt be null");
+            throw new IllegalArgumentException("ConsumerHandler can't be null");
         }
 
         MessageHandler messageHandler = new MessageHandler() {
@@ -82,6 +84,22 @@ public class NqsMessageConsumer implements MqConsumer {
         } catch (MessageClientException e) {
             throw new MqRuntimeException("Consumer nqs messages exception.", e);
         }
+    }
+
+    @Override
+    public void consumeMessage(final ConsumerHandler handler, ExecutorService service) {
+        if (service == null) {
+            throw new IllegalArgumentException("ExecutorService can't be null");
+        }
+
+        service.submit(new Runnable() {
+
+            @Override
+            public void run() {
+                consumeMessage(handler);
+            }
+        });
+
     }
 
     /**

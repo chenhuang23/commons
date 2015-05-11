@@ -73,7 +73,7 @@ public class DesUtils {
 
     public static void main(String[] args) throws Exception {
         String md5Password = "xsdfasdfasdf3egfadaa";
-        String str = DesUtils.encrypt("test", md5Password);
+        String str = DesUtils.encrypt("测试", md5Password);
         System.out.println("str: " + str);
         str = DesUtils.decrypt(str, md5Password);
         System.out.println("str: " + str);

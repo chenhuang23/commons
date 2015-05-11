@@ -19,6 +19,7 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import java.io.IOException;
+import java.util.concurrent.ExecutorService;
 
 /**
  * NqsMessageConsumer.java 消息队列消费者对象
@@ -43,10 +44,14 @@ public class RabbitMessageConsumer implements MqConsumer {
         while (true) {
             QueueingConsumer.Delivery delivery = null;
             try {
-                delivery = consumer.nextDelivery();
+                delivery = consumer.nextDelivery(3000);
             } catch (InterruptedException e) {
                 logger.error("Deal message exception.", e);
 
+                continue;
+            }
+
+            if (delivery == null) {
                 continue;
             }
 
@@ -79,6 +84,21 @@ public class RabbitMessageConsumer implements MqConsumer {
                 }.retry(3);
             }
         }
+
+    }
+
+    @Override
+    public void consumeMessage(final ConsumerHandler handler, ExecutorService service) {
+        if (service == null) {
+            throw new IllegalArgumentException("ExecutorService can't be null");
+        }
+
+        service.submit(new Runnable() {
+            @Override
+            public void run() {
+                consumeMessage(handler);
+            }
+        });
 
     }
 
