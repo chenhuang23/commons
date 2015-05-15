@@ -46,6 +46,8 @@ public class DefaultRedisClient<T extends Serializable, Object> extends Abstract
 
     private static final String POOL_MAX_SIZE = "poolMaxSize";
 
+    private static final String UTF_8 = "utf-8";
+
     private static final int MAX_TOTAL = 100;
     private static final long MAX_WAIT_MILLIS = 1000L * 10;
     private static final int MAX_IDLE = 1000 * 60;
@@ -113,7 +115,7 @@ public class DefaultRedisClient<T extends Serializable, Object> extends Abstract
         try {
             shareJedis = getShareJedis();
 
-            getJdies(shareJedis, key).set(key.getBytes(), SerializationUtils.serialize(val));
+            getJdies(shareJedis, key).set(key.getBytes(UTF_8), SerializationUtils.serialize(val));
         } catch (Throwable e) {
             throw new CacheException("Put cache exception.", e);
         } finally {
@@ -131,7 +133,7 @@ public class DefaultRedisClient<T extends Serializable, Object> extends Abstract
         try {
             shareJedis = getShareJedis();
 
-            getJdies(shareJedis, key).setex(key.getBytes(), expiredTime, SerializationUtils.serialize(val));
+            getJdies(shareJedis, key).setex(key.getBytes(UTF_8), expiredTime, SerializationUtils.serialize(val));
         } catch (Throwable e) {
             throw new CacheException("Put cache exception.", e);
         } finally {
@@ -151,7 +153,7 @@ public class DefaultRedisClient<T extends Serializable, Object> extends Abstract
         try {
             shareJedis = getShareJedis();
 
-            byte[] ret = getJdies(shareJedis, key).get(key.getBytes());
+            byte[] ret = getJdies(shareJedis, key).get(key.getBytes(UTF_8));
             if (ret == null) {
                 return null;
             }
@@ -247,7 +249,7 @@ public class DefaultRedisClient<T extends Serializable, Object> extends Abstract
         try {
             shareJedis = getShareJedis();
 
-            getJdies(shareJedis, key).lpush(key.getBytes(), SerializationUtils.serialize(val));
+            getJdies(shareJedis, key).lpush(key.getBytes(UTF_8), SerializationUtils.serialize(val));
 
         } catch (Throwable e) {
             throw new CacheException("lpush cache exception.", e);
@@ -266,7 +268,7 @@ public class DefaultRedisClient<T extends Serializable, Object> extends Abstract
         try {
             shareJedis = getShareJedis();
 
-            getJdies(shareJedis, key).rpush(key.getBytes(), SerializationUtils.serialize(val));
+            getJdies(shareJedis, key).rpush(key.getBytes(UTF_8), SerializationUtils.serialize(val));
 
         } catch (Throwable e) {
             throw new CacheException("rpush cache exception.", e);
@@ -282,7 +284,7 @@ public class DefaultRedisClient<T extends Serializable, Object> extends Abstract
         try {
             shareJedis = getShareJedis();
 
-            byte[] ret = getJdies(shareJedis, key).lpop(key.getBytes());
+            byte[] ret = getJdies(shareJedis, key).lpop(key.getBytes(UTF_8));
 
             if (ret == null) {
                 return null;
@@ -305,7 +307,7 @@ public class DefaultRedisClient<T extends Serializable, Object> extends Abstract
         try {
             shareJedis = getShareJedis();
 
-            byte[] ret = getJdies(shareJedis, key).rpop(key.getBytes());
+            byte[] ret = getJdies(shareJedis, key).rpop(key.getBytes(UTF_8));
 
             if (ret == null) {
                 return null;
@@ -328,7 +330,7 @@ public class DefaultRedisClient<T extends Serializable, Object> extends Abstract
         try {
             shareJedis = getShareJedis();
 
-            byte[] ret = getJdies(shareJedis, key).lindex(key.getBytes(), index);
+            byte[] ret = getJdies(shareJedis, key).lindex(key.getBytes(UTF_8), index);
 
             if (ret == null) {
                 return null;
@@ -368,7 +370,7 @@ public class DefaultRedisClient<T extends Serializable, Object> extends Abstract
         try {
             shareJedis = getShareJedis();
 
-            getJdies(shareJedis, key).hset(key.getBytes(), field.getBytes(), SerializationUtils.serialize(v));
+            getJdies(shareJedis, key).hset(key.getBytes(UTF_8), field.getBytes(), SerializationUtils.serialize(v));
 
         } catch (Throwable e) {
             throw new CacheException("hset cache exception.", e);
@@ -385,7 +387,7 @@ public class DefaultRedisClient<T extends Serializable, Object> extends Abstract
         ShardedJedis shareJedis = getShareJedis();
 
         try {
-            byte[] ret = getJdies(shareJedis, key).hget(key.getBytes(), field.getBytes());
+            byte[] ret = getJdies(shareJedis, key).hget(key.getBytes(UTF_8), field.getBytes(UTF_8));
 
             if (ret == null) {
                 return null;
@@ -409,7 +411,7 @@ public class DefaultRedisClient<T extends Serializable, Object> extends Abstract
         try {
             shareJedis = getShareJedis();
 
-            getJdies(shareJedis, key).hdel(key.getBytes(), field.getBytes());
+            getJdies(shareJedis, key).hdel(key.getBytes(UTF_8), field.getBytes(UTF_8));
         } catch (Throwable e) {
             throw new CacheException("hget cache exception.", e);
         } finally {
@@ -424,7 +426,7 @@ public class DefaultRedisClient<T extends Serializable, Object> extends Abstract
         try {
             shareJedis = getShareJedis();
 
-            return getJdies(shareJedis, key).hlen(key.getBytes());
+            return getJdies(shareJedis, key).hlen(key.getBytes(UTF_8));
         } catch (Throwable e) {
             throw new CacheException("hget cache exception.", e);
         } finally {
@@ -441,7 +443,7 @@ public class DefaultRedisClient<T extends Serializable, Object> extends Abstract
         try {
             shareJedis = getShareJedis();
 
-            getJdies(shareJedis, key).sadd(key.getBytes(), SerializationUtils.serialize(val));
+            getJdies(shareJedis, key).sadd(key.getBytes(UTF_8), SerializationUtils.serialize(val));
 
         } catch (Throwable e) {
             throw new CacheException("sAdd cache exception.", e);
@@ -458,7 +460,7 @@ public class DefaultRedisClient<T extends Serializable, Object> extends Abstract
         try {
             shareJedis = getShareJedis();
 
-            byte[] ret = getJdies(shareJedis, key).spop(key.getBytes());
+            byte[] ret = getJdies(shareJedis, key).spop(key.getBytes(UTF_8));
             if (ret == null) {
                 return null;
             }

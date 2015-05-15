@@ -10,11 +10,14 @@ import java.util.Map;
  * 构建一个短信请求
  */
 public class SmsRequestBuilder {
-    private static final String BASE_URL = "http://smsknl.163.com:8089/servlet/CorpIdentifyNotCheck";
 
-    private final Map<String, String> params = new HashMap<>();
+    private static final String       BASE_URL = "http://smsknl.163.com:8089/servlet/CorpIdentifyNotCheck";
 
-    public SmsRequestBuilder() {
+    private static final String        UTF_8    = "utf-8";
+
+    private final Map<String, String> params   = new HashMap<>();
+
+    public SmsRequestBuilder(){
         // default settings
         add("format", "15");
         add("send_time", String.valueOf(System.currentTimeMillis() / 1000));
@@ -29,16 +32,15 @@ public class SmsRequestBuilder {
     }
 
     public SmsRequestBuilder setRecipients(List<String> recipients) {
-        if (recipients == null || recipients.isEmpty())
-            throw new IllegalArgumentException("sms recipients cannot be empty!");
+        if (recipients == null || recipients.isEmpty()) throw new IllegalArgumentException(
+                                                                                           "sms recipients cannot be empty!");
 
         String phone = "", fromPhone = "";
 
         for (String p : recipients) {
             p = p.trim();
 
-            if (fromPhone.isEmpty())
-                fromPhone = p;
+            if (fromPhone.isEmpty()) fromPhone = p;
 
             phone += p + "|";
         }

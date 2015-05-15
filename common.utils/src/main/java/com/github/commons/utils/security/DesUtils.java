@@ -12,17 +12,18 @@ import javax.crypto.spec.DESKeySpec;
 public class DesUtils {
 
     private final static String ALGORITHM = "DES";
+    public static final String  UTF_8     = "utf-8";
 
     /**
      */
     public final static String decrypt(String data, String key) throws Exception {
-        return new String(decrypt(hex2byte(data.getBytes("utf-8")), key.getBytes()));
+        return new String(decrypt(hex2byte(data.getBytes(UTF_8)), key.getBytes(UTF_8)), UTF_8);
     }
 
     /**
      */
     public final static String encrypt(String data, String key) throws Exception {
-        return byte2hex(encrypt(data.getBytes("utf-8"), key.getBytes()));
+        return byte2hex(encrypt(data.getBytes(UTF_8), key.getBytes(UTF_8)));
     }
 
     // ==============================

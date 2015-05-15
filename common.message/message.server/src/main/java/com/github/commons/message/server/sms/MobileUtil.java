@@ -32,6 +32,8 @@ public class MobileUtil {
 
     private static final String smsGatewayUrl = "http://smsknl.163.com:8089/servlet/CorpIdentifyNotCheck?";
 
+    public static final String  UTF_8         = "utf-8";
+
     private static final int    CONN_TIME_OUT = 5000;
 
     /**
@@ -81,7 +83,7 @@ public class MobileUtil {
 
         try {
             // url 网易企信通的地址
-            StringBuffer smsUrl = new StringBuffer(smsGatewayUrl).append("msgprop=").append(msgprop).append("&message=").append(Tools.HexToStr(message.getBytes())).append("&corpinfo=1").append("&msgtype=0");
+            StringBuffer smsUrl = new StringBuffer(smsGatewayUrl).append("msgprop=").append(msgprop).append("&message=").append(Tools.HexToStr(message.getBytes(UTF_8))).append("&corpinfo=1").append("&msgtype=0");
 
             if (StringUtils.isNotBlank(level)) {
                 smsUrl.append("&level=").append(level);
