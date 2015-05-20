@@ -30,19 +30,19 @@ public class RabbitMqClientTest {
     @Before
     public void before() throws Exception {
         client = new RabbitMqClient();
-        client.setHost("10.240.176.240");
+        client.setHost("127.0.0.1");
 
         // client.setHost("10.240.176.106");
 
         client.setPort(5672);
 
         client.setUserName("admin");
-        client.setPassword("admin");
+        client.setPassword("nRcyVu7MB9");
 
         client.init();
 
-        producer = client.createMqProducer("huey.rabbit.eventqueue");
-        consumer = client.createMqConsumer("huey.rabbit.eventqueue", null);
+        producer = client.createMqProducer("loan_dev");
+        consumer = client.createMqConsumer("loan_dev", null);
     }
 
     @After

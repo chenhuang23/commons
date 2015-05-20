@@ -45,7 +45,7 @@ public class NqsMessageProducer implements MqProducer {
     public boolean sendMessage(byte[] message) {
         assertInited();
 
-        if (message == null || message.length > 0) {
+        if (message == null || message.length == 0) {
             throw new IllegalArgumentException("message can't be null");
         }
 
@@ -123,7 +123,7 @@ public class NqsMessageProducer implements MqProducer {
 
     private void assertInited() {
 
-        if (producer != null) {
+        if (producer == null) {
 
             throw new MqRuntimeException(" producer hasn't inited.");
 

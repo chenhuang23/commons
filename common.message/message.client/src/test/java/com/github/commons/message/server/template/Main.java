@@ -19,7 +19,7 @@ public class Main {
         SimpleMessageCenter messageCenter = context.getBean("messageCenter", SimpleMessageCenter.class);
 
         Map<String, Object> param = new HashMap<String, Object>();
-        param.put("username", "hi.....mike");
+        param.put("username", "<html><head></head><body><h1>hello!!chao.wang</h1></body></html>");
 
         System.out.println(messageCenter.sendEmail("网易小贷,个人邮箱验证", "test.email", param, "hzzhouxiaofeng@corp.netease.com"));
 

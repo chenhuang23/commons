@@ -7,9 +7,12 @@ package com.github.commons.message.server.mail;
 
 import com.github.commons.message.server.MessageException;
 import org.apache.commons.mail.DefaultAuthenticator;
+import org.apache.commons.mail.HtmlEmail;
 import org.apache.commons.mail.SimpleEmail;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+
+import javax.swing.text.html.HTML;
 
 /**
  * MailSender.java
@@ -30,6 +33,46 @@ public class MailSender {
     private int                 port;
 
     private boolean             isDebug;
+
+
+
+    /**
+     * 发送邮件
+     *
+     * @param from
+     * @param to
+     * @param cc
+     * @param bcc
+     * @param subject
+     * @param msg
+     * @return
+     */
+    public void sendHtml(String from, String[] to, String[] cc, String[] bcc, String subject, String msg)
+            throws MessageException {
+
+        HtmlEmail email = new HtmlEmail();
+        // email.setTLS(true); //是否TLS校验，，某些邮箱需要TLS安全校验，同理有SSL校验
+        // email.setSSL(true);
+        email.setDebug(isDebug);
+
+        email.setHostName(smtp);
+        email.setSmtpPort(port);
+
+        email.setAuthenticator(new DefaultAuthenticator(username, password));
+        try {
+            email.setFrom(from == null ? username : from); // 发送方,这里可以写多个
+            if (to != null && to.length > 0) email.addTo(to); // 接收方
+            if (cc != null && cc.length > 0) email.addCc(cc); // 抄送方
+            if (bcc != null && bcc.length > 0) email.addBcc(bcc); // 秘密抄送方
+            email.setSubject(subject); // 标题
+            email.setMsg(msg);// 内容
+            email.setCharset(GB_2312); // 默认
+            email.send();
+        } catch (Throwable e) {
+            logger.error("Send mail exception.", e);
+            throw new MessageException("Send mail exception ", e);
+        }
+    }
 
     /**
      * 发送邮件

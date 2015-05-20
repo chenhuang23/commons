@@ -181,4 +181,6 @@ public interface SimpleCache<T extends Serializable> {
 	 *
 	 */
 	public void incr(String key, int expiredTime) throws CacheException;
+
+
 }

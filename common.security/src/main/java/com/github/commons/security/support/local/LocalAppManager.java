@@ -48,9 +48,6 @@ public class LocalAppManager implements AppConfigurationSpi {
     }
 
     private void initAppConfiguration(Integer step) {
-
-        System.out.println("step:=---> " + step);
-
         switch (step) {
 
             case INIT_SPI_STEP:

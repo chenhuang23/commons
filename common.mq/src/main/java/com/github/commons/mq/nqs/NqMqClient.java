@@ -71,26 +71,31 @@ public class NqMqClient implements MqClient {
             throw new IllegalArgumentException("queueName ca'nt be null");
         }
 
-        ConsumerConfig consumerConfig = new ConsumerConfig();
-        consumerConfig.setProductId(productId);
-        consumerConfig.setQueueName(queueName);
-        consumerConfig.setGroup(StringUtils.isEmpty(group) ? DEF_G_NAME : group);
+        if (simpleMessageSessionFactory != null) {
+            ConsumerConfig consumerConfig = new ConsumerConfig();
+            consumerConfig.setProductId(productId);
+            consumerConfig.setQueueName(queueName);
+            consumerConfig.setGroup(StringUtils.isEmpty(group) ? DEF_G_NAME : group);
 
-        try {
-            return new NqsMessageConsumer(simpleMessageSessionFactory.createConsumer(consumerConfig));
-        } catch (MessageClientException e) {
-            throw new MqRuntimeException("Create nqs consumer exception.", e);
+            try {
+                return new NqsMessageConsumer(simpleMessageSessionFactory.createConsumer(consumerConfig));
+            } catch (MessageClientException e) {
+                throw new MqRuntimeException("Create nqs consumer exception.", e);
+            }
         }
+
+        return null;
 
     }
 
     @Override
     public MqProducer createMqProducer(String queueName) {
 
-        if (simpleMessageSessionFactory == null) {
+        if (simpleMessageSessionFactory != null) {
             ProducerConfig producerConfig = new ProducerConfig();
             producerConfig.setProductId(productId);
             producerConfig.setQueueName(queueName);
+            producerConfig.setRequireConfirm(true);
 
             try {
                 return new NqsMessageProducer(simpleMessageSessionFactory.createProducer(producerConfig));

@@ -116,7 +116,7 @@ public class NqsMessageConsumer implements MqConsumer {
 
     private void assertInited() {
 
-        if (messageConsumer != null) {
+        if (messageConsumer == null) {
 
             throw new MqRuntimeException(" consumer hasn't inited.");
 

@@ -30,7 +30,7 @@ public class NeteaseMailSender implements IMessageSender {
 
         try {
 
-            internalMailSender.send(null, envelop.getRecipients(), null, null, envelop.getTitle(), envelop.getContent());
+            internalMailSender.sendHtml(null, envelop.getRecipients(), null, null, envelop.getTitle(), envelop.getContent());
 
         } catch (Throwable e) {
 
