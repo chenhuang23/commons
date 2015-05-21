@@ -40,4 +40,8 @@ public class NeteaseMailSender implements IMessageSender {
         }
         return true;
     }
+
+    public void setInternalMailSender(MailSender internalMailSender) {
+        this.internalMailSender = internalMailSender;
+    }
 }

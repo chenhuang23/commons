@@ -28,7 +28,7 @@ public class DefaultMessageProcessor implements IMessageProcessor, InitializingB
     private final Map<MessageChannel, IMessageSender> messageSenderMap = new ConcurrentHashMap<>();
 
     @Override
-    public void afterPropertiesSet() throws Exception {
+    public void afterPropertiesSet() {
         for (IMessageSender s : messageSenders)
             messageSenderMap.put(s.getMessageChannel(), s);
     }
@@ -63,4 +63,11 @@ public class DefaultMessageProcessor implements IMessageProcessor, InitializingB
         return messageSenderMap.get(ch);
     }
 
+    public void setTemplateResolver(ITemplateResolver templateResolver) {
+        this.templateResolver = templateResolver;
+    }
+
+    public void setMessageSenders(List<IMessageSender> messageSenders) {
+        this.messageSenders = messageSenders;
+    }
 }
