@@ -35,7 +35,6 @@ import org.slf4j.LoggerFactory;
  */
 public abstract class AbstractCacheClient implements CacheClient {
 
-    private static Logger         log     = LoggerFactory.getLogger(AbstractCacheClient.class);
     protected Map<String, String> config;
     protected String[]            servers;
     protected volatile boolean    isInitd = false;
@@ -106,7 +105,7 @@ public abstract class AbstractCacheClient implements CacheClient {
                 try {
                     return (C) Integer.valueOf(ret);
                 } catch (NumberFormatException e) {
-                    log.error("Format config exception.", e);
+                    // log.error("Format config exception.", e);
                     return defValue;
                 }
             }
@@ -119,7 +118,7 @@ public abstract class AbstractCacheClient implements CacheClient {
                 try {
                     return (C) Long.valueOf(ret);
                 } catch (NumberFormatException e) {
-                    log.error("Format config exception.", e);
+                    // log.error("Format config exception.", e);
                     return defValue;
                 }
             }
@@ -153,5 +152,13 @@ public abstract class AbstractCacheClient implements CacheClient {
         } else {
             return addrs;
         }
+    }
+
+    protected boolean isInitd() {
+        return isInitd;
+    }
+
+    protected void checkInited() {
+        Assert.isTrue("Cache not inited", isInitd);
     }
 }

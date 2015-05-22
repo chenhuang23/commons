@@ -1,10 +1,13 @@
+package test;
+
 import java.io.Serializable;
 
-import com.github.commons.cache.CacheException;
-import com.github.commons.cache.DefaultRedisClient;
-import com.github.commons.cache.RedisClient;
 import org.junit.Before;
 import org.junit.Test;
+
+import com.github.commons.cache.CacheException;
+import com.github.commons.cache.redis.DefaultRedisClient;
+import com.github.commons.cache.redis.RedisClient;
 
 public class RedisClientTest implements Serializable {
 
@@ -13,7 +16,7 @@ public class RedisClientTest implements Serializable {
 
     @Before
     public void init() {
-        redisClient = new DefaultRedisClient<>();
+        redisClient = new DefaultRedisClient();
 
         redisClient.setServers("redis://:xdcsrftest@10.165.124.109:6379");
 
@@ -25,21 +28,21 @@ public class RedisClientTest implements Serializable {
     @Test
     public void putAndGet() throws CacheException {
 
-//        int age = 25;
-//        String name = "mike";
+        // int age = 25;
+        // String name = "mike";
         String key = "test";
-//
-//        User val = new User();
-//        val.setAge(age);
-//        val.setName(name);
-//        this.getRedisClient().put(key, val);
+        //
+        // User val = new User();
+        // val.setAge(age);
+        // val.setName(name);
+        // this.getRedisClient().put(key, val);
 
         User user = this.getRedisClient().get(key);
 
         System.out.println(user);
         org.junit.Assert.assertNotNull(user);
         org.junit.Assert.assertEquals(25, user.getAge());
-//        org.junit.Assert.assertEquals(name, user.getName());
+        // org.junit.Assert.assertEquals(name, user.getName());
 
     }
 
