@@ -12,13 +12,12 @@ import com.github.commons.limit.annotation.LimitMethod;
  *
  * @author zhouxiaofeng 4/29/15
  */
-@LimitFlag
+@LimitFlag(thresholdHandlerRef = "demoThresholdHandler")
 public class LimitDemo {
 
-    @LimitMethod(threshold = 10)
+    @LimitMethod(threshold = 5)
     public void sayHello() {
-
-        // System.out.println("hello......");
+        // System.out.println("--------hello--------");
 
     }
 }

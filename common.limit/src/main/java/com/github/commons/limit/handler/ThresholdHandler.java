@@ -21,11 +21,19 @@ import org.aopalliance.intercept.MethodInvocation;
 public interface ThresholdHandler {
 
     /**
+     * 初期检查,权限检查
+     *
+     * @param methodInvocation
+     * @return
+     */
+    public boolean permission(MethodInvocation methodInvocation) throws LimitException;
+
+    /**
      * 处理当前的调用,这里对各种异常都不会处理
      * 
      * @param methodInvocation 当前调用的方法
      */
-    public void handler(MethodInvocation methodInvocation) throws LimitException;
+    public void handlerFailed(MethodInvocation methodInvocation) throws LimitException;
 
     public void setClassName(String name);
 

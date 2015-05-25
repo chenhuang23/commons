@@ -8,4 +8,6 @@
 
     <bean id="demo" class="LimitDemo"/>
 
+    <bean id="demoThresholdHandler" class="DemoThresholdHandler"/>
+
 </beans>

@@ -16,7 +16,7 @@ import java.util.concurrent.atomic.AtomicInteger;
  *
  * @author zhouxiaofeng 4/29/15
  */
-public class Spy implements ThresholdHandler {
+public class Spy {
 
     private ThresholdSynchronizer thresholdSynchronizer;
     private ThresholdHandler      handler;
@@ -36,11 +36,10 @@ public class Spy implements ThresholdHandler {
      */
     public boolean entry(MethodInvocation methodInvocation) {
 
+        // 检查阀值 和 权限
         if (count.incrementAndGet() <= thresholdSynchronizer.fetch()) {
             return true;
         }
-
-        handler.handler(methodInvocation);
 
         return false;
     }
@@ -56,17 +55,18 @@ public class Spy implements ThresholdHandler {
         return count.get();
     }
 
-    @Override
-    public void handler(MethodInvocation methodInvocation) {
-        handler.handler(methodInvocation);
+    public boolean permission(MethodInvocation methodInvocation) {
+        return handler.permission(methodInvocation);
     }
 
-    @Override
+    public void failEntry(MethodInvocation methodInvocation) {
+        handler.handlerFailed(methodInvocation);
+    }
+
     public void setClassName(String name) {
         this.className = name;
     }
 
-    @Override
     public String getClassName() {
         return className;
     }

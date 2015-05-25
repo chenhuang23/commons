@@ -24,9 +24,10 @@ public class Test {
 
         demo = ctx.getBean("demo", LimitDemo.class);
 
-        ExecutorService executorService = Executors.newFixedThreadPool(10);
+        ExecutorService executorService = Executors.newFixedThreadPool(20);
 
-        for (int i = 0; i < 10; i++) {
+        for (int i = 0; i < 20; i++) {
+            // System.out.println("start--" + i);
             executorService.submit(new Work(i));
         }
 
@@ -58,12 +59,12 @@ public class Test {
                 try {
                     demo.sayHello();
                 } catch (Throwable e) {
-                    e.printStackTrace();
+                    System.out.println("-------<<>>>>>" + index);
                 }
                 // System.out.println(index + ":" + " work.....");
 
                 try {
-                    TimeUnit.MILLISECONDS.sleep(1200);
+                    TimeUnit.MILLISECONDS.sleep(100);
                 } catch (InterruptedException e) {
                     e.printStackTrace();
                 }

@@ -19,4 +19,10 @@ import java.lang.annotation.Target;
 @Retention(RetentionPolicy.RUNTIME)
 public @interface LimitFlag {
 
+    /**
+     * 处理器的beanName,不填写为默认配置
+     *
+     * @return
+     */
+    String thresholdHandlerRef() default "";
 }

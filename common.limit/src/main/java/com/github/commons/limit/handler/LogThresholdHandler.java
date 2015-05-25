@@ -22,7 +22,7 @@ public class LogThresholdHandler implements ThresholdHandler {
     private String              className;
 
     @Override
-    public void handler(MethodInvocation methodInvocation) throws LimitException {
+    public void handlerFailed(MethodInvocation methodInvocation) throws LimitException {
 
         logger.error("Method is exceed limit. {}-{}", className, methodInvocation.getMethod());
 
@@ -38,5 +38,10 @@ public class LogThresholdHandler implements ThresholdHandler {
     @Override
     public String getClassName() {
         return className;
+    }
+
+    @Override
+    public boolean permission(MethodInvocation methodInvocation) throws LimitException {
+        return true;
     }
 }

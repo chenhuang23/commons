@@ -10,6 +10,7 @@ import java.util.HashMap;
 import java.util.Map;
 import java.util.concurrent.TimeUnit;
 
+import com.github.commons.limit.exception.LimitException;
 import org.aopalliance.intercept.MethodInterceptor;
 import org.aopalliance.intercept.MethodInvocation;
 import org.slf4j.Logger;
@@ -83,10 +84,16 @@ public class LimitAnnotationPostProcessor implements BeanFactoryPostProcessor, B
         // 找到存在limit的类
         if (bean.getClass().isAnnotationPresent(LimitFlag.class)) {
 
+            LimitFlag limitFlag = bean.getClass().getAnnotation(LimitFlag.class);
+            String thresholdHandlerRef = null;
+            if (limitFlag != null) {
+                thresholdHandlerRef = limitFlag.thresholdHandlerRef();
+            }
+
             Map<String, Spy> spyMap = new HashMap<String, Spy>();
 
             // 配置spy
-            spyMethodConfig(bean, spyMap);
+            spyMethodConfig(bean, thresholdHandlerRef, spyMap);
 
             // register engine
             engine.add(bean.getClass().getName(), spyMap);
@@ -109,7 +116,7 @@ public class LimitAnnotationPostProcessor implements BeanFactoryPostProcessor, B
      * @param bean
      * @param spyMap
      */
-    private void spyMethodConfig(Object bean, Map<String, Spy> spyMap) {
+    private void spyMethodConfig(Object bean, String thresholdHandlerRef, Map<String, Spy> spyMap) {
         Method[] methods = bean.getClass().getDeclaredMethods();
 
         if (methods != null) {
@@ -119,11 +126,13 @@ public class LimitAnnotationPostProcessor implements BeanFactoryPostProcessor, B
 
                     LimitMethod annotation = method.getAnnotation(LimitMethod.class);
 
-                    int threshold = thresholdConfig(annotation);
-
                     // 处理器
                     String thresholdHandlerStr = annotation.thresholdHandlerRef();
                     ThresholdHandler thresholdHandler = null;
+
+                    if (thresholdHandlerStr == null || "".equals(thresholdHandlerStr)) {
+                        thresholdHandlerStr = thresholdHandlerRef;
+                    }
 
                     if (thresholdHandlerStr != null && !"".equals(thresholdHandlerStr)) {
                         thresholdHandler = applicationContext.getBean(thresholdHandlerStr, ThresholdHandler.class);
@@ -241,32 +250,35 @@ public class LimitAnnotationPostProcessor implements BeanFactoryPostProcessor, B
 
             logger.debug("before invoke...{}", methodInvocation);
 
+            Object obj = null;
+
             if (engine.isOn()) {
 
                 Spy spy = spyMap.get(methodInvocation.getMethod().getName());
-                try {
-                    if (spy.entry(methodInvocation)) {
+                if (spy.permission(methodInvocation)) {
+                    try {
 
-                        logger.debug("limit entry before invoke...{}", methodInvocation);
+                        if (spy.entry(methodInvocation)) {
 
-                        Object obj = methodInvocation.proceed();
+                            logger.debug("limit entry before invoke...{}", methodInvocation);
 
-                        logger.debug("limit entry after invoke...{}", methodInvocation);
+                            obj = methodInvocation.proceed();
 
-                        return obj;
-                    } else {
+                            logger.debug("limit entry after invoke...{}", methodInvocation);
 
-                        logger.debug("limit entry failed invoke...{}", methodInvocation);
+                        } else {
 
-                        spy.handler(methodInvocation);
+                            logger.debug("limit entry failed invoke...{}", methodInvocation);
+
+                            spy.failEntry(methodInvocation);
+                        }
+                    } finally {
+                        spy.release();
                     }
-                } finally {
-                    spy.release();
                 }
-
+            } else {
+                obj = methodInvocation.proceed();
             }
-
-            Object obj = methodInvocation.proceed();
 
             logger.debug("after invoke...{}", methodInvocation);
 
