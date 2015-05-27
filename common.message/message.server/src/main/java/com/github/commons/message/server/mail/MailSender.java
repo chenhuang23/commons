@@ -8,6 +8,7 @@ package com.github.commons.message.server.mail;
 import com.github.commons.message.server.MessageException;
 import org.apache.commons.mail.DefaultAuthenticator;
 import org.apache.commons.mail.HtmlEmail;
+import org.apache.commons.mail.MultiPartEmail;
 import org.apache.commons.mail.SimpleEmail;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -88,7 +89,7 @@ public class MailSender {
     public void send(String from, String[] to, String[] cc, String[] bcc, String subject, String msg)
                                                                                                      throws MessageException {
 
-        SimpleEmail email = new SimpleEmail();
+        MultiPartEmail email = new MultiPartEmail();
         // email.setTLS(true); //是否TLS校验，，某些邮箱需要TLS安全校验，同理有SSL校验
         // email.setSSL(true);
         email.setDebug(isDebug);
@@ -97,6 +98,7 @@ public class MailSender {
         email.setSmtpPort(port);
 
         email.setAuthenticator(new DefaultAuthenticator(username, password));
+
         try {
             email.setFrom(from == null ? username : from); // 发送方,这里可以写多个
             if (to != null && to.length > 0) email.addTo(to); // 接收方

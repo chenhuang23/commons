@@ -4,6 +4,7 @@ import static org.apache.http.HttpStatus.SC_OK;
 
 import java.io.IOException;
 import java.io.InputStream;
+import java.io.UnsupportedEncodingException;
 import java.net.URL;
 import java.util.List;
 import java.util.regex.Matcher;
@@ -32,9 +33,8 @@ public class MobileUtil {
 
     private static final String smsGatewayUrl = "http://smsknl.163.com:8089/servlet/CorpIdentifyNotCheck?";
 
-    public static final String  UTF_8         = "utf-8";
-
     private static final int    CONN_TIME_OUT = 5000;
+    public static final String  GBK           = "GBK";
 
     /**
      * 验证手机号的有效性，规则6-20位的纯数字字符串
@@ -83,7 +83,7 @@ public class MobileUtil {
 
         try {
             // url 网易企信通的地址
-            StringBuffer smsUrl = new StringBuffer(smsGatewayUrl).append("msgprop=").append(msgprop).append("&message=").append(Tools.HexToStr(message.getBytes(UTF_8))).append("&corpinfo=1").append("&msgtype=0");
+            StringBuffer smsUrl = new StringBuffer(smsGatewayUrl).append("msgprop=").append(msgprop).append("&message=").append(Tools.HexToStr(message.getBytes(GBK))).append("&corpinfo=1").append("&msgtype=0");
 
             if (StringUtils.isNotBlank(level)) {
                 smsUrl.append("&level=").append(level);
@@ -194,5 +194,13 @@ public class MobileUtil {
         }
 
         return sb.toString();
+    }
+
+    public static void main(String[] args) throws UnsupportedEncodingException {
+
+        MobileUtil sms = new MobileUtil();
+
+        // System.out.println(Tools.HexToStr("测试一下".getBytes("GBK")));
+        sms.sendTxtSms("测试测试啦", "123", "0", "13588461183");
     }
 }
