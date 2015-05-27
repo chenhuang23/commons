@@ -11,13 +11,13 @@ package com.github.commons.datasource;
  *
  */
 
-import com.github.commons.datasource.FetchDataSourcesConfigSpi;
-import com.github.commons.utils.format.JsonUtils;
-import com.github.diamond.client.spring.MessagePropertyPlaceholderConfigurer;
-import org.springframework.context.ApplicationContext;
-
 import java.util.Map;
 import java.util.Properties;
+
+import org.springframework.context.ApplicationContext;
+
+import com.github.commons.utils.format.JsonUtils;
+import com.github.diamond.client.spring.MessagePropertyPlaceholderConfigurer;
 
 /**
  * DefaultFetchDataSourceConfig.java
@@ -27,6 +27,8 @@ import java.util.Properties;
 public class DefaultFetchDataSourceConfig implements FetchDataSourcesConfigSpi {
 
     private ApplicationContext applicationContext;
+
+    private String             dataSourceKey = "commonDatasSource";
 
     @Override
     public Properties fetchConfigProp() {
@@ -39,7 +41,7 @@ public class DefaultFetchDataSourceConfig implements FetchDataSourcesConfigSpi {
 
         MessagePropertyPlaceholderConfigurer messagePropertyPlaceholderConfigurer = beansOfType.values().iterator().next();
 
-        Object mysqlDatasSource = messagePropertyPlaceholderConfigurer.getContextProperty("commonDatasSource");
+        Object mysqlDatasSource = messagePropertyPlaceholderConfigurer.getContextProperty(dataSourceKey);
 
         if (mysqlDatasSource == null || !(mysqlDatasSource instanceof String)) {
             return null;
@@ -53,5 +55,9 @@ public class DefaultFetchDataSourceConfig implements FetchDataSourcesConfigSpi {
 
         this.applicationContext = applicationContext;
 
+    }
+
+    public void setDataSourceKey(String dataSourceKey) {
+        this.dataSourceKey = dataSourceKey;
     }
 }

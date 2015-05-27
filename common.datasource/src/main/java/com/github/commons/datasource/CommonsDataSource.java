@@ -18,20 +18,22 @@ import org.springframework.beans.factory.DisposableBean;
 import org.springframework.beans.factory.FactoryBean;
 import org.springframework.context.ApplicationContext;
 import org.springframework.context.ApplicationContextAware;
+import org.springframework.util.Assert;
 
 /**
  * @author zhouxiaofeng 3/17/15
  */
 public class CommonsDataSource implements FactoryBean<DataSource>, ApplicationContextAware, DisposableBean {
 
-    private static final Logger logger = LoggerFactory.getLogger(CommonsDataSource.class);
+    private static final Logger       logger = LoggerFactory.getLogger(CommonsDataSource.class);
 
-    private ApplicationContext  applicationContext;
-    private DataSource          dataSource;
+    private ApplicationContext        applicationContext;
+    private DataSource                dataSource;
+    private String                    dataSourceName;
+    private FetchDataSourcesConfigSpi fetchDataSourcesConfigSpi;
+    private DataSourceConfigSpi       dataSourceConfigSpi;
 
-    private String              dataSourceName;
-
-    private volatile Object     lock   = new Object();
+    private volatile Object           lock   = new Object();
 
     @Override
     public DataSource getObject() throws Exception {
@@ -53,46 +55,59 @@ public class CommonsDataSource implements FactoryBean<DataSource>, ApplicationCo
                 return dataSource;
             }
 
-            ServiceLoader<DataSourceConfigSpi> dataSourceConfigloader = ServiceLoader.load(DataSourceConfigSpi.class);
-
-            if (dataSourceConfigloader != null) {
-
-                for (DataSourceConfigSpi config : dataSourceConfigloader)
-                    if (config != null && config.getName().equals(dataSourceName)) {
-
-                        ServiceLoader<FetchDataSourcesConfigSpi> fetchDataSourcesConfigSpis = ServiceLoader.load(FetchDataSourcesConfigSpi.class);
-
-                        Properties properties = null;
-
-                        if (fetchDataSourcesConfigSpis != null) {
-
-                            for (FetchDataSourcesConfigSpi fetch : fetchDataSourcesConfigSpis)
-                                if (fetch != null) {
-
-                                    fetch.setApplicationContext(this.applicationContext);
-                                    properties = fetch.fetchConfigProp();
-                                }
-                        }
-
-                        if (properties == null) {
-                            return null;
-                        }
-
-                        if (dataSource == null) {
-                            dataSource = config.createDateSource(properties);
-                        }
-
-                        if (dataSource != null) {
-                            break;
-                        }
-                    }
+            if (dataSourceConfigSpi == null) {
+                initDataSourceConfig();
+                Assert.notNull(dataSourceConfigSpi);
             }
+
+            if (fetchDataSourcesConfigSpi == null) {
+                initFetchDataSourcesConfig();
+                Assert.notNull(fetchDataSourcesConfigSpi);
+            }
+
+            fetchDataSourcesConfigSpi.setApplicationContext(this.applicationContext);
+            Properties properties = fetchDataSourcesConfigSpi.fetchConfigProp();
+
+            Assert.notNull(properties);
+
+            if (dataSource == null) {
+                dataSource = dataSourceConfigSpi.createDateSource(properties);
+            }
+
         }
 
         logger.debug("[Common-datasource] dataSource: " + dataSource);
 
         return dataSource;
 
+    }
+
+    private void initFetchDataSourcesConfig() {
+        ServiceLoader<FetchDataSourcesConfigSpi> fetchDataSourcesConfigSpis = ServiceLoader.load(FetchDataSourcesConfigSpi.class);
+
+        if (fetchDataSourcesConfigSpis != null) {
+
+            for (FetchDataSourcesConfigSpi fetch : fetchDataSourcesConfigSpis)
+                if (fetch != null) {
+
+                    fetchDataSourcesConfigSpi = fetch;
+                }
+        }
+    }
+
+    private void initDataSourceConfig() {
+        ServiceLoader<DataSourceConfigSpi> dataSourceConfigloader = ServiceLoader.load(DataSourceConfigSpi.class);
+
+        if (dataSourceConfigloader != null) {
+
+            for (DataSourceConfigSpi config : dataSourceConfigloader)
+                if (config != null && config.getName().equals(dataSourceName)) {
+
+                    dataSourceConfigSpi = config;
+                    return;
+
+                }
+        }
     }
 
     @Override
@@ -132,5 +147,13 @@ public class CommonsDataSource implements FactoryBean<DataSource>, ApplicationCo
         if (dataSource != null && dataSource instanceof Closeable) {
             ((Closeable) dataSource).close();
         }
+    }
+
+    public void setFetchDataSourcesConfigSpi(FetchDataSourcesConfigSpi fetchDataSourcesConfigSpi) {
+        this.fetchDataSourcesConfigSpi = fetchDataSourcesConfigSpi;
+    }
+
+    public void setDataSourceConfigSpi(DataSourceConfigSpi dataSourceConfigSpi) {
+        this.dataSourceConfigSpi = dataSourceConfigSpi;
     }
 }
