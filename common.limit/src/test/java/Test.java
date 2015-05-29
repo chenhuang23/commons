@@ -64,7 +64,7 @@ public class Test {
                 // System.out.println(index + ":" + " work.....");
 
                 try {
-                    TimeUnit.MILLISECONDS.sleep(100);
+                    TimeUnit.MILLISECONDS.sleep(1000);
                 } catch (InterruptedException e) {
                     e.printStackTrace();
                 }

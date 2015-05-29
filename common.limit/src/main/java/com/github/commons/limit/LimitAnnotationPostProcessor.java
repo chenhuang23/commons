@@ -86,14 +86,16 @@ public class LimitAnnotationPostProcessor implements BeanFactoryPostProcessor, B
 
             LimitFlag limitFlag = bean.getClass().getAnnotation(LimitFlag.class);
             String thresholdHandlerRef = null;
+            boolean thresholdHandleByType = false;
             if (limitFlag != null) {
                 thresholdHandlerRef = limitFlag.thresholdHandlerRef();
+                thresholdHandleByType = limitFlag.thresholdHandleByType();
             }
 
             Map<String, Spy> spyMap = new HashMap<String, Spy>();
 
             // 配置spy
-            spyMethodConfig(bean, thresholdHandlerRef, spyMap);
+            spyMethodConfig(bean, thresholdHandlerRef, thresholdHandleByType, spyMap);
 
             // register engine
             engine.add(bean.getClass().getName(), spyMap);
@@ -116,7 +118,8 @@ public class LimitAnnotationPostProcessor implements BeanFactoryPostProcessor, B
      * @param bean
      * @param spyMap
      */
-    private void spyMethodConfig(Object bean, String thresholdHandlerRef, Map<String, Spy> spyMap) {
+    private void spyMethodConfig(Object bean, String thresholdHandlerRef, boolean thresholdHandleByType,
+                                 Map<String, Spy> spyMap) {
         Method[] methods = bean.getClass().getDeclaredMethods();
 
         if (methods != null) {
@@ -135,12 +138,27 @@ public class LimitAnnotationPostProcessor implements BeanFactoryPostProcessor, B
                     }
 
                     if (thresholdHandlerStr != null && !"".equals(thresholdHandlerStr)) {
-                        thresholdHandler = applicationContext.getBean(thresholdHandlerStr, ThresholdHandler.class);
+                        try {
+                            thresholdHandler = applicationContext.getBean(thresholdHandlerStr, ThresholdHandler.class);
+                        } catch (BeansException ex) {
+                            logger.debug("Get ThresholdHandler by name exceptin.", ex);
+                        }
+                    }
+
+                    if (thresholdHandler == null && thresholdHandleByType) {
+
+                        try {
+                            thresholdHandler = applicationContext.getBean(ThresholdHandler.class);
+                        } catch (BeansException ex) {
+                            logger.debug("Get ThresholdHandler by type exceptin.", ex);
+                        }
                     }
 
                     if (thresholdHandler == null) {
+                        logger.debug("Use default ThresholdHandler [LogThresholdHandler]");
                         thresholdHandler = new LogThresholdHandler();
                     }
+
                     thresholdHandler.setClassName(bean.getClass().getName());
                     spyMap.put(method.getName(), new Spy(bean.getClass().getName(), thresholdHandler,
                                                          new Spy.ThresholdSynchronizer(env, annotation.threshold(),

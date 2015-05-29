@@ -55,11 +55,11 @@ public class Spy {
         return count.get();
     }
 
-    public boolean permission(MethodInvocation methodInvocation) {
+    public boolean permission(MethodInvocation methodInvocation) throws Exception{
         return handler.permission(methodInvocation);
     }
 
-    public void failEntry(MethodInvocation methodInvocation) {
+    public void failEntry(MethodInvocation methodInvocation) throws Exception{
         handler.handlerFailed(methodInvocation);
     }
 

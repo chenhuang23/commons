@@ -12,7 +12,7 @@ import com.github.commons.limit.annotation.LimitMethod;
  *
  * @author zhouxiaofeng 4/29/15
  */
-@LimitFlag(thresholdHandlerRef = "demoThresholdHandler")
+@LimitFlag
 public class LimitDemo {
 
     @LimitMethod(threshold = 5)

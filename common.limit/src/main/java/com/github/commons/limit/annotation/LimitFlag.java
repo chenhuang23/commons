@@ -25,4 +25,11 @@ public @interface LimitFlag {
      * @return
      */
     String thresholdHandlerRef() default "";
+
+    /**
+     * 使用 ThresholdHandle 类型注入
+     *
+     * @return
+     */
+    boolean thresholdHandleByType() default true;
 }
