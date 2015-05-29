@@ -5,7 +5,6 @@
  */
 package com.github.commons.limit.handler;
 
-import com.github.commons.limit.exception.LimitException;
 import org.aopalliance.intercept.MethodInvocation;
 
 /**
@@ -26,14 +25,14 @@ public interface ThresholdHandler {
      * @param methodInvocation
      * @return
      */
-    public boolean permission(MethodInvocation methodInvocation) throws LimitException;
+    public boolean permission(MethodInvocation methodInvocation) throws Exception;
 
     /**
      * 处理当前的调用,这里对各种异常都不会处理
      * 
      * @param methodInvocation 当前调用的方法
      */
-    public void handlerFailed(MethodInvocation methodInvocation) throws LimitException;
+    public void handlerFailed(MethodInvocation methodInvocation) throws Exception;
 
     public void setClassName(String name);
 
