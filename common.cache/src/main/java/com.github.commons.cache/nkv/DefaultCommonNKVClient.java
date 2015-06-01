@@ -28,21 +28,21 @@ import com.netease.backend.nkv.client.impl.DefaultNkvClient;
  */
 public class DefaultCommonNKVClient extends AbstractCacheClient implements NKVClient {
 
-    public static final int MIN_COMPRESS_THRESHOLD = 1024;
-    public static final String UTF_8 = "utf-8";
-    public static final int DEFAULT_VAL = 0;
-    private DefaultNkvClient client;
+    public static final int     MIN_COMPRESS_THRESHOLD = 1024;
+    public static final String  UTF_8                  = "utf-8";
+    public static final int     DEFAULT_VAL            = 0;
+    private DefaultNkvClient    client;
 
-    private String nameSpace;
-    private String masterUrl;
-    private String slaveUrl;
-    private String group;
-    private boolean compressEnable = true;
-    private boolean fastCompressed = true;
-    private int compressThreshold;
-    private long timeOut = 2000;
+    private String              nameSpace;
+    private String              masterUrl;
+    private String              slaveUrl;
+    private String              group;
+    private boolean             compressEnable         = true;
+    private boolean             fastCompressed         = true;
+    private int                 compressThreshold;
+    private long                timeOut                = 2000;
 
-    private NkvClient.NkvOption option = null;
+    private NkvClient.NkvOption option                 = null;
 
     @Override
     public void init() {
@@ -115,8 +115,11 @@ public class DefaultCommonNKVClient extends AbstractCacheClient implements NKVCl
         Assert.isTrue("expiredTime must large 0.", expiredTime > 0);
 
         try {
-            client.put(nameSpace, getByteArray(key), getByteArray(String.valueOf(val)),
-                    new NkvClient.NkvOption(expiredTime));
+
+            NkvClient.NkvOption nkvOption = new NkvClient.NkvOption(timeOut);
+            nkvOption.setExpireTime(expiredTime);
+
+            client.put(nameSpace, getByteArray(key), getByteArray(String.valueOf(val)), nkvOption);
 
         } catch (Throwable ex) {
             throw new CacheException("Put cache exception.", ex);
@@ -170,7 +173,7 @@ public class DefaultCommonNKVClient extends AbstractCacheClient implements NKVCl
 
                 @Override
                 public java.lang.Object get(long timeout, TimeUnit unit) throws InterruptedException,
-                        ExecutionException, TimeoutException {
+                                                                        ExecutionException, TimeoutException {
                     Result<byte[]> result = async.get(timeout, unit);
 
                     if (result.getCode().equals(Result.ResultCode.OK)) {
@@ -228,7 +231,7 @@ public class DefaultCommonNKVClient extends AbstractCacheClient implements NKVCl
         }
 
         throw new CacheException(MessageFormat.format("get cache failed. {1}",
-                result != null ? result.getCode() : "Null code"));
+                                                      result != null ? result.getCode() : "Null code"));
     }
 
     @Override
@@ -253,7 +256,9 @@ public class DefaultCommonNKVClient extends AbstractCacheClient implements NKVCl
 
         Result<byte[]> result = null;
         try {
-            client.incr(nameSpace, getByteArray(key), by, DEFAULT_VAL, option);
+            NkvClient.NkvOption nkvOption = new NkvClient.NkvOption(timeOut);
+            nkvOption.setExpireTime(expiredTime);
+            client.incr(nameSpace, getByteArray(key), by, DEFAULT_VAL, nkvOption);
 
         } catch (Throwable ex) {
             throw new CacheException("get cache exception.", ex);
@@ -268,7 +273,9 @@ public class DefaultCommonNKVClient extends AbstractCacheClient implements NKVCl
 
         Result<byte[]> result = null;
         try {
-            client.decr(nameSpace, getByteArray(key), by, DEFAULT_VAL, option);
+            NkvClient.NkvOption nkvOption = new NkvClient.NkvOption(timeOut);
+            nkvOption.setExpireTime(expiredTime);
+            client.decr(nameSpace, getByteArray(key), by, DEFAULT_VAL, nkvOption);
 
         } catch (Throwable ex) {
             throw new CacheException("get cache exception.", ex);

@@ -213,6 +213,7 @@ public class DefaultRedisClient<T extends Serializable, Object> extends Abstract
             shareJedis = getShareJedis();
 
             getJdies(shareJedis, key).incrBy(key, by);
+            getJdies(shareJedis, key).expire(key, expiredTime);
 
         } catch (Throwable e) {
             throw new CacheException("incr cache exception.", e);
