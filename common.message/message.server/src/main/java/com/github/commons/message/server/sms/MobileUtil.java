@@ -110,7 +110,7 @@ public class MobileUtil {
 
             resultstr = openUrl(smsUrl.toString());
 
-            log.debug("[RESULT] subUrl - {} - result: ", smsUrl.toString(), resultstr);
+            log.debug("[RESULT] subUrl - {} - result: {}", smsUrl.toString(), resultstr);
 
         } catch (Throwable e) {
             throw new MessageException("Send sms exception.", e);

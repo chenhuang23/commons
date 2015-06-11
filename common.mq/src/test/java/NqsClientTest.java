@@ -1,3 +1,5 @@
+import com.github.commons.mq.domain.ConsumerHandler;
+import com.github.commons.mq.domain.MqMessage;
 import com.netease.cloud.nqs.client.ClientConfig;
 import org.junit.*;
 
@@ -32,8 +34,11 @@ public class NqsClientTest {
 
         client.init();
 
-        producer = client.createMqProducer("huey.rabbit.test");
-        consumer = client.createMqConsumer("huey.rabbit.test", null);
+        producer = client.createMqProducer("huey.rabbit.resultqueue");
+        consumer = client.createMqConsumer("huey.rabbit.resultqueue", null);
+
+        // producer = client.createMqProducer("loan_dev");
+        // consumer = client.createMqConsumer("loan_dev", null);
     }
 
     @After
@@ -51,4 +56,19 @@ public class NqsClientTest {
 
     }
 
+    @Test
+    public void testConsumer() {
+
+        consumer.consumeMessage(new ConsumerHandler() {
+
+            @Override
+            public boolean handler(MqMessage msg) {
+
+                System.out.println(new String(msg.getMessage()));
+
+                return true;
+            }
+        });
+
+    }
 }

@@ -59,6 +59,8 @@ public class RabbitMessageConsumer implements MqConsumer {
             try {
                 result = handler.handler(new RabbitMessage(delivery.getBody()));
 
+            } catch (Throwable e) {
+                logger.error("Comsumer message exception.", e);
             } finally {
 
                 final QueueingConsumer.Delivery innerDelivery = delivery;
@@ -94,6 +96,7 @@ public class RabbitMessageConsumer implements MqConsumer {
         }
 
         service.submit(new Runnable() {
+
             @Override
             public void run() {
                 consumeMessage(handler);

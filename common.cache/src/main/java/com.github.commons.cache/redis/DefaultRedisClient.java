@@ -175,6 +175,24 @@ public class DefaultRedisClient<T extends Serializable, Object> extends Abstract
         }
     }
 
+    public byte[] getBytes(String key) throws CacheException {
+        // 1. 检查参数
+        checkInited();
+        Assert.isNotBlank("key is blank.", key);
+
+        ShardedJedis shareJedis = null;
+        try {
+            shareJedis = getShareJedis();
+
+            return getJdies(shareJedis, key).get(key.getBytes(UTF_8));
+
+        } catch (Throwable e) {
+            throw new CacheException("get cache exception.", e);
+        } finally {
+            retShareJedis(shareJedis);
+        }
+    }
+
     public void delete(String key) throws CacheException {
         // 1. 检查参数
         checkInited();
@@ -201,7 +219,7 @@ public class DefaultRedisClient<T extends Serializable, Object> extends Abstract
      * @param expiredTime
      * @throws CacheException
      */
-    public void incr(String key, int by, int expiredTime) throws CacheException {
+    public Integer incr(String key, int by, int expiredTime) throws CacheException {
 
         // 1. 检查参数
         checkInited();
@@ -212,8 +230,12 @@ public class DefaultRedisClient<T extends Serializable, Object> extends Abstract
         try {
             shareJedis = getShareJedis();
 
-            getJdies(shareJedis, key).incrBy(key, by);
+            Long aLong = getJdies(shareJedis, key).incrBy(key, (long) by);
             getJdies(shareJedis, key).expire(key, expiredTime);
+
+            if (aLong != null) {
+                return aLong.intValue();
+            }
 
         } catch (Throwable e) {
             throw new CacheException("incr cache exception.", e);
@@ -221,6 +243,7 @@ public class DefaultRedisClient<T extends Serializable, Object> extends Abstract
             retShareJedis(shareJedis);
         }
 
+        return null;
     }
 
     /**
@@ -231,7 +254,7 @@ public class DefaultRedisClient<T extends Serializable, Object> extends Abstract
      * @param expiredTime
      * @throws CacheException
      */
-    public void decr(String key, int by, int expiredTime) throws CacheException {
+    public Integer decr(String key, int by, int expiredTime) throws CacheException {
         // 1. 检查参数
         checkInited();
         Assert.isNotBlank("key is blank.", key);
@@ -239,8 +262,12 @@ public class DefaultRedisClient<T extends Serializable, Object> extends Abstract
         try {
             shareJedis = getShareJedis();
 
-            getJdies(shareJedis, key).decrBy(key, by);
+            Long aLong = getJdies(shareJedis, key).decrBy(key, by);
             getJdies(shareJedis, key).expire(key, expiredTime);
+
+            if (aLong != null) {
+                return aLong.intValue();
+            }
 
         } catch (Throwable e) {
             throw new CacheException("incr cache exception.", e);
@@ -248,6 +275,7 @@ public class DefaultRedisClient<T extends Serializable, Object> extends Abstract
             retShareJedis(shareJedis);
         }
 
+        return null;
     }
 
     public void expire(String key, int expiredTime) throws CacheException {

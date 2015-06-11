@@ -5,9 +5,11 @@
  */
 package com.github.commons.security;
 
+import com.github.commons.security.config.SecKey;
 import com.github.commons.security.constants.EncryptType;
 import com.github.commons.security.constants.SecPolicy;
 import com.github.commons.security.support.CodecTool;
+import com.github.commons.security.support.ReqParams;
 import com.github.commons.security.support.local.codec.LocalCodecTools;
 import org.springframework.beans.BeansException;
 import org.springframework.context.ApplicationContext;
@@ -41,6 +43,11 @@ public class CodecToolsFacade implements CodecTool {
     @Override
     public String encode(String plainText, EncryptType type) {
         return tool.encode(plainText, type);
+    }
+
+    @Override
+    public SecKey getSecKey(ReqParams params) {
+        return tool.getSecKey(params);
     }
 
 }

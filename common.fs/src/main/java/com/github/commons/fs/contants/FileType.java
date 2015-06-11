@@ -12,6 +12,8 @@ package com.github.commons.fs.contants;
  */
 public enum FileType {
 
+    // 图片的链接
+    IMG_URL("img_url"),
     // 图
     IMG("img"),
 

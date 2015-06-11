@@ -5,6 +5,7 @@
  */
 package nos;
 
+import com.github.commons.fs.UserMetadata;
 import com.github.commons.fs.contants.FileType;
 import com.github.commons.fs.nos.NosFileSystem;
 import com.github.commons.fs.utils.ImageUtils;
@@ -18,6 +19,7 @@ import javax.imageio.ImageIO;
 import javax.imageio.metadata.IIOMetadataFormatImpl;
 import java.awt.image.BufferedImage;
 import java.io.*;
+import java.net.URL;
 
 /**
  * TestNosFileSystem.java
@@ -45,9 +47,21 @@ public class TestNosFileSystem {
 
     @Test
     public void testTestWriteFile() throws Exception {
-        InputStream resourceAsStream = TestNosFileSystem.class.getResourceAsStream("/11.jpg");
 
-        system.writeFile("test_file_jpg_yyyy.jpg", FileType.IMG, resourceAsStream);
+        String urlPath = "http://e.hiphotos.baidu.com/baike/w%3D268/sign=06657b30ec50352ab161220e6b42fb1a/7aec54e736d12f2e85aedae74ac2d56284356889.jpg";
+
+        system.writeFile("test_shenfen__yyyy1.jpg", FileType.IMG, urlPath);
+
+    }
+
+    @Test
+    public void testTestWriteFile2() throws Exception {
+
+        InputStream resourceAsStream = TestNosFileSystem.class.getResourceAsStream("/back.jpg");
+        BufferedInputStream bufferedInputStream = new BufferedInputStream(resourceAsStream);
+
+        system.writeFile("test_shenfen__yyyy1.jpg", FileType.IMG, bufferedInputStream);
+
     }
 
     @Test
@@ -59,7 +73,7 @@ public class TestNosFileSystem {
 
     @Test
     public void testTestGenerateUrl() throws Exception {
-        String generateUrl = system.generateUrl("test_file_jpg_yyyy.jpg", FileType.IMG, 10000);
+        String generateUrl = system.generateUrl("test_shenfen__yyyy1.jpg", FileType.IMG, 10000000);
 
         System.out.println(generateUrl);
         Assert.assertNotNull(generateUrl);

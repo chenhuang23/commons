@@ -41,8 +41,8 @@ public class RabbitMqClientTest {
 
         client.init();
 
-        producer = client.createMqProducer("loan_dev");
-        consumer = client.createMqConsumer("loan_dev", null);
+        producer = client.createMqProducer("huey.rabbit.resultqueue");
+        consumer = client.createMqConsumer("huey.rabbit.resultqueue", null);
     }
 
     @After

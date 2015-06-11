@@ -235,6 +235,31 @@ public class DefaultCommonNKVClient extends AbstractCacheClient implements NKVCl
     }
 
     @Override
+    public byte[] getBytes(String key) throws CacheException {
+        checkInited();
+        Assert.isNotBlank("key is blank.", key);
+
+        Result<byte[]> result = null;
+        try {
+            result = client.get(nameSpace, getByteArray(key), option);
+
+        } catch (Throwable ex) {
+            throw new CacheException("get cache exception.", ex);
+        }
+
+        if (result != null && result.getCode().equals(Result.ResultCode.OK)) {
+
+            byte[] ret = result.getResult();
+
+            return ret;
+
+        }
+
+        throw new CacheException(MessageFormat.format("get cache failed. {1}",
+                                                      result != null ? result.getCode() : "Null code"));
+    }
+
+    @Override
     public void delete(String key) throws CacheException {
         checkInited();
         Assert.isNotBlank("key is blank.", key);
@@ -250,7 +275,7 @@ public class DefaultCommonNKVClient extends AbstractCacheClient implements NKVCl
     }
 
     @Override
-    public void incr(String key, int by, int expiredTime) throws CacheException {
+    public Integer incr(String key, int by, int expiredTime) throws CacheException {
         checkInited();
         Assert.isNotBlank("key is blank.", key);
 
@@ -258,16 +283,21 @@ public class DefaultCommonNKVClient extends AbstractCacheClient implements NKVCl
         try {
             NkvClient.NkvOption nkvOption = new NkvClient.NkvOption(timeOut);
             nkvOption.setExpireTime(expiredTime);
-            client.incr(nameSpace, getByteArray(key), by, DEFAULT_VAL, nkvOption);
+            Result<Integer> incr = client.incr(nameSpace, getByteArray(key), by, DEFAULT_VAL, nkvOption);
+
+            if (incr != null) {
+                return incr.getResult();
+            }
 
         } catch (Throwable ex) {
             throw new CacheException("get cache exception.", ex);
         }
 
+        return null;
     }
 
     @Override
-    public void decr(String key, int by, int expiredTime) throws CacheException {
+    public Integer decr(String key, int by, int expiredTime) throws CacheException {
         checkInited();
         Assert.isNotBlank("key is blank.", key);
 
@@ -275,12 +305,15 @@ public class DefaultCommonNKVClient extends AbstractCacheClient implements NKVCl
         try {
             NkvClient.NkvOption nkvOption = new NkvClient.NkvOption(timeOut);
             nkvOption.setExpireTime(expiredTime);
-            client.decr(nameSpace, getByteArray(key), by, DEFAULT_VAL, nkvOption);
-
+            Result<Integer> decr = client.decr(nameSpace, getByteArray(key), by, DEFAULT_VAL, nkvOption);
+            if (decr != null) {
+                return decr.getResult();
+            }
         } catch (Throwable ex) {
             throw new CacheException("get cache exception.", ex);
         }
 
+        return null;
     }
 
     private byte[] getByteArray(String value) {

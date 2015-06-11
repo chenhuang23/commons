@@ -1,6 +1,7 @@
 package test;
 
 import java.io.Serializable;
+import java.io.UnsupportedEncodingException;
 
 import org.junit.Before;
 import org.junit.Test;
@@ -18,9 +19,11 @@ public class RedisClientTest implements Serializable {
     public void init() {
         redisClient = new DefaultRedisClient();
 
-        redisClient.setServers("redis://:xdcsrftest@10.165.124.109:6379");
+        // redisClient.setServers("redis://:xdcsrftest@10.165.124.109:6379");
 
         // redisClient.setServers("10.240.176.240");
+
+        redisClient.setServers("redis://:xdcsrftest@127.0.0.1:6479");
 
         redisClient.init();
     }
@@ -37,7 +40,7 @@ public class RedisClientTest implements Serializable {
         // val.setName(name);
         // this.getRedisClient().put(key, val);
 
-        User user = this.getRedisClient().get(key);
+        User user = (User) this.getRedisClient().get(key);
 
         System.out.println(user);
         org.junit.Assert.assertNotNull(user);
@@ -46,7 +49,41 @@ public class RedisClientTest implements Serializable {
 
     }
 
-    public RedisClient<User> getRedisClient() {
+    @Test
+    public void incr() throws CacheException {
+
+        Integer test = this.getRedisClient().incr("testINcr", 1, 10);
+
+        System.out.println(test);
+
+    }
+
+    @Test
+    public void get() throws CacheException, UnsupportedEncodingException {
+
+        byte[] testINcrs = this.getRedisClient().getBytes("owVPosyg9fnn3YBaKe6tGs0DickM_LOGIN_FAILED");
+
+        System.out.println(Integer.valueOf(new String(testINcrs, "utf-8")));
+
+    }
+
+    @Test
+    public void del() throws CacheException, UnsupportedEncodingException {
+
+        this.getRedisClient().delete("owVPosyg9fnn3YBaKe6tGs0DickM_LOGIN_FAILED");
+
+    }
+
+    @Test
+    public void decr() throws CacheException {
+
+        Integer test = this.getRedisClient().decr("OPENID123456_LOGIN_FAILED", 1, 100);
+
+        System.out.println(test);
+
+    }
+
+    public RedisClient getRedisClient() {
         return redisClient;
     }
 

@@ -16,8 +16,8 @@ public class Main {
         System.out.println(processor);
 
         DefaultMessageRequest request = new DefaultMessageRequest();
-        request.addEnvelop(MessageChannel.SMS, new SimpleEnvelop("test", "test_teid", IEnvelop.LEVEL.LEVEL_HIGH, null,
-                                                                 null));
+        request.addEnvelop(MessageChannel.EMAIL, new SimpleEnvelop("test", "test_teid", IEnvelop.LEVEL.LEVEL_HIGH,
+                                                                   null, null));
 
         processor.process(request);
 

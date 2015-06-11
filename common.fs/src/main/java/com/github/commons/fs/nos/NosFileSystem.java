@@ -5,10 +5,14 @@
  */
 package com.github.commons.fs.nos;
 
+import java.io.BufferedInputStream;
+import java.io.IOException;
 import java.io.InputStream;
+import java.net.MalformedURLException;
 import java.net.URL;
 import java.util.Calendar;
 
+import com.netease.cloud.services.nos.Headers;
 import org.apache.commons.lang.StringUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -84,6 +88,7 @@ public class NosFileSystem extends FileSystem {
                 if (nosObject != null) {
                     return nosObject.getObjectContent();
                 }
+
         }
 
         return null;
@@ -112,6 +117,20 @@ public class NosFileSystem extends FileSystem {
     }
 
     @Override
+    public void writeFile(String filename, FileType type, String urlPath, UserMetadata... userMetadatas) {
+
+        try {
+            URL url = new URL(urlPath);
+
+            BufferedInputStream bufferedInputStream = new BufferedInputStream(url.openStream());
+
+            writeFile(filename, type, bufferedInputStream, userMetadatas);
+        } catch (Throwable e) {
+            throw new FileSystemException("Nos file system write file exception.", e);
+        }
+    }
+
+    @Override
     public void writeFile(String filename, FileType type, InputStream inputStream, UserMetadata... userMetadatas) {
         isNotNUll(bucketName, "bucketName");
         isNotNUll(nosClient, "filename");
@@ -135,7 +154,15 @@ public class NosFileSystem extends FileSystem {
         if (userMetadatas != null) {
             for (UserMetadata entry : userMetadatas) {
                 if (entry != null && StringUtils.isNotBlank(entry.getKey()) && StringUtils.isNotBlank(entry.getValue())) {
-                    objectMetadata.addUserMetadata(entry.getKey(), entry.getValue());
+                    if (UserMetadata.CONTENT_LENGTH.equals(entry.getKey())) {
+                        try {
+                            objectMetadata.setContentLength(Long.parseLong(entry.getValue()));
+                        } catch (NumberFormatException ex) {
+                            logger.error("Put object params [{}] error, value [{}]", entry.getKey(), entry.getValue());
+                        }
+                    } else {
+                        objectMetadata.addUserMetadata(entry.getKey(), entry.getValue());
+                    }
                 }
             }
         }

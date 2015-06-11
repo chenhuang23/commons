@@ -4,6 +4,8 @@ package com.github.commons.security;/*
  * 
  */
 
+import com.github.commons.security.config.SecKey;
+import com.github.commons.security.support.ReqParams;
 import junit.framework.Assert;
 
 import org.junit.Test;
@@ -29,17 +31,24 @@ public class CodecToolsTest {
     @Test
     public void testDes() throws ClassNotFoundException, IllegalAccessException, InstantiationException {
 
-        String encode = tools.encode(plaintext, EncryptType.DES);
+        ReqParams re = new ReqParams("test-code", 1, EncryptType.AES);
+        SecKey secKey = tools.getSecKey(re);
 
-        System.out.println(encode);
+        System.out.println("pri = " + secKey.getPriKey());
 
-        Assert.assertEquals(encode, encodeCode);
+        System.out.println("pub = " + secKey.getPubKey());
 
-        String decode = tools.decode(encode, EncryptType.DES);
-
-        System.out.println(decode);
-
-        Assert.assertEquals(decode, plaintext);
+        // String encode = tools.encode(plaintext, EncryptType.DES);
+        //
+        // System.out.println(encode);
+        //
+        // Assert.assertEquals(encode, encodeCode);
+        //
+        // String decode = tools.decode(encode, EncryptType.DES);
+        //
+        // System.out.println(decode);
+        //
+        // Assert.assertEquals(decode, plaintext);
     }
 
     @Test

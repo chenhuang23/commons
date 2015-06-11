@@ -18,4 +18,6 @@ public interface FileWriter {
 
     public void writeFile(String filename, FileType type, InputStream inputStream, UserMetadata... userMetadatas);
 
+    public void writeFile(String filename, FileType type, String url, UserMetadata... userMetadatas);
+
 }

@@ -2,8 +2,13 @@ package com.github.commons.fs;
 
 public class UserMetadata {
 
-    private String key;
-    private String value;
+    /*
+     * Standard HTTP Headers
+     */
+    public static final String CONTENT_LENGTH = "Content-Length";
+
+    private String             key;
+    private String             value;
 
     public String getKey() {
         return key;

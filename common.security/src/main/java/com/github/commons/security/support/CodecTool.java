@@ -5,6 +5,7 @@
  */
 package com.github.commons.security.support;
 
+import com.github.commons.security.config.SecKey;
 import com.github.commons.security.constants.EncryptType;
 
 /**
@@ -17,4 +18,6 @@ public interface CodecTool {
     public String decode(String ciphertext, EncryptType type);
 
     public String encode(String plainText, EncryptType type);
+
+    public abstract SecKey getSecKey(ReqParams params);
 }

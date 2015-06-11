@@ -105,6 +105,24 @@ public interface SimpleCache<T extends Serializable> {
 
     /**
      * <pre>
+     * Description：获取缓存项
+     * @param key
+     * @return
+     * @throws CacheException,IllegalArgumentException
+     * @return Object
+     * @author name：xiaofeng.zhou
+     * <p>============================================</p>
+     * Modified No： 
+     * Modified By： 
+     * Modified Date： 
+     * Modified Description: 
+     * <p>============================================</p>
+     * </pre>
+     */
+    public byte[] getBytes(String key) throws CacheException;
+
+    /**
+     * <pre>
      * Description：
      * @param key
      * @throws CacheException,IllegalArgumentException
@@ -137,7 +155,7 @@ public interface SimpleCache<T extends Serializable> {
      * <p>============================================</p>
      * </pre>
      */
-    public void incr(String key, int by, int expiredTime) throws CacheException;
+    public Integer incr(String key, int by, int expiredTime) throws CacheException;
 
     /**
      * <pre>
@@ -155,6 +173,6 @@ public interface SimpleCache<T extends Serializable> {
      *  <p>============================================</p>
      * </pre>
      */
-    public void decr(String key, int by, int expiredTime) throws CacheException;
+    public Integer decr(String key, int by, int expiredTime) throws CacheException;
 
 }

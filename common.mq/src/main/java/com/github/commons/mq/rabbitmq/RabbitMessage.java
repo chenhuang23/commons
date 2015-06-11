@@ -6,7 +6,6 @@
 package com.github.commons.mq.rabbitmq;
 
 import com.github.commons.mq.domain.MqMessage;
-import com.netease.cloud.nqs.client.util.Utils;
 
 /**
  * NqsMessage.java
@@ -18,7 +17,6 @@ public class RabbitMessage implements MqMessage {
     private byte[] data;
 
     public RabbitMessage(byte[] body){
-        Utils.checkNotNull(body, "body");
 
         this.data = body;
     }

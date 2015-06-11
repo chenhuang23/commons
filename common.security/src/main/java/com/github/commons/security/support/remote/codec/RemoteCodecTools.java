@@ -5,9 +5,11 @@
  */
 package com.github.commons.security.support.remote.codec;
 
+import com.github.commons.security.config.SecKey;
 import com.github.commons.security.constants.EncryptType;
 import com.github.commons.security.constants.SecPolicy;
 import com.github.commons.security.support.CodecTool;
+import com.github.commons.security.support.ReqParams;
 import com.github.commons.security.support.SecTool;
 
 /**
@@ -28,6 +30,11 @@ public class RemoteCodecTools extends SecTool implements CodecTool {
 
     @Override
     public String encode(String plainText, EncryptType type) {
+        return null;
+    }
+
+    @Override
+    public SecKey getSecKey(ReqParams params) {
         return null;
     }
 }

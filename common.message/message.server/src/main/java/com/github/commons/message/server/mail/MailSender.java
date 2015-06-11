@@ -6,14 +6,12 @@
 package com.github.commons.message.server.mail;
 
 import com.github.commons.message.server.MessageException;
-import org.apache.commons.mail.DefaultAuthenticator;
-import org.apache.commons.mail.HtmlEmail;
-import org.apache.commons.mail.MultiPartEmail;
-import org.apache.commons.mail.SimpleEmail;
+import org.apache.commons.mail.*;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import javax.swing.text.html.HTML;
+import java.io.File;
 
 /**
  * MailSender.java
@@ -35,7 +33,73 @@ public class MailSender {
 
     private boolean             isDebug;
 
+    /**
+     * 发送邮件 带附件
+     *
+     * @param from
+     * @param to
+     * @param cc
+     * @param bcc
+     * @param subject
+     * @param msg
+     * @return
+     */
+    public void sendHtmlWithAttachment(String from, String[] to, String[] cc, String[] bcc, String subject, String msg,
+                                       EmailAttachmentEntity... attachments) throws MessageException {
 
+        HtmlEmail email = new HtmlEmail();
+
+        try {
+            if (attachments != null) {
+                for (EmailAttachmentEntity attachmentEntity : attachments) {
+
+                    if (attachmentEntity != null) {
+                        EmailAttachment ea = new EmailAttachment();
+                        ea.setDescription(attachmentEntity.getDescription());
+                        ea.setDisposition(attachmentEntity.getDisposition());
+                        ea.setName(attachmentEntity.getName());
+                        ea.setPath(attachmentEntity.getPath());
+                        ea.setURL(attachmentEntity.getUrl());
+
+                        email.attach(ea);
+                    }
+                }
+            }
+        } catch (EmailException e) {
+            logger.error("attach file exception.", e);
+        }
+
+        sendHtmlReal(email, from, to, cc, bcc, subject, msg);
+    }
+
+    /**
+     * 发送邮件 带附件
+     *
+     * @param from
+     * @param to
+     * @param cc
+     * @param bcc
+     * @param subject
+     * @param msg
+     * @return
+     */
+    public void sendHtmlWithAttachment(String from, String[] to, String[] cc, String[] bcc, String subject, String msg,
+                                       File... files) throws MessageException {
+
+        HtmlEmail email = new HtmlEmail();
+
+        try {
+            for (File file : files) {
+                if (file != null) {
+                    email.attach(file);
+                }
+            }
+        } catch (EmailException e) {
+            logger.error("attach file exception.", e);
+        }
+
+        sendHtmlReal(email, from, to, cc, bcc, subject, msg);
+    }
 
     /**
      * 发送邮件
@@ -49,9 +113,26 @@ public class MailSender {
      * @return
      */
     public void sendHtml(String from, String[] to, String[] cc, String[] bcc, String subject, String msg)
-            throws MessageException {
+                                                                                                         throws MessageException {
 
         HtmlEmail email = new HtmlEmail();
+        sendHtmlReal(email, from, to, cc, bcc, subject, msg);
+    }
+
+    /**
+     * 发送邮件
+     *
+     * @param from
+     * @param to
+     * @param cc
+     * @param bcc
+     * @param subject
+     * @param msg
+     * @return
+     */
+    private void sendHtmlReal(HtmlEmail email, String from, String[] to, String[] cc, String[] bcc, String subject,
+                              String msg) throws MessageException {
+
         // email.setTLS(true); //是否TLS校验，，某些邮箱需要TLS安全校验，同理有SSL校验
         // email.setSSL(true);
         email.setDebug(isDebug);
@@ -60,6 +141,7 @@ public class MailSender {
         email.setSmtpPort(port);
 
         email.setAuthenticator(new DefaultAuthenticator(username, password));
+
         try {
             email.setFrom(from == null ? username : from); // 发送方,这里可以写多个
             if (to != null && to.length > 0) email.addTo(to); // 接收方
