@@ -119,14 +119,22 @@ public class NosFileSystem extends FileSystem {
     @Override
     public void writeFile(String filename, FileType type, String urlPath, UserMetadata... userMetadatas) {
 
+        BufferedInputStream bufferedInputStream = null;
         try {
             URL url = new URL(urlPath);
 
-            BufferedInputStream bufferedInputStream = new BufferedInputStream(url.openStream());
+            bufferedInputStream = new BufferedInputStream(url.openStream());
 
             writeFile(filename, type, bufferedInputStream, userMetadatas);
         } catch (Throwable e) {
             throw new FileSystemException("Nos file system write file exception.", e);
+        } finally {
+            if (bufferedInputStream != null) {
+                try {
+                    bufferedInputStream.close();
+                } catch (IOException e) {
+                }
+            }
         }
     }
 
