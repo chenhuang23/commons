@@ -175,4 +175,13 @@ public interface SimpleCache<T extends Serializable> {
      */
     public Integer decr(String key, int by, int expiredTime) throws CacheException;
 
+    /**
+     * 返回incr,decr结果值,如果key不存在返回null
+     * 
+     * @param key
+     * @return
+     * @throws CacheException
+     */
+    public Integer getIntForIncrAndDecr(String key) throws CacheException;
+
 }

@@ -20,6 +20,7 @@ import com.netease.backend.nkv.client.NkvClient;
 import com.netease.backend.nkv.client.Result;
 import com.netease.backend.nkv.client.error.NkvException;
 import com.netease.backend.nkv.client.impl.DefaultNkvClient;
+import org.apache.commons.lang.SerializationUtils;
 
 /**
  * DefaultNKVClient.java
@@ -100,7 +101,8 @@ public class DefaultCommonNKVClient extends AbstractCacheClient implements NKVCl
         Assert.isNotNull("val is null.", val);
 
         try {
-            client.put(nameSpace, getByteArray(key), getByteArray(String.valueOf(val)), option);
+
+            client.put(nameSpace, getByteArray(key), SerializationUtils.serialize(val), option);
 
         } catch (Throwable ex) {
             throw new CacheException("Put cache exception.", ex);
@@ -119,7 +121,7 @@ public class DefaultCommonNKVClient extends AbstractCacheClient implements NKVCl
             NkvClient.NkvOption nkvOption = new NkvClient.NkvOption(timeOut);
             nkvOption.setExpireTime(expiredTime);
 
-            client.put(nameSpace, getByteArray(key), getByteArray(String.valueOf(val)), nkvOption);
+            client.put(nameSpace, getByteArray(key), SerializationUtils.serialize(val), nkvOption);
 
         } catch (Throwable ex) {
             throw new CacheException("Put cache exception.", ex);
@@ -220,9 +222,12 @@ public class DefaultCommonNKVClient extends AbstractCacheClient implements NKVCl
 
             if (ret != null) {
                 try {
-                    return new String(ret, UTF_8);
-                } catch (UnsupportedEncodingException e) {
-                    throw new CacheException("new String exception.", e);
+                    Object deserialize = SerializationUtils.deserialize(ret);
+                    if (deserialize != null) {
+                        return (Serializable) deserialize;
+                    }
+                } catch (Throwable e) {
+                    throw new CacheException("get Result exception.", e);
                 }
             } else {
                 return null;
@@ -313,6 +318,17 @@ public class DefaultCommonNKVClient extends AbstractCacheClient implements NKVCl
             throw new CacheException("get cache exception.", ex);
         }
 
+        return null;
+    }
+
+    @Override
+    public Integer getIntForIncrAndDecr(String key) throws CacheException {
+        byte[] bytes = this.getBytes(key);
+        if (bytes == null) return 0;
+        try {
+            return Integer.valueOf(new String(bytes, "utf-8"));
+        } catch (UnsupportedEncodingException e) {
+        }
         return null;
     }
 

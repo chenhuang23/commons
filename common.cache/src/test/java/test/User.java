@@ -1,5 +1,7 @@
 package test;
 
+import org.apache.commons.lang.SerializationUtils;
+
 import java.io.Serializable;
 import java.net.SocketAddress;
 
@@ -26,4 +28,11 @@ public class User implements Serializable {
         this.age = age;
     }
 
+    public static void main(String[] args) {
+        byte[] serialize = SerializationUtils.serialize(1);
+
+        int ss = (Integer) SerializationUtils.deserialize(serialize);
+
+        System.out.println(ss);
+    }
 }

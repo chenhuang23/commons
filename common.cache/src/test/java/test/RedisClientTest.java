@@ -59,9 +59,18 @@ public class RedisClientTest implements Serializable {
     }
 
     @Test
+    public void getIntForIncrAndDecr() throws CacheException, UnsupportedEncodingException {
+
+        Integer testINcr = this.getRedisClient().getIntForIncrAndDecr("testINcr");
+
+        System.out.println(testINcr);
+
+    }
+
+    @Test
     public void get() throws CacheException, UnsupportedEncodingException {
 
-        byte[] testINcrs = this.getRedisClient().getBytes("owVPosyg9fnn3YBaKe6tGs0DickM_LOGIN_FAILED");
+        byte[] testINcrs = this.getRedisClient().getBytes("cdf16dbfbfff00fbc3061cd18d77b7a0_LOGIN_FAILED");
 
         System.out.println(Integer.valueOf(new String(testINcrs, "utf-8")));
 
@@ -70,7 +79,7 @@ public class RedisClientTest implements Serializable {
     @Test
     public void del() throws CacheException, UnsupportedEncodingException {
 
-        this.getRedisClient().delete("owVPosyg9fnn3YBaKe6tGs0DickM_LOGIN_FAILED");
+        this.getRedisClient().delete("cdf16dbfbfff00fbc3061cd18d77b7a0_LOGIN_FAILED");
 
     }
 

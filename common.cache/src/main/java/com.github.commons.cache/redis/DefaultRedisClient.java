@@ -1,6 +1,7 @@
 package com.github.commons.cache.redis;
 
 import java.io.Serializable;
+import java.io.UnsupportedEncodingException;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.concurrent.Future;
@@ -275,6 +276,17 @@ public class DefaultRedisClient<T extends Serializable, Object> extends Abstract
             retShareJedis(shareJedis);
         }
 
+        return null;
+    }
+
+    @Override
+    public Integer getIntForIncrAndDecr(String key) throws CacheException {
+        byte[] bytes = this.getBytes(key);
+        if (bytes == null) return 0;
+        try {
+            return Integer.valueOf(new String(bytes, "utf-8"));
+        } catch (UnsupportedEncodingException e) {
+        }
         return null;
     }
 

@@ -1,16 +1,14 @@
 package com.github.commons.datasource;
 
-import com.github.commons.datasource.seq.DBSeqGenerator;
-import com.github.commons.utils.format.JsonUtils;
+import java.io.IOException;
+import java.sql.SQLException;
+
+import javax.sql.DataSource;
+
 import org.springframework.context.ApplicationContext;
 import org.springframework.context.support.ClassPathXmlApplicationContext;
 
-import javax.sql.DataSource;
-import java.io.IOException;
-import java.io.InputStream;
-import java.sql.SQLException;
-import java.util.Enumeration;
-import java.util.Properties;
+import com.github.commons.datasource.seq.DBSeqGenerator;
 
 public class ClientTest {
 
