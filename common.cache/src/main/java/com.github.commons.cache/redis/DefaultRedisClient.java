@@ -8,6 +8,8 @@ import java.util.concurrent.Future;
 
 import org.apache.commons.lang.SerializationUtils;
 
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import redis.clients.jedis.*;
 import redis.clients.util.Hashing;
 import redis.clients.util.Sharded;
@@ -44,6 +46,8 @@ import com.github.commons.cache.CacheException;
  */
 public class DefaultRedisClient<T extends Serializable, Object> extends AbstractCacheClient implements RedisClient<T> {
 
+    private static final Logger logger              = LoggerFactory.getLogger(DefaultRedisClient.class);
+
     private static final int    VAL_INT_ZERO        = 0;
 
     private static final String POOL_MAX_WAIT_MILLS = "poolMaxWaitMills";
@@ -59,6 +63,8 @@ public class DefaultRedisClient<T extends Serializable, Object> extends Abstract
     private static final int    MAX_IDLE            = 1000 * 60;
 
     private ShardedJedisPool    pool;
+
+    private boolean             throwException;
 
     public void init() {
         if (!isInitd) {
@@ -112,6 +118,11 @@ public class DefaultRedisClient<T extends Serializable, Object> extends Abstract
 
     // =====================function================
 
+    @Override
+    public void throwException(boolean isThrow) {
+        this.throwException = isThrow;
+    }
+
     public void put(String key, T val) throws CacheException {
         // 1. 检查参数
         checkInited();
@@ -124,7 +135,7 @@ public class DefaultRedisClient<T extends Serializable, Object> extends Abstract
 
             getJdies(shareJedis, key).set(key.getBytes(UTF_8), SerializationUtils.serialize(val));
         } catch (Throwable e) {
-            throw new CacheException("Put cache exception.", e);
+            failDealForVoid("Put cache exception.", e);
         } finally {
             retShareJedis(shareJedis);
         }
@@ -143,7 +154,7 @@ public class DefaultRedisClient<T extends Serializable, Object> extends Abstract
 
             getJdies(shareJedis, key).setex(key.getBytes(UTF_8), expiredTime, SerializationUtils.serialize(val));
         } catch (Throwable e) {
-            throw new CacheException("Put cache exception.", e);
+            failDealForVoid("Put cache exception.", e);
         } finally {
             retShareJedis(shareJedis);
         }
@@ -170,10 +181,11 @@ public class DefaultRedisClient<T extends Serializable, Object> extends Abstract
             return (T) SerializationUtils.<T> deserialize(ret);
 
         } catch (Throwable e) {
-            throw new CacheException("get cache exception.", e);
+            failDealForVoid("get cache exception.", e);
         } finally {
             retShareJedis(shareJedis);
         }
+        return null;
     }
 
     public byte[] getBytes(String key) throws CacheException {
@@ -188,10 +200,12 @@ public class DefaultRedisClient<T extends Serializable, Object> extends Abstract
             return getJdies(shareJedis, key).get(key.getBytes(UTF_8));
 
         } catch (Throwable e) {
-            throw new CacheException("get cache exception.", e);
+            failDealForVoid("getBytes cache exception.", e);
         } finally {
             retShareJedis(shareJedis);
         }
+
+        return null;
     }
 
     public void delete(String key) throws CacheException {
@@ -206,7 +220,7 @@ public class DefaultRedisClient<T extends Serializable, Object> extends Abstract
             getJdies(shareJedis, key).del(key);
 
         } catch (Throwable e) {
-            throw new CacheException("delete cache exception.", e);
+            failDealForVoid("delete cache exception.", e);
         } finally {
             retShareJedis(shareJedis);
         }
@@ -239,7 +253,7 @@ public class DefaultRedisClient<T extends Serializable, Object> extends Abstract
             }
 
         } catch (Throwable e) {
-            throw new CacheException("incr cache exception.", e);
+            failDealForVoid("incr cache exception.", e);
         } finally {
             retShareJedis(shareJedis);
         }
@@ -271,7 +285,7 @@ public class DefaultRedisClient<T extends Serializable, Object> extends Abstract
             }
 
         } catch (Throwable e) {
-            throw new CacheException("incr cache exception.", e);
+            failDealForVoid("decr cache exception.", e);
         } finally {
             retShareJedis(shareJedis);
         }
@@ -301,7 +315,7 @@ public class DefaultRedisClient<T extends Serializable, Object> extends Abstract
             getJdies(shareJedis, key).expire(key, expiredTime);
 
         } catch (Throwable e) {
-            throw new CacheException("expire cache exception.", e);
+            failDealForVoid("expire cache exception.", e);
         } finally {
             retShareJedis(shareJedis);
         }
@@ -321,7 +335,7 @@ public class DefaultRedisClient<T extends Serializable, Object> extends Abstract
             getJdies(shareJedis, key).lpush(key.getBytes(UTF_8), SerializationUtils.serialize(val));
 
         } catch (Throwable e) {
-            throw new CacheException("lpush cache exception.", e);
+            failDealForVoid("lpush cache exception.", e);
         } finally {
             retShareJedis(shareJedis);
         }
@@ -341,7 +355,7 @@ public class DefaultRedisClient<T extends Serializable, Object> extends Abstract
             getJdies(shareJedis, key).rpush(key.getBytes(UTF_8), SerializationUtils.serialize(val));
 
         } catch (Throwable e) {
-            throw new CacheException("rpush cache exception.", e);
+            failDealForVoid("rpush cache exception.", e);
         } finally {
             retShareJedis(shareJedis);
         }
@@ -364,10 +378,12 @@ public class DefaultRedisClient<T extends Serializable, Object> extends Abstract
             return (T) SerializationUtils.<T> deserialize(ret);
 
         } catch (Throwable e) {
-            throw new CacheException("lpop cache exception.", e);
+            failDealForVoid("lpop cache exception.", e);
         } finally {
             retShareJedis(shareJedis);
         }
+
+        return null;
     }
 
     public T rpop(String key) throws CacheException {
@@ -388,10 +404,12 @@ public class DefaultRedisClient<T extends Serializable, Object> extends Abstract
             return (T) SerializationUtils.<T> deserialize(ret);
 
         } catch (Throwable e) {
-            throw new CacheException("rpop cache exception.", e);
+            failDealForVoid("rpop cache exception.", e);
         } finally {
             retShareJedis(shareJedis);
         }
+
+        return null;
     }
 
     public T rindex(String key, long index) throws CacheException {
@@ -412,10 +430,12 @@ public class DefaultRedisClient<T extends Serializable, Object> extends Abstract
             return (T) SerializationUtils.<T> deserialize(ret);
 
         } catch (Throwable e) {
-            throw new CacheException("rpop cache exception.", e);
+            failDealForVoid("rpop cache exception.", e);
         } finally {
             retShareJedis(shareJedis);
         }
+
+        return null;
     }
 
     public Long rindex(String key) throws CacheException {
@@ -428,10 +448,12 @@ public class DefaultRedisClient<T extends Serializable, Object> extends Abstract
 
             return getJdies(shareJedis, key).llen(key);
         } catch (Throwable e) {
-            throw new CacheException("rpop cache exception.", e);
+            failDealForVoid("rpop cache exception.", e);
         } finally {
             retShareJedis(shareJedis);
         }
+
+        return null;
     }
 
     // =======[map]=============>>>>
@@ -448,7 +470,7 @@ public class DefaultRedisClient<T extends Serializable, Object> extends Abstract
             getJdies(shareJedis, key).hset(key.getBytes(UTF_8), field.getBytes(), SerializationUtils.serialize(v));
 
         } catch (Throwable e) {
-            throw new CacheException("hset cache exception.", e);
+            failDealForVoid("hset cache exception.", e);
         } finally {
             retShareJedis(shareJedis);
         }
@@ -472,10 +494,12 @@ public class DefaultRedisClient<T extends Serializable, Object> extends Abstract
             return (T) SerializationUtils.<T> deserialize(ret);
 
         } catch (Throwable e) {
-            throw new CacheException("hget cache exception.", e);
+            failDealForVoid("hget cache exception.", e);
         } finally {
             retShareJedis(shareJedis);
         }
+
+        return null;
     }
 
     public void hdel(String key, String field) throws CacheException {
@@ -490,7 +514,7 @@ public class DefaultRedisClient<T extends Serializable, Object> extends Abstract
 
             getJdies(shareJedis, key).hdel(key.getBytes(UTF_8), field.getBytes(UTF_8));
         } catch (Throwable e) {
-            throw new CacheException("hget cache exception.", e);
+            failDealForVoid("hdel cache exception.", e);
         } finally {
             retShareJedis(shareJedis);
         }
@@ -506,10 +530,12 @@ public class DefaultRedisClient<T extends Serializable, Object> extends Abstract
 
             return getJdies(shareJedis, key).hlen(key.getBytes(UTF_8));
         } catch (Throwable e) {
-            throw new CacheException("hget cache exception.", e);
+            failDealForVoid("hlen cache exception.", e);
         } finally {
             retShareJedis(shareJedis);
         }
+
+        return null;
     }
 
     // ======[set]========>>>
@@ -525,7 +551,7 @@ public class DefaultRedisClient<T extends Serializable, Object> extends Abstract
             getJdies(shareJedis, key).sadd(key.getBytes(UTF_8), SerializationUtils.serialize(val));
 
         } catch (Throwable e) {
-            throw new CacheException("sAdd cache exception.", e);
+            failDealForVoid("sAdd cache exception.", e);
         } finally {
             retShareJedis(shareJedis);
         }
@@ -548,9 +574,20 @@ public class DefaultRedisClient<T extends Serializable, Object> extends Abstract
             return (T) SerializationUtils.<T> deserialize(ret);
 
         } catch (Throwable e) {
-            throw new CacheException("sAdd cache exception.", e);
+            failDealForVoid("sPop cache exception.", e);
         } finally {
             retShareJedis(shareJedis);
+        }
+
+        return null;
+    }
+
+    private void failDealForVoid(String message, Throwable ex) {
+        if (throwException) {
+            throw new CacheException(message, ex);
+        } else {
+            logger.error(message, ex);
+            return;
         }
     }
 

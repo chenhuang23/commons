@@ -75,7 +75,6 @@ public class SecToolsTest {
         Assert.assertEquals(sign, signCode);
 
         Assert.assertTrue(tools.signTool().validateSign(plaintext, sign, EncryptType.RSA));
-
     }
 
     @Test

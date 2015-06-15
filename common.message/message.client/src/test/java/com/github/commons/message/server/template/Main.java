@@ -28,7 +28,7 @@ public class Main {
 
         URL resource = Main.class.getResource("/AttachFile.txt");
 
-        // param.put(EmailEnum.__Attachment_FILE.getKey(), new File(resource.toURI()));
+        param.put(EmailEnum.__Attachment_FILE.getKey(), new File(resource.toURI()));
 
         System.out.println(messageCenter.sendEmail("网易小贷,个人邮箱验证", "test.email", param,
                                                    "hzzhouxiaofeng@corp.netease.com"));

@@ -21,6 +21,8 @@ import com.netease.backend.nkv.client.Result;
 import com.netease.backend.nkv.client.error.NkvException;
 import com.netease.backend.nkv.client.impl.DefaultNkvClient;
 import org.apache.commons.lang.SerializationUtils;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 /**
  * DefaultNKVClient.java
@@ -28,6 +30,8 @@ import org.apache.commons.lang.SerializationUtils;
  * @author zhouxiaofeng 5/22/15
  */
 public class DefaultCommonNKVClient extends AbstractCacheClient implements NKVClient {
+
+    private static final Logger logger                 = LoggerFactory.getLogger(DefaultCommonNKVClient.class);
 
     public static final int     MIN_COMPRESS_THRESHOLD = 1024;
     public static final String  UTF_8                  = "utf-8";
@@ -44,6 +48,8 @@ public class DefaultCommonNKVClient extends AbstractCacheClient implements NKVCl
     private long                timeOut                = 2000;
 
     private NkvClient.NkvOption option                 = null;
+
+    private boolean             throwException         = true;
 
     @Override
     public void init() {
@@ -95,6 +101,11 @@ public class DefaultCommonNKVClient extends AbstractCacheClient implements NKVCl
     }
 
     @Override
+    public void throwException(boolean isThrow) {
+        this.throwException = isThrow;
+    }
+
+    @Override
     public void put(String key, Serializable val) throws CacheException {
         checkInited();
         Assert.isNotBlank("key is blank.", key);
@@ -105,7 +116,7 @@ public class DefaultCommonNKVClient extends AbstractCacheClient implements NKVCl
             client.put(nameSpace, getByteArray(key), SerializationUtils.serialize(val), option);
 
         } catch (Throwable ex) {
-            throw new CacheException("Put cache exception.", ex);
+            failDealForVoid("Put cache exception.", ex);
         }
     }
 
@@ -124,7 +135,7 @@ public class DefaultCommonNKVClient extends AbstractCacheClient implements NKVCl
             client.put(nameSpace, getByteArray(key), SerializationUtils.serialize(val), nkvOption);
 
         } catch (Throwable ex) {
-            throw new CacheException("Put cache exception.", ex);
+            failDealForVoid("Put cache exception.", ex);
         }
     }
 
@@ -198,9 +209,10 @@ public class DefaultCommonNKVClient extends AbstractCacheClient implements NKVCl
             };
 
         } catch (Throwable ex) {
-            throw new CacheException("Put cache exception.", ex);
+            failDealForVoid("asyncGet cache exception.", ex);
         }
 
+        return null;
     }
 
     @Override
@@ -226,8 +238,8 @@ public class DefaultCommonNKVClient extends AbstractCacheClient implements NKVCl
                     if (deserialize != null) {
                         return (Serializable) deserialize;
                     }
-                } catch (Throwable e) {
-                    throw new CacheException("get Result exception.", e);
+                } catch (Throwable ex) {
+                    failDealForVoid("get cache exception.", ex);
                 }
             } else {
                 return null;
@@ -235,8 +247,9 @@ public class DefaultCommonNKVClient extends AbstractCacheClient implements NKVCl
 
         }
 
-        throw new CacheException(MessageFormat.format("get cache failed. {1}",
-                                                      result != null ? result.getCode() : "Null code"));
+        return null;
+        // throw new CacheException(MessageFormat.format("get cache failed. {}",
+        // result != null ? result.getCode() : "Null code"));
     }
 
     @Override
@@ -249,7 +262,7 @@ public class DefaultCommonNKVClient extends AbstractCacheClient implements NKVCl
             result = client.get(nameSpace, getByteArray(key), option);
 
         } catch (Throwable ex) {
-            throw new CacheException("get cache exception.", ex);
+            failDealForVoid("getBytes cache exception.", ex);
         }
 
         if (result != null && result.getCode().equals(Result.ResultCode.OK)) {
@@ -260,8 +273,10 @@ public class DefaultCommonNKVClient extends AbstractCacheClient implements NKVCl
 
         }
 
-        throw new CacheException(MessageFormat.format("get cache failed. {1}",
-                                                      result != null ? result.getCode() : "Null code"));
+        return null;
+
+        // throw new CacheException(MessageFormat.format("get cache failed. {1}",
+        // result != null ? result.getCode() : "Null code"));
     }
 
     @Override
@@ -274,7 +289,7 @@ public class DefaultCommonNKVClient extends AbstractCacheClient implements NKVCl
             client.remove(nameSpace, getByteArray(key), option);
 
         } catch (Throwable ex) {
-            throw new CacheException("get cache exception.", ex);
+            failDealForVoid("delete cache exception.", ex);
         }
 
     }
@@ -295,7 +310,7 @@ public class DefaultCommonNKVClient extends AbstractCacheClient implements NKVCl
             }
 
         } catch (Throwable ex) {
-            throw new CacheException("get cache exception.", ex);
+            failDealForVoid("incr cache exception.", ex);
         }
 
         return null;
@@ -315,7 +330,7 @@ public class DefaultCommonNKVClient extends AbstractCacheClient implements NKVCl
                 return decr.getResult();
             }
         } catch (Throwable ex) {
-            throw new CacheException("get cache exception.", ex);
+            failDealForVoid("incr cache exception.", ex);
         }
 
         return null;
@@ -330,6 +345,15 @@ public class DefaultCommonNKVClient extends AbstractCacheClient implements NKVCl
         } catch (UnsupportedEncodingException e) {
         }
         return null;
+    }
+
+    private void failDealForVoid(String message, Throwable ex) {
+        if (throwException) {
+            throw new CacheException(message, ex);
+        } else {
+            logger.error(message, ex);
+            return;
+        }
     }
 
     private byte[] getByteArray(String value) {

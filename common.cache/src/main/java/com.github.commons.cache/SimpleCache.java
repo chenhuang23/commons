@@ -32,6 +32,13 @@ import java.util.concurrent.Future;
 public interface SimpleCache<T extends Serializable> {
 
     /**
+     * 是否抛出异常，默认是抛出
+     * 
+     * @param isThrow
+     */
+    public void throwException(boolean isThrow);
+
+    /**
      * Description： 添加缓存项到缓存服务器，缓存项超时时间为默认值（配置文件中超时项值）
      * 
      * @param key 缓存键

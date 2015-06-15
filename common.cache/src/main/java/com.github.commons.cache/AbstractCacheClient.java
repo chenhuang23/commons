@@ -47,6 +47,9 @@ public abstract class AbstractCacheClient implements CacheClient {
         this.config = config;
     }
 
+
+
+
     public void setServers(String server) {
         if (StringUtils.isNotBlank(server)) {
             server = server.replace(";", ",");
