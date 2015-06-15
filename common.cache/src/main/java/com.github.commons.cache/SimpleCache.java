@@ -36,7 +36,7 @@ public interface SimpleCache<T extends Serializable> {
      * 
      * @param isThrow
      */
-    public void throwException(boolean isThrow);
+    public void setThrowException(boolean isThrow);
 
     /**
      * Description： 添加缓存项到缓存服务器，缓存项超时时间为默认值（配置文件中超时项值）

@@ -7,11 +7,14 @@ package com.github.commons.cache.nkv;
 
 import java.io.Serializable;
 import java.io.UnsupportedEncodingException;
-import java.text.MessageFormat;
 import java.util.concurrent.ExecutionException;
 import java.util.concurrent.Future;
 import java.util.concurrent.TimeUnit;
 import java.util.concurrent.TimeoutException;
+
+import org.apache.commons.lang.SerializationUtils;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import com.github.commons.cache.AbstractCacheClient;
 import com.github.commons.cache.Assert;
@@ -20,9 +23,6 @@ import com.netease.backend.nkv.client.NkvClient;
 import com.netease.backend.nkv.client.Result;
 import com.netease.backend.nkv.client.error.NkvException;
 import com.netease.backend.nkv.client.impl.DefaultNkvClient;
-import org.apache.commons.lang.SerializationUtils;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 
 /**
  * DefaultNKVClient.java
@@ -98,11 +98,6 @@ public class DefaultCommonNKVClient extends AbstractCacheClient implements NKVCl
         if (isInitd() && client != null) {
             client.close();
         }
-    }
-
-    @Override
-    public void throwException(boolean isThrow) {
-        this.throwException = isThrow;
     }
 
     @Override
@@ -339,10 +334,10 @@ public class DefaultCommonNKVClient extends AbstractCacheClient implements NKVCl
     @Override
     public Integer getIntForIncrAndDecr(String key) throws CacheException {
         byte[] bytes = this.getBytes(key);
-        if (bytes == null) return 0;
+        if (bytes == null || bytes.length == 0) return 0;
         try {
             return Integer.valueOf(new String(bytes, "utf-8"));
-        } catch (UnsupportedEncodingException e) {
+        } catch (Throwable e) {
         }
         return null;
     }
@@ -365,6 +360,10 @@ public class DefaultCommonNKVClient extends AbstractCacheClient implements NKVCl
             throw new CacheException("Get bytes exception.", e);
         }
 
+    }
+
+    public void setThrowException(boolean throwException) {
+        this.throwException = throwException;
     }
 
     // =====================================================

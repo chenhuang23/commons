@@ -119,7 +119,7 @@ public class DefaultRedisClient<T extends Serializable, Object> extends Abstract
     // =====================function================
 
     @Override
-    public void throwException(boolean isThrow) {
+    public void setThrowException(boolean isThrow) {
         this.throwException = isThrow;
     }
 
@@ -296,10 +296,10 @@ public class DefaultRedisClient<T extends Serializable, Object> extends Abstract
     @Override
     public Integer getIntForIncrAndDecr(String key) throws CacheException {
         byte[] bytes = this.getBytes(key);
-        if (bytes == null) return 0;
+        if (bytes == null || bytes.length == 0) return 0;
         try {
             return Integer.valueOf(new String(bytes, "utf-8"));
-        } catch (UnsupportedEncodingException e) {
+        } catch (Throwable e) {
         }
         return null;
     }
