@@ -1,3 +1,4 @@
 com.github.commons.security.core.codec.DesCodec
 com.github.commons.security.core.codec.XDesCodec
 com.github.commons.security.core.codec.AesCodec
+com.github.commons.security.core.codec.RsaCodec

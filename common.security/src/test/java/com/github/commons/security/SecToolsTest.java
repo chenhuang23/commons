@@ -38,6 +38,26 @@ public class SecToolsTest {
     SecTools             tools         = new SecTools("test-code", SecPolicy.LOCAL, 1);
 
     @Test
+    public void testRsa() throws ClassNotFoundException, IllegalAccessException, InstantiationException {
+
+        String encode = tools.codecTool().encode(plaintext, EncryptType.RSA);
+
+        System.out.println(encode);
+
+        System.out.println("----------------");
+
+        String encodess = "WQEPVQNwijz3mNO8JHmBnhayfVe6YkbAy2PdlSjrKKeQq9jCPOzXSd8/Tk3BY6gXwa0co3FW0Het5zBT\n"
+                          + "Pb9PBaL5ZUx0RC5FDlj7gf8Ymh1hOngUD5b2SuEbYsvxrvyhPPhSagLm3fA2e2MRsJCJhg7aLAcM\n"
+                          + "LmJcEIliHu9FoGvkqz0=";
+
+        // Assert.assertEquals(encode, encodess);
+
+        String decode = tools.codecTool().decode(encode, EncryptType.RSA);
+
+        Assert.assertEquals(decode, plaintext);
+    }
+
+    @Test
     public void testDes() throws ClassNotFoundException, IllegalAccessException, InstantiationException {
 
         String encode = tools.codecTool().encode(plaintext, EncryptType.DES);
