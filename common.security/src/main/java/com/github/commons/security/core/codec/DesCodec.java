@@ -30,7 +30,7 @@ public class DesCodec implements CodecSpi {
             logger.error("des exception.", e);
         }
 
-        return null;
+        return plainText;
     }
 
     @Override
@@ -41,7 +41,7 @@ public class DesCodec implements CodecSpi {
             logger.error("des exception.", e);
         }
 
-        return null;
+        return ciphertext;
     }
 
     @Override

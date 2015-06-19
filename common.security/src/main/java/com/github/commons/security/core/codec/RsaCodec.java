@@ -36,7 +36,7 @@ public class RsaCodec implements CodecSpi {
             logger.error("aes encode exception.", e);
         }
 
-        return null;
+        return plainText;
     }
 
     @Override
@@ -48,7 +48,7 @@ public class RsaCodec implements CodecSpi {
             logger.error("aes decode exception.", e);
         }
 
-        return null;
+        return ciphertext;
 
     }
 

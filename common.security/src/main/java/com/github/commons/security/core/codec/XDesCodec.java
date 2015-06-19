@@ -40,7 +40,7 @@ public class XDesCodec implements CodecSpi {
             logger.error("des exception.", e);
         }
 
-        return null;
+        return plainText;
     }
 
     @Override
@@ -60,7 +60,7 @@ public class XDesCodec implements CodecSpi {
             logger.error("des exception.", e);
         }
 
-        return null;
+        return ciphertext;
     }
 
     @Override
