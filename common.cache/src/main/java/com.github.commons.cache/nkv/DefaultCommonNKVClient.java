@@ -335,11 +335,8 @@ public class DefaultCommonNKVClient extends AbstractCacheClient implements NKVCl
     public Integer getIntForIncrAndDecr(String key) throws CacheException {
         byte[] bytes = this.getBytes(key);
         if (bytes == null || bytes.length == 0) return 0;
-        try {
-            return Integer.valueOf(new String(bytes, "utf-8"));
-        } catch (Throwable e) {
-        }
-        return null;
+
+        return bytesToInt(bytes, 0);
     }
 
     private void failDealForVoid(String message, Throwable ex) {
@@ -360,6 +357,16 @@ public class DefaultCommonNKVClient extends AbstractCacheClient implements NKVCl
             throw new CacheException("Get bytes exception.", e);
         }
 
+    }
+
+
+    private int bytesToInt(byte[] src, int offset) {
+        int value;
+        value = (int) ((src[offset] & 0xFF)
+                | ((src[offset+1] & 0xFF)<<8)
+                | ((src[offset+2] & 0xFF)<<16)
+                | ((src[offset+3] & 0xFF)<<24));
+        return value;
     }
 
     public void setThrowException(boolean throwException) {
