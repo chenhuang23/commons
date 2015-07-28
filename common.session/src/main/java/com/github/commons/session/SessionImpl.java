@@ -1,38 +1,38 @@
 package com.github.commons.session;
 
-import java.util.*;
+import com.github.commons.session.constants.SessionConstants;
+import org.apache.commons.lang.StringUtils;
 
 import javax.servlet.ServletContext;
 import javax.servlet.http.Cookie;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import javax.servlet.http.HttpSession;
-
-import org.apache.commons.lang.StringUtils;
+import java.util.*;
 
 /**
  * session 的封装
  */
 public class SessionImpl implements HttpSession {
 
-    private SessionRequestWrapper              request;
-    private HttpServletResponse                response;
-    private int                                maxInactiveInterval;
-    private boolean                            isRequestedSessionIdValid;
-    private boolean                            isSessionIdFromURL    = false;
-    private boolean                            isSessionIdFromCookie = true;
-    private static String                      SESSION_ID_NAME       = "ne_ln_jsession_id";
-    private static String                      SESSION_CREATE_TIME   = "ne_ln_jsession_create_time";
-    public static String                       COOKIE_PATH_VAL       = "/";
-    private SessionIDGenerator                 sidGenerator          = new DefaultSessionIDGenerator();
-    public static int                          COOKIE_ALIVE_TIME     = 3600 * 24 * 365 * 100;
-    private SessionInternal                    session;
-    private ServletContext                     servletContext;
-    private SessionStoreHolder                 holder;
-    public static ThreadLocal<SessionInternal> localSession          = new ThreadLocal<SessionInternal>();
+    private SessionRequestWrapper request;
+    private HttpServletResponse response;
+    private int maxInactiveInterval;
+    private boolean isRequestedSessionIdValid;
+    private boolean isSessionIdFromURL = false;
+    private boolean isSessionIdFromCookie = true;
+    private static String SESSION_ID_NAME = SessionConstants.SESSION_ID_NAME;
+    private static String SESSION_CREATE_TIME = SessionConstants.SESSION_CREATE_TIME;
+    public static String COOKIE_PATH_VAL = "/";
+    private SessionIDGenerator sidGenerator = new DefaultSessionIDGenerator();
+    public static int COOKIE_ALIVE_TIME = 3600 * 24 * 365 * 100;
+    private SessionInternal session;
+    private ServletContext servletContext;
+    private SessionStoreHolder holder;
+    public static ThreadLocal<SessionInternal> localSession = new ThreadLocal<SessionInternal>();
 
     public SessionImpl(SessionRequestWrapper request, HttpServletResponse response, ServletContext servletContext,
-                       SessionStoreHolder holder){
+                       SessionStoreHolder holder) {
         this.request = request;
         this.response = response;
         this.servletContext = servletContext;
@@ -224,7 +224,7 @@ public class SessionImpl implements HttpSession {
 
         private String sessionId;
         private String creationTime;
-        private long   lastAccessTime;
+        private long lastAccessTime;
 
         public long getLastAccessTime() {
             return lastAccessTime;

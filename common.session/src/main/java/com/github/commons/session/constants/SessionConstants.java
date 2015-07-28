@@ -10,5 +10,8 @@ package com.github.commons.session.constants;
  *
  * @author zhouxiaofeng 7/15/15
  */
-public class SessionConstants {
+public interface SessionConstants {
+    String SESSION_ID_NAME = "llq_fn_jsession_id";
+    String SESSION_CREATE_TIME = "llq_fn_jsession_create_time";
+
 }
